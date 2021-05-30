@@ -37,7 +37,7 @@ namespace cs3750LMS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SignUp([Bind("Email,Fname,Lname,Birthday,Password,AccountType")] User users)
+        public async Task<IActionResult> SignUp([Bind("Email,FirstName,LastName,Birthday,Password,AccountType")] User users)
         {
             if(_context.Users.Count(e => e.Email == users.Email) == 0)
             {
