@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace cs3750LMS.Controllers
@@ -37,12 +39,13 @@ namespace cs3750LMS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SignUp([Bind("Email,Fname,Lname,Birthday,Password,AccountType")] User users)
+        public async Task<IActionResult> SignUp([Bind("Email,FirstName,LastName,Birthday,Password,AccountType")] User users)
         {
             if(_context.Users.Count(e => e.Email == users.Email) == 0)
             {
                 if (ModelState.IsValid)
                 {
+                    users.Password = Sha256(users.Password);
                     _context.Add(users);
                     await _context.SaveChangesAsync();
                     return View("Index");
@@ -64,7 +67,7 @@ namespace cs3750LMS.Controllers
             {
                 return View();
             }
-            if(userFound.Password == password)
+            if(userFound.Password == Sha256(password))
             {
                 return View("Index");
             }
@@ -75,6 +78,20 @@ namespace cs3750LMS.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public static String Sha256(String value)
+        {
+            StringBuilder hash = new StringBuilder();
+
+            SHA256 security = SHA256.Create();
+            Encoding enc = Encoding.UTF8;
+            Byte[] result = security.ComputeHash(enc.GetBytes(value));
+
+            foreach (byte b in result)
+                hash.Append(b.ToString());
+
+            return hash.ToString();
         }
     }
 }
