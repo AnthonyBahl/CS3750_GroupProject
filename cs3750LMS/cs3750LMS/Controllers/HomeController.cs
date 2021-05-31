@@ -1,5 +1,6 @@
 ﻿using cs3750LMS.DataAccess;
 using cs3750LMS.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -24,6 +25,11 @@ namespace cs3750LMS.Controllers
 
         public IActionResult Index()
         {
+            if(HttpContext.Session.Get<string>("user") != null)
+            {
+                ViewData["Message"] = _context.UserCache.Where(y => y.CacheId == HttpContext.Session.Get<string>("user")).Single();
+                return View();
+            }
             return View("Login");
         }
 
@@ -48,6 +54,25 @@ namespace cs3750LMS.Controllers
                     users.Password = Sha256(users.Password);
                     _context.Add(users);
                     await _context.SaveChangesAsync();
+
+                    if (_context.UserCache.Count(y => y.CacheId == users.Email) == 0)
+                    {
+                        UserCache create = new UserCache();
+                        create.CacheId = users.Email;
+                        create.UserEmail = users.Email;
+                        create.CacheFirstName = users.FirstName;
+                        create.CacheLastName = users.LastName;
+                        create.ExpiresAtTime = new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month,
+                                                            DateTime.Now.Day, DateTime.Now.Hour,
+                                                            DateTime.Now.Minute, DateTime.Now.Second,
+                                                            new TimeSpan(3, 0, 0));
+                        _context.Add(create);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    HttpContext.Session.Set<string>("user", users.Email);
+                    ViewData["Message"] = _context.UserCache.Where(y => y.CacheId == HttpContext.Session.Get<string>("user")).Single();
+
                     return View("Index");
                 }
             }
@@ -56,7 +81,7 @@ namespace cs3750LMS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Login(string email, string password)
+        public async Task<IActionResult> Login(string email, string password)
         {
             User userFound;
             if(_context.Users.Count(y=>y.Email == email) == 1)
@@ -69,6 +94,23 @@ namespace cs3750LMS.Controllers
             }
             if(userFound.Password == Sha256(password))
             {
+
+                if(_context.UserCache.Count(y=>y.CacheId == userFound.Email) == 0){
+                    UserCache create = new UserCache();
+                    create.CacheId = userFound.Email;
+                    create.UserEmail = userFound.Email;
+                    create.CacheFirstName = userFound.FirstName;
+                    create.CacheLastName = userFound.LastName;
+                    create.ExpiresAtTime = new DateTimeOffset(DateTime.Now.Year,DateTime.Now.Month,
+                                                        DateTime.Now.Day,DateTime.Now.Hour,
+                                                        DateTime.Now.Minute,DateTime.Now.Second,
+                                                        new TimeSpan(3, 0, 0));
+                    _context.Add(create);
+                    await _context.SaveChangesAsync();
+                }
+
+                HttpContext.Session.Set<string>("user",userFound.Email);
+                ViewData["Message"] = _context.UserCache.Where(y=>y.CacheId == HttpContext.Session.Get<string>("user")).Single();
                 return View("Index");
             }
             return View();

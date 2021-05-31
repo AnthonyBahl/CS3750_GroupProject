@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace cs3750LMS.DataAccess
+namespace cs3750LMS.Models
 {
     public partial class User
     {

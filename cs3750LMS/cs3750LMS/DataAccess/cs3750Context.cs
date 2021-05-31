@@ -1,10 +1,12 @@
 ﻿using System;
+using cs3750LMS.DataAccess;
+using cs3750LMS.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace cs3750LMS.DataAccess
+namespace cs3750LMS.Models
 {
     public partial class cs3750Context : DbContext
     {
@@ -18,6 +20,7 @@ namespace cs3750LMS.DataAccess
         }
 
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<UserCache> UserCache { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -62,6 +65,47 @@ namespace cs3750LMS.DataAccess
                     .IsUnicode(false)
                     .HasColumnName("password");
             });
+
+            modelBuilder.Entity<UserCache>(entity =>
+                {
+                    entity.Property(e => e.CacheId)
+                    .IsRequired()
+                    .HasMaxLength(256)
+                    .IsUnicode(false)
+                    .HasColumnName("id");
+
+                    entity.Property(e => e.UserEmail)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("userEmail");
+
+                    entity.Property(e => e.CacheFirstName)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("FirstName");
+
+                    entity.Property(e => e.CacheLastName)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("LastName");
+
+                    entity.Property(e => e.ExpiresAtTime)
+                    .IsRequired()
+                    .HasColumnType("DateTimeOffset")
+                    .HasColumnName("ExpiresAtTime");
+
+                    entity.Property(e => e.SlidingExpirationInSeconds)
+                    .HasColumnType("long")
+                    .HasColumnName("SlidingExpirationInSeconds");
+
+                    entity.Property(e => e.AbsoluteExpiration)
+                    .HasColumnType("DateTimeOffset")
+                    .HasColumnName("AbsoluteExpiration");
+
+                });
 
             OnModelCreatingPartial(modelBuilder);
         }
