@@ -1,4 +1,5 @@
 using cs3750LMS.DataAccess;
+using cs3750LMS.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -45,8 +46,7 @@ namespace cs3750LMS
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, 
-            IHostApplicationLifetime lifetime, IDistributedCache cache)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
 
             if (env.IsDevelopment())
@@ -59,15 +59,7 @@ namespace cs3750LMS
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            lifetime.ApplicationStarted.Register(() =>
-            {
-                var currentTimeUTC = DateTime.UtcNow.ToString();
-                byte[] encodedCurrentTimeUTC = Encoding.UTF8.GetBytes(currentTimeUTC);
-                var options = new DistributedCacheEntryOptions()
-                .SetSlidingExpiration(TimeSpan.FromSeconds(10));
-                cache.Set("cachedTimeUTC", encodedCurrentTimeUTC, options);
-            }
-            );
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

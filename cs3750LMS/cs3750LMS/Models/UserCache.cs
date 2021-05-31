@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace cs3750LMS.DataAccess
+namespace cs3750LMS.Models
 {
     public partial class UserCache
     {
@@ -15,5 +15,6 @@ namespace cs3750LMS.DataAccess
         public DateTimeOffset ExpiresAtTime { get; set; }
         public long SlidingExpirationInSeconds { get; set;}
         public DateTimeOffset AbsoluteExpiration { get; set; }
+ 
     }
 }

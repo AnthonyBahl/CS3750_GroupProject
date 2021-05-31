@@ -1,10 +1,12 @@
 ﻿using System;
+using cs3750LMS.DataAccess;
+using cs3750LMS.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace cs3750LMS.DataAccess
+namespace cs3750LMS.Models
 {
     public partial class cs3750Context : DbContext
     {
@@ -18,6 +20,7 @@ namespace cs3750LMS.DataAccess
         }
 
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<UserCache> UserCache { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
