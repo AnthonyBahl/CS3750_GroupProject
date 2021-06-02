@@ -13,7 +13,7 @@ namespace cs3750LMS.Models
         public string CacheFirstName { get; set; }
         public string CacheLastName { get; set; }
         public DateTimeOffset ExpiresAtTime { get; set; }
-        public long SlidingExpirationInSeconds { get; set;}
+        public Int64 SlidingExpirationInSeconds { get; set;}
         public DateTimeOffset AbsoluteExpiration { get; set; }
  
     }
