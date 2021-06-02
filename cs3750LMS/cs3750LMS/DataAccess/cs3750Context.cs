@@ -98,7 +98,7 @@ namespace cs3750LMS.Models
                     .HasColumnName("ExpiresAtTime");
 
                     entity.Property(e => e.SlidingExpirationInSeconds)
-                    .HasColumnType("Int64")
+                    .HasColumnType("long")
                     .HasColumnName("SlidingExpirationInSeconds");
 
                     entity.Property(e => e.AbsoluteExpiration)
