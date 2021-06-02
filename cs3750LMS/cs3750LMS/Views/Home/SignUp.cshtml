@@ -1,52 +1,64 @@
-﻿@{
+﻿@model User
+@{
     ViewData["Title"] = "Sign Up";
+}
+
+@section Scripts{
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
 }
 
 <div class="text-center">
     <h1 class="display-4">@ViewData["Title"]</h1>
     <form asp-action="SignUp" method="post">
+
+        <div asp-validation-summary="ModelOnly"></div> <!--ModelOnly mode allows errors to be show per input box-->
+
         <div class="form-group">
-            <label for="Email" class="control-label">Email</label>
-            <input type="email" for="Email" name="Email" class="form-control" required />
-            <span class="text-danger"></span>
+            <label asp-for="Email" class="control-label">Email</label>
+            <input type="email" asp-for="Email" name="Email" class="form-control" required />
+            <span class="text-danger" asp-validation-for="Email"></span>
         </div>
 
         <div class="form-group">
-            <label for="Fname" class="control-label">First Name</label>
-            <input type="text" for="Fname" name="FirstName" class="form-control" required />
-            <span class="text-danger"></span>
+            <label asp-for="FirstName" class="control-label">First Name</label>
+            <input type="text" asp-for="FirstName" name="FirstName" class="form-control" required />
+            <span class="text-danger" asp-validation-for="FirstName"></span>
         </div>
 
         <div class="form-group">
-            <label for="Lname" class="control-label">Last Name</label>
-            <input type="text" for="Lname" name="LastName" class="form-control" required />
-            <span class="text-danger"></span>
+            <label asp-for="LastName" class="control-label">Last Name</label>
+            <input type="text" asp-for="LastName" name="LastName" class="form-control" required />
+            <span class="text-danger" asp-validation-for="LastName"></span>
+            
         </div>
 
         <div class="form-group">
-            <label for="Birthday" class="control-label">Birthday</label>
-            <input type="date" for="Birthday" name="Birthday" class="form-control" required />
-            <span class="text-danger"></span>
+            <label asp-for="Birthday" class="control-label">Birthday</label>
+            <input type="date" asp-for="Birthday" name="Birthday" class="form-control" required />
+            <span class="text-danger" asp-validation-for="Birthday"></span>
+       
         </div>
 
         <div class="form-group">
-            <label for="password" class="control-label">Password</label>
-            <input type="password" for="password" name="Password" class="form-control" required />
-            <span class="text-danger"></span>
+            <label asp-for="Password" class="control-label">Password</label>
+            <input type="password" asp-for="Password" name="Password" class="form-control" required />
+            <span class="text-danger" asp-validation-for="Password"></span>
+            
         </div>
 
         <div class="form-group">
-            <label for="passwordConfirm" class="control-label">Password</label>
-            <input type="password" for="passwordConfirm" name="check" class="form-control" required />
-            <span class="text-danger"></span>
+            <label asp-for="ConfirmPassword" class="control-label">Confirm Password</label>
+            <input type="password" asp-for="ConfirmPassword" name="ConfirmPassword" class="form-control" required />
+            <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
         </div>
 
         <div class="form-group">
-            <input type="radio" for="AccountType1" name="AccountType" value="0" checked />
+            <input type="radio" asp-for="AccountType" id="AccountType1" value="0" checked />
             <label for="AccountType1">Student</label>
-            <input type="radio" for="AccountType2" name="AccountType" value="1" />
+            <input type="radio" asp-for="AccountType" id="AccountType2" value="1" />
             <label for="AccountType2">Instructor</label>
-            <span class="text-danger"></span>
+            <span class="text-danger" asp-validation-for="AccountType"></span>
         </div>
 
         <div class="form-group">

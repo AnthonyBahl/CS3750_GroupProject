@@ -76,6 +76,7 @@ namespace cs3750LMS.Controllers
                     return View("Index");
                 }
             }
+           
             return View();
         }
 
