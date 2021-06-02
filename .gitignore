@@ -4,6 +4,8 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 appsettings.json
+cs3750LMS/appsettings.json
+cs3750LMS/cs3750LMS/appsettings.json
 
 # User-specific files
 *.rsuser
