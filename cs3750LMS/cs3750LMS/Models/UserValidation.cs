@@ -46,4 +46,5 @@ namespace cs3750LMS.Models
         [Required]
         public short AccountType { get; set; }
     }
+
 }
