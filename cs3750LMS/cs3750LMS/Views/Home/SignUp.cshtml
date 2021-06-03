@@ -8,61 +8,85 @@
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
 }
 
-<div class="text-center">
-    <h1 class="display-4">@ViewData["Title"]</h1>
-    <form asp-action="SignUp" method="post">
+<div>
+    <h1 class="display-4 text-center mt-3">@ViewData["Title"]</h1>
+    <form asp-action="SignUp" method="post" class="w-75 mx-auto mt-5">
 
         <div asp-validation-summary="ModelOnly"></div> <!--ModelOnly mode allows errors to be show per input box-->
 
-        <div class="form-group">
-            <label asp-for="Email" class="control-label">Email</label>
-            <input type="email" asp-for="Email" name="Email" class="form-control" required />
-            <span class="text-danger" asp-validation-for="Email"></span>
+        <div class="form-group row">
+            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                <label asp-for="Email" class="control-label mb-0">Email</label>
+            </div>
+            <div class="col-sm-10">
+                <input type="email" asp-for="Email" name="Email" class="form-control" required />
+                <span class="text-danger" asp-validation-for="Email"></span>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label asp-for="FirstName" class="control-label">First Name</label>
-            <input type="text" asp-for="FirstName" name="FirstName" class="form-control" required />
-            <span class="text-danger" asp-validation-for="FirstName"></span>
+        <div class="form-group row">
+            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                <label asp-for="FirstName" class="control-label mb-0">First Name</label>
+            </div>
+            <div class="col-sm-10">
+                <input type="text" asp-for="FirstName" name="FirstName" class="form-control" required />
+                <span class="text-danger" asp-validation-for="FirstName"></span>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label asp-for="LastName" class="control-label">Last Name</label>
-            <input type="text" asp-for="LastName" name="LastName" class="form-control" required />
-            <span class="text-danger" asp-validation-for="LastName"></span>
-            
+        <div class="form-group row">
+            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                <label asp-for="LastName" class="control-label mb-0">Last Name</label>
+            </div>
+            <div class="col-sm-10">
+                <input type="text" asp-for="LastName" name="LastName" class="form-control" required />
+                <span class="text-danger" asp-validation-for="LastName"></span>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label asp-for="Birthday" class="control-label">Birthday</label>
-            <input type="date" asp-for="Birthday" name="Birthday" class="form-control" required />
-            <span class="text-danger" asp-validation-for="Birthday"></span>
-       
+        <div class="form-group row">
+            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                <label asp-for="Birthday" class="control-label mb-0">Birthday</label>
+            </div>
+            <div class="col-sm-10">
+                <input type="date" asp-for="Birthday" name="Birthday" class="form-control" required />
+                <span class="text-danger" asp-validation-for="Birthday"></span>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label asp-for="Password" class="control-label">Password</label>
-            <input type="password" asp-for="Password" name="Password" class="form-control" required />
-            <span class="text-danger" asp-validation-for="Password"></span>
-            
+        <div class="form-group row">
+            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                <label asp-for="Password" class="control-labe mb-0l">Password</label>
+            </div>
+            <div class="col-sm-10">
+                <input type="password" asp-for="Password" name="Password" class="form-control" required />
+                <span class="text-danger" asp-validation-for="Password"></span>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label asp-for="ConfirmPassword" class="control-label">Confirm Password</label>
-            <input type="password" asp-for="ConfirmPassword" name="ConfirmPassword" class="form-control" required />
-            <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
+        <div class="form-group row">
+            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                <label asp-for="ConfirmPassword" class="control-label mb-0">Confirm Password</label>
+            </div>
+            <div class="col-sm-10">
+                <input type="password" asp-for="ConfirmPassword" name="ConfirmPassword" class="form-control" required />
+                <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
+            </div>
         </div>
 
-        <div class="form-group">
-            <input type="radio" asp-for="AccountType" id="AccountType1" value="0" checked />
-            <label for="AccountType1">Student</label>
-            <input type="radio" asp-for="AccountType" id="AccountType2" value="1" />
-            <label for="AccountType2">Instructor</label>
-            <span class="text-danger" asp-validation-for="AccountType"></span>
+        <div class="form-group row">
+            <div class="col-sm-10 offset-sm-2">
+                <input type="radio" asp-for="AccountType" id="AccountType1" value="0" checked />
+                <label for="AccountType1" class="mr-3">Student</label>
+                <input type="radio" asp-for="AccountType" id="AccountType2" value="1" />
+                <label for="AccountType2">Instructor</label>
+                <span class="text-danger" asp-validation-for="AccountType"></span>
+            </div>
         </div>
 
-        <div class="form-group">
-            <input type="submit" value="Sign Up" class="btn-primary" />
+        <div class="form-group text-center">
+            <input type="submit" value="Sign Up" class="btn btn-primary mx-2" />
+            <a asp-action="Login" class="btn btn-warning">Cancel</a>
         </div>
 
     </form>
