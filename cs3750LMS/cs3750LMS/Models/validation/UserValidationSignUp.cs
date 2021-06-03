@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace cs3750LMS.Models
 {
-    public partial class UserValidation
+    public partial class UserValidationSignUp
     {
         public int UserId { get; set; }
 

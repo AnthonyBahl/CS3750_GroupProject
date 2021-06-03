@@ -20,7 +20,8 @@ namespace cs3750LMS.Models
         }
 
         public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<UserCache> UserCache { get; set; }
+        public virtual DbSet<Link> Links { get; set; }
+        public virtual DbSet<State> States { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -64,50 +65,62 @@ namespace cs3750LMS.Models
                     .HasMaxLength(256)
                     .IsUnicode(false)
                     .HasColumnName("password");
+
+                entity.Property(e => e.Address1)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("address1");
+
+                entity.Property(e => e.Address2)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("address2");
+
+                entity.Property(e => e.City)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("city");
+
+                entity.Property(e => e.State)
+                    .HasColumnName("state");
+
+                entity.Property(e => e.Zip)
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("zip");
+
+                entity.Property(e => e.Phone)
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("phone");
             });
 
-            modelBuilder.Entity<UserCache>(entity =>
-                {
-                    entity.Property(e => e.CacheId)
-                    .IsRequired()
+            modelBuilder.Entity<Link>(entity =>
+            {
+                entity.Property(e => e.LinkID).HasColumnName("linkID");
+                entity.Property(e => e.UserID).HasColumnName("userID");
+                entity.Property(e => e.Contents)
                     .HasMaxLength(256)
                     .IsUnicode(false)
-                    .HasColumnName("id");
+                    .HasColumnName("contents");
 
-                    entity.Property(e => e.UserEmail)
-                    .IsRequired()
-                    .HasMaxLength(100)
+            });
+
+            modelBuilder.Entity<State>(entity =>
+            {
+                entity.Property(e => e.StateID).HasColumnName("stateID");
+                entity.Property(e => e.StateCode)
+                    .HasMaxLength(2)
                     .IsUnicode(false)
-                    .HasColumnName("userEmail");
+                    .HasColumnName("stateCode");
+                entity.Property(e => e.StateName)
+                    .HasMaxLength(128)
+                    .HasColumnName("stateName");
+            });
 
-                    entity.Property(e => e.CacheFirstName)
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("FirstName");
 
-                    entity.Property(e => e.CacheLastName)
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("LastName");
 
-                    entity.Property(e => e.ExpiresAtTime)
-                    .IsRequired()
-                    .HasColumnType("DateTimeOffset")
-                    .HasColumnName("ExpiresAtTime");
-
-                    entity.Property(e => e.SlidingExpirationInSeconds)
-                    .HasColumnType("long")
-                    .HasColumnName("SlidingExpirationInSeconds");
-
-                    entity.Property(e => e.AbsoluteExpiration)
-                    .HasColumnType("DateTimeOffset")
-                    .HasColumnName("AbsoluteExpiration");
-
-                });
-
-            OnModelCreatingPartial(modelBuilder);
+                OnModelCreatingPartial(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

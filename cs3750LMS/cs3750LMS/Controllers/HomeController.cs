@@ -22,12 +22,20 @@ namespace cs3750LMS.Controllers
             _logger = logger;
             _context = context;
         }
-
         public IActionResult Index()
         {
-            if(HttpContext.Session.Get<string>("user") != null)
+            if (HttpContext.Session.Get<string>("user") != null)
             {
-                ViewData["Message"] = _context.UserCache.Where(y => y.CacheId == HttpContext.Session.Get<string>("user")).Single();
+                User userFound = _context.Users.Where(u => u.Email == HttpContext.Session.Get<string>("user")).Single();
+                UserSession session = new UserSession
+                {
+                    Email = userFound.Email,
+                    FirstName = userFound.FirstName,
+                    LastName = userFound.LastName,
+                    Birthday = userFound.Birthday,
+                    AccountType = userFound.AccountType
+                };
+                ViewData["Message"] = session;
                 return View();
             }
             return View("Login");
@@ -45,33 +53,36 @@ namespace cs3750LMS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SignUp([Bind("Email,FirstName,LastName,Birthday,Password,AccountType")] User users)
+        public async Task<IActionResult> SignUp([Bind("Email,FirstName,LastName,Birthday,Password,ConfirmPassword,AccountType")] UserValidationSignUp testUser)
         {
-            if(_context.Users.Count(e => e.Email == users.Email) == 0)
-            {
-                if (ModelState.IsValid)
+            if (ModelState.IsValid) { 
+                if(_context.Users.Count(e => e.Email == testUser.Email) == 0)
                 {
-                    users.Password = Sha256(users.Password);
+
+                    User users = new Models.User
+                    {
+                        Email = testUser.Email,
+                        FirstName = testUser.FirstName,
+                        LastName = testUser.LastName,
+                        Birthday = testUser.Birthday,
+                        Password = Sha256(testUser.Password),
+                        AccountType = testUser.AccountType
+                    };
+
                     _context.Add(users);
                     await _context.SaveChangesAsync();
 
-                    if (_context.UserCache.Count(y => y.CacheId == users.Email) == 0)
-                    {
-                        UserCache create = new UserCache();
-                        create.CacheId = users.Email;
-                        create.UserEmail = users.Email;
-                        create.CacheFirstName = users.FirstName;
-                        create.CacheLastName = users.LastName;
-                        create.ExpiresAtTime = new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month,
-                                                            DateTime.Now.Day, DateTime.Now.Hour,
-                                                            DateTime.Now.Minute, DateTime.Now.Second,
-                                                            new TimeSpan(3, 0, 0));
-                        _context.Add(create);
-                        await _context.SaveChangesAsync();
-                    }
-
                     HttpContext.Session.Set<string>("user", users.Email);
-                    ViewData["Message"] = _context.UserCache.Where(y => y.CacheId == HttpContext.Session.Get<string>("user")).Single();
+                    UserSession session = new UserSession
+                    {
+                        Email = testUser.Email,
+                        FirstName = testUser.FirstName,
+                        LastName = testUser.LastName,
+                        Birthday = testUser.Birthday,
+                        AccountType = testUser.AccountType
+                    };
+
+                    ViewData["Message"] = session;
 
                     return View("Index");
                 }
@@ -82,37 +93,34 @@ namespace cs3750LMS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(string email, string password)
+        public IActionResult Login([Bind("Email,Password")] UserValidationLogin testLogin)
         {
-            User userFound;
-            if(_context.Users.Count(y=>y.Email == email) == 1)
+            if (ModelState.IsValid)
             {
-                userFound = _context.Users.Where(e => e.Email == email).Single();
-            }
-            else
-            {
-                return View();
-            }
-            if(userFound.Password == Sha256(password))
-            {
-
-                if(_context.UserCache.Count(y=>y.CacheId == userFound.Email) == 0){
-                    UserCache create = new UserCache();
-                    create.CacheId = userFound.Email;
-                    create.UserEmail = userFound.Email;
-                    create.CacheFirstName = userFound.FirstName;
-                    create.CacheLastName = userFound.LastName;
-                    create.ExpiresAtTime = new DateTimeOffset(DateTime.Now.Year,DateTime.Now.Month,
-                                                        DateTime.Now.Day,DateTime.Now.Hour,
-                                                        DateTime.Now.Minute,DateTime.Now.Second,
-                                                        new TimeSpan(3, 0, 0));
-                    _context.Add(create);
-                    await _context.SaveChangesAsync();
+                User userFound;
+                if (_context.Users.Count(y => y.Email == testLogin.Email) == 1)
+                {
+                    userFound = _context.Users.Where(e => e.Email == testLogin.Email).Single();
                 }
+                else
+                {
+                    return View();
+                }
+                if (userFound.Password == Sha256(testLogin.Password))
+                {
 
-                HttpContext.Session.Set<string>("user",userFound.Email);
-                ViewData["Message"] = _context.UserCache.Where(y=>y.CacheId == HttpContext.Session.Get<string>("user")).Single();
-                return View("Index");
+                    HttpContext.Session.Set<string>("user", userFound.Email);
+                    UserSession session = new UserSession
+                    {
+                        Email = userFound.Email,
+                        FirstName = userFound.FirstName,
+                        LastName = userFound.LastName,
+                        Birthday = userFound.Birthday,
+                        AccountType = userFound.AccountType
+                    };
+                    ViewData["Message"] = session;
+                    return View("Index");
+                }
             }
             return View();
         } 
