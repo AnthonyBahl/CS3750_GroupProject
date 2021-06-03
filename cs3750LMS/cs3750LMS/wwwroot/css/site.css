@@ -1,21 +1,126 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
+:root {
+    --blue: #04738C;
+    --dark-blue: #023F4D;
+    --light-blue: #07B2D9;
+    --indigo: #6610f2;
+    --purple: #6f42c1;
+    --pink: #e83e8c;
+    --red: #BF3C30;
+    --dark-red: #802820;
+    --light-red: #F04B3C;
+    --orange: #D94B2B;
+    --dark-orange: #99351F;
+    --light-orange: #F7612A;
+    --yellow: #ffc107;
+    --green: #28a745;
+    --teal: #03998F;
+    --dark-teal: #024D48;
+    --light-teal: #04C4B8;
+    --cyan: #17a2b8;
+    --off-white: #F2F0CE;
+    --white: #fff;
+    --gray: #6c757d;
+    --gray-dark: #343a40;
+    --primary: var(--blue);
+    --secondary: var(--orange);
+    --success: var(--teal);
+    --info: var(--light-blue);
+    --warning: var(--light-orange);
+    --danger: var(--red);
+    --light: var(--off-white);
+    --dark: var(--dark-blue);
+    --breakpoint-xs: 0;
+    --breakpoint-sm: 576px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 992px;
+    --breakpoint-xl: 1200px;
+    --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+body {
+    background-color: var(--off-white);
+    color: var(--dark);
+}
 
 a.navbar-brand {
   white-space: normal;
   text-align: center;
   word-break: break-all;
+  color: var(--orange);
 }
+
+.navbar-dark .navbar-brand {
+    color: var(--orange);
+}
+
+.bg-light {
+    background-color: var(--light);
+}
+
+.bg-dark {
+    background-color: var(--dark);
+}
+
+
 
 /* Provide sufficient contrast against white background */
 a {
-  color: #0366d6;
+    color: var(--blue);
+}
+
+a:hover {
+    color: var(--light-blue);
 }
 
 .btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: var(--white);
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.btn-primary:hover {
+    color: var(--white);
+    background-color: var(--dark-blue);
+    border-color: var(--dark-blue);
+}
+
+.btn-success {
+    color: var(--white);
+    background-color: var(--success);
+    border-color: var(--success);
+}
+
+.btn-success:hover {
+    color: var(--white);
+    background-color: var(--dark-teal);
+    border-color: var(--dark-teal);
+}
+
+.btn-danger {
+    color: var(--white);
+    background-color: var(--danger);
+    border-color: var(--danger);
+}
+
+.btn-danger:hover {
+    color: var(--white);
+    background-color: var(--dark-red);
+    border-color: var(--dark-red);
+}
+
+.btn-warning {
+    color: var(--white);
+    background-color: var(--warning);
+    border-color: var(--warning);
+}
+
+.btn-warning:hover {
+    color: var(--white);
+    background-color: var(--dark-orange);
+    border-color: var(--dark-orange);
 }
 
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
@@ -23,6 +128,7 @@ a {
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
+
 
 /* Sticky footer styles
 -------------------------------------------------- */
