@@ -1,11 +1,11 @@
 ﻿
 @{
     ViewData["Title"] = "Home Page";
-    UserCache show = (UserCache)ViewData["Message"];
+    UserSession show = (UserSession)ViewData["Message"];
 }
 
 
 
 <div class="text-center">
-    <h1 class="display-4">Welcome @show.CacheFirstName @show.CacheLastName</h1>
+    <h1 class="display-4">Welcome @show.FirstName @show.LastName</h1>
 </div>
