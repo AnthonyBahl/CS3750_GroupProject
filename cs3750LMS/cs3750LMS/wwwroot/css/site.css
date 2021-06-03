@@ -40,6 +40,70 @@ for details on configuring this project to bundle and minify static web assets. 
     --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
+.bg-light {
+    background-color: var(--light);
+}
+
+.bg-dark {
+    background-color: var(--dark);
+}
+
+.bg-primary {
+    background-color: var(--primary);
+}
+
+.bg-secondary {
+    background-color: var(--secondary);
+}
+
+.bg-info {
+    background-color: var(--info);
+}
+
+.bg-success {
+    background-color: var(--success);
+}
+
+.bg-warning {
+    background-color: var(--warning);
+}
+
+.bg-danger {
+    background-color: var(--danger);
+}
+
+.text-light {
+    color: var(--light);
+}
+
+.text-dark {
+    color: var(--dark);
+}
+
+.text-primary {
+    color: var(--primary);
+}
+
+.text-secondary {
+    color: var(--secondary);
+}
+
+.text-info {
+    color: var(--info);
+}
+
+.text-success {
+    color: var(--success);
+}
+
+.text-warning {
+    color: var(--warning);
+}
+
+.text-danger {
+    color: var(--danger);
+}
+
 body {
     background-color: var(--off-white);
     color: var(--dark);
@@ -55,16 +119,6 @@ a.navbar-brand {
 .navbar-dark .navbar-brand {
     color: var(--orange);
 }
-
-.bg-light {
-    background-color: var(--light);
-}
-
-.bg-dark {
-    background-color: var(--dark);
-}
-
-
 
 /* Provide sufficient contrast against white background */
 a {
