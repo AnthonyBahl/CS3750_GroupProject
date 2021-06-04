@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using cs3750LMS.Models.validation;
 
 #nullable disable
 
@@ -9,8 +10,6 @@ namespace cs3750LMS.Models
     public partial class UserValidationSignUp
     {
         public int UserId { get; set; }
-
-       //TODO: Not sure if [DataType(DataType.text)] should be added to the model to match the database. 
 
         [Required]
         [EmailAddress]
@@ -27,6 +26,7 @@ namespace cs3750LMS.Models
         public string LastName { get; set; }
 
         [Required]
+        [DateRange("01/01/1921")]
         //[DateMinimumAge(16,ErrorMessage = "Must be at least {1} years of age")] 
         //TODO: Once I can figure out how to connect the DLL MinimumAgeAttribute this should work. 
         [DataType(DataType.Date)]  //specifies only the Date, not the Time. 
