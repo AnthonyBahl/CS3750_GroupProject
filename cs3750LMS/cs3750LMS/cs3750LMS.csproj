@@ -32,10 +32,4 @@
     <Folder Include="UnitTests\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="MinimumAgeAttribute">
-      <HintPath>MinimumAgeAttribute.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>
