@@ -26,7 +26,7 @@ namespace cs3750LMS.Models
         public string LastName { get; set; }
 
         [Required]
-        [DateRange("01/01/1921", ErrorMessage ="Must be at least 16 years old")] //age range is between 100 years old and 16 years old.       
+        [DateRange("01/01/1921", ErrorMessage ="Must be at least 16 years old")] //age range is between 100 years old and 16 years old.  The override for this is in the DateRangeAttribute.cs     
         [DataType(DataType.Date)]  //specifies only the Date, not the Time. 
         public DateTime Birthday { get; set; }
 
