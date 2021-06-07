@@ -59,10 +59,10 @@ namespace cs3750LMS.Models.validation
         public string City { get; set; }
         public int State { get; set; }
 
-        [StringLength(30, ErrorMessage = "Maximum length of 100 characters")]
+        [StringLength(30, ErrorMessage = "Maximum length of 30 characters")]
         public string Zip { get; set; }
 
-        [StringLength(30, ErrorMessage = "Maximum length of 100 characters")]
+        [StringLength(30, ErrorMessage = "Maximum length of 30 characters")]
         public string Phone { get; set; }
 
         public List<Link> UserLinks { get; set; }
