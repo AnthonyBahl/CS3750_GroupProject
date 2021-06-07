@@ -17,7 +17,7 @@ namespace cs3750LMS.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly cs3750Context _context;
-        public HomeController(ILogger<HomeController> logger,cs3750Context context)
+        public HomeController(ILogger<HomeController> logger, cs3750Context context)
         {
             _logger = logger;
             _context = context;
@@ -38,7 +38,7 @@ namespace cs3750LMS.Controllers
                 ViewData["Message"] = session;
                 return View();
             }
-            return View("Login");
+            return View("~/Views/Home/Login.cshtml");
         }
 
         public IActionResult Login()
@@ -84,7 +84,7 @@ namespace cs3750LMS.Controllers
 
                     ViewData["Message"] = session;
 
-                    return View("Index");
+                    return View("~/Views/Home/Index.cshtml");
                 }
             }
            
@@ -119,7 +119,7 @@ namespace cs3750LMS.Controllers
                         AccountType = userFound.AccountType
                     };
                     ViewData["Message"] = session;
-                    return View("Index");
+                    return View("~/Views/Home/Index.cshtml");
                 }
             }
             return View();
