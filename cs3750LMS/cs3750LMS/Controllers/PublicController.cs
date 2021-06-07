@@ -74,7 +74,7 @@ namespace cs3750LMS.Controllers
         //updates user profile to database from the profile page
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Update([Bind("Email,FirstName,LastName,Birthday,Password,ConfirmPassword,AccountType,ProfileImage,Address1,Address2,City,State,Zip,Phone,UserLinks")] UserValidationUpdate testUser)
+        public async Task<IActionResult> UpdateProfile([Bind("Email,FirstName,LastName,Birthday,Password,ConfirmPassword,AccountType,ProfileImage,Address1,Address2,City,State,Zip,Phone,UserLinks")] UserValidationUpdate testUser)
         {
             bool updateSuccess = false;
             if (ModelState.IsValid)
