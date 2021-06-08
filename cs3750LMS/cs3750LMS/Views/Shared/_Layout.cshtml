@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    UserSession show = (UserSession)ViewData["Message"];
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -21,24 +25,42 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="SignUp">Sign Up</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Public" asp-action="Profile">Profile</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Instructor" asp-action="AddClass">Add Class</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Student" asp-action="Register">Register</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Public" asp-action="Calendar">Calendar</a>
-                        </li>
+                        @if (show == null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="SignUp">Sign Up</a>
+                            </li>
+                        }
+                        @if (show != null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Public" asp-action="Profile">Profile</a>
+                            </li>
+                        }
+                        @if (show != null && show.AccountType == 1)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Instructor" asp-action="AddClass">Add Class</a>
+                            </li>
+                        }
+                        @if (show != null && show.AccountType == 0)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Student" asp-action="Register">Register</a>
+                            </li>
+                        }
+                        @if (show != null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Public" asp-action="Calendar">Calendar</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="LogOut">Log Out</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
