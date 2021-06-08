@@ -110,6 +110,7 @@ namespace cs3750LMS.Controllers
                 }
                 else
                 {
+                    ViewBag.errMsg = "Invalid Email/Password";
                     return View();
                 }
                 if (userFound.Password == Sha256(testLogin.Password))
