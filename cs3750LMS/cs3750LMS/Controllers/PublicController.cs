@@ -95,8 +95,13 @@ namespace cs3750LMS.Controllers
                     users.Email = testUser.Email;
                     users.FirstName = testUser.FirstName;
                     users.LastName = testUser.LastName;
+                    users.Phone = testUser.Phone;
                     users.Birthday = testUser.Birthday;
-                    users.AccountType = testUser.AccountType;
+                    users.Address1 = testUser.Address1;
+                    users.Address2 = testUser.Address2;
+                    users.City = testUser.City;
+                    users.State = testUser.State;
+                    users.Zip = testUser.Zip;
 
                     //start picture logic
                     string wwwPath = this.Environment.WebRootPath;
