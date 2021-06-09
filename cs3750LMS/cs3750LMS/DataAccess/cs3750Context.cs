@@ -98,6 +98,21 @@ namespace cs3750LMS.Models
                     .HasMaxLength(255)
                     .IsUnicode(false)
                     .HasColumnName("image");
+
+                entity.Property(e => e.LinkedIn)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("LinkedIn");
+
+                entity.Property(e => e.Github)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("Github");
+
+                entity.Property(e => e.Twitter)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("Twitter");
             });
 
             modelBuilder.Entity<Link>(entity =>
