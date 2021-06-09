@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <Folder Include="UnitTests\" />
+    <Folder Include="wwwroot\Images\" />
   </ItemGroup>
 
 </Project>

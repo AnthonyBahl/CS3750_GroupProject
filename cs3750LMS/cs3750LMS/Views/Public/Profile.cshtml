@@ -53,13 +53,13 @@
         <div class="col-md-8">
             <div class="card mb-3">
                 <div class="card-body">
-                    <form asp-action="UpdateProfile" method="post" class="w-75 mx-auto mt-5">
+                    <form enctype="multipart/form-data"asp-action="UpdateProfile" method="post" class="w-75 mx-auto mt-5">
                         <div class="form-group row" id="uploadImage" hidden>
                             <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
                                 <label asp-for="ProfileImage" class="control-label mb-0"><b>Image</b></label>
                             </div>
                             <div class="col-sm-10">
-                                <input type="file" accept="image/*" asp-for="ProfileImage" name="ProfileImage" class="form-control" value="@user.ProfileImage" onchange="()" />
+                                <input type="file" accept="image/*" asp-for="ProfileImage" name="ProfileImage" class="form-control" value="@user.ProfileImage" onchange="ReloadPic()" />
                                 <span class="text-danger" asp-validation-for="ProfileImage"></span>
                             </div>
 
@@ -275,8 +275,7 @@
         function ReloadPic() {
             var image = document.getElementById('UploadedPic');
             image.src = URL.createObjectURL(event.target.files[0]);
-            console.log(image.src);
-            console.log(event.target.value);
+  
         }
     </script>
 
@@ -289,5 +288,6 @@
             $('#Social_Links').prop('hidden', false);
             $('#editButton').hide();
         };
+        console.log(document.getElementById('UploadedPic').src);
     </script>
 </div>
