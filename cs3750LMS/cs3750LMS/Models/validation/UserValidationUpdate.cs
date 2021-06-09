@@ -55,18 +55,18 @@ namespace cs3750LMS.Models
         public List<Link> UserLinks { get; set; }
 
         //[RegularExpression(@"^[http]", ErrorMessage = "Invalid url")]
-        public String gitHubLink { get; set; }
+        public string gitHubLink { get; set; }
 
         //[RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
-        public Link TwitterLink { get; set; }
+        public string TwitterLink { get; set; }
 
         //[RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
-        public Link InstagramLink { get; set; }
+        public string InstagramLink { get; set; }
 
         //[RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
-        public Link FacebookLink { get; set; }
+        public string FacebookLink { get; set; }
 
         //[RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
-        public Link LinkedInLink { get; set; }
+        public string LinkedInLink { get; set; }
     }
 }
