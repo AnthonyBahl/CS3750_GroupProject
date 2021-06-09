@@ -14,7 +14,7 @@ namespace cs3750LMS.Models
         public string LastName { get; set; }
         public DateTime Birthday { get; set; }
         public short AccountType { get; set; }
-        public byte[] ProfileImage { get; set; }
+        public string ProfileImage { get; set; }
         public string Address1 { get; set; }
         public string Address2 { get; set; }
         public string City { get; set; }
@@ -23,5 +23,8 @@ namespace cs3750LMS.Models
         public string Phone { get; set; }
         public List<Link> UserLinks { get; set; }
         public bool IsUpdate { get; set; }
+        public string LinkedIn { get; set;}
+        public string Github { get; set; }
+        public string  Twitter { get; set; }
     }
 }

@@ -22,5 +22,9 @@ namespace cs3750LMS.Models
         public int State { get; set; }
         public string Zip { get; set; }
         public string Phone { get; set; }
+        public string ProfileImage { get; set; }
+        public string LinkedIn { get; set; }
+        public string Github { get; set; }
+        public string Twitter { get; set; }
     }
 }

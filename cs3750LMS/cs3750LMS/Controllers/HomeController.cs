@@ -1,5 +1,6 @@
 ﻿using cs3750LMS.DataAccess;
 using cs3750LMS.Models;
+using cs3750LMS.Models.validation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -129,6 +130,11 @@ namespace cs3750LMS.Controllers
                     return View("~/Views/Home/Index.cshtml");
                 }
             }
+            Errors fail = new Errors
+            {
+                LoginError = "Invalid Email/Password"
+            };
+            ViewData["LogErr"]= fail;
             return View();
         } 
 

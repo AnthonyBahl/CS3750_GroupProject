@@ -1,36 +1,53 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@model UserValidationUpdate
+﻿@using cs3750LMS.Models.general;
+@using System.Linq;
 @{
     ViewData["Title"] = "profile Page";
     UserSession user = (UserSession)ViewData["Message"];
+    States states = (States)ViewData["States"];
 }
-
+@section Scripts{
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+}
 <div class="container">
     <div class="row">
         <div class="col-md-4 mb-3">
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex flex-column align-items-center text-center">
-                        <img src=@user.ProfileImage alt="Admin" class="rounded-circle" width="150">
+                        <img id="UploadedPic" src=@user.ProfileImage alt="Admin" class="rounded-circle" width="150">
                         <div class="mt-3">
-                            <h4>John Doe</h4>
+                            <h4>@String.Format("{0} {1}", user.FirstName, user.LastName)</h4>
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github mr-2 icon-inline"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>Github</h6>
-                                    <span class="text-secondary">github</span>
+                                    <a href="@user.Github" target="_blank">
+                                        <h6>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github mr-2 icon-inline">
+                                                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+                                            </svg>
+                                            Github
+                                        </h6>
+                                    </a>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter mr-2 icon-inline text-info"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>Twitter</h6>
-                                    <span class="text-secondary">twitter</span>
-                                </li>
+                                    <a href="@user.Twitter" target="_blank">
+                                        <h6 class="mb-0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter mr-2 icon-inline text-info">
+                                                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" />
+                                            </svg>
+                                            Twitter
+                                        </h6>
+                                    </a>
                                 <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-instagram mr-2 icon-inline text-danger"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>Instagram</h6>
-                                    <span class="text-secondary">Instagram</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                    <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-facebook mr-2 icon-inline text-primary"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>Facebook</h6>
-                                    <span class="text-secondary">facebook</span>
+                                    <a href="@user.LinkedIn" target="_blank">
+                                        <h6 class="mb-0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-linkedin" viewBox="0 0 16 16">
+                                                <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z" />
+                                            </svg>
+                                            LinkedIn
+                                        </h6>
+                                    </a>
                                 </li>
                             </ul>
                         </div>
@@ -41,102 +58,209 @@
         <div class="col-md-8">
             <div class="card mb-3">
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <h6 class="mb-0">First Name</h6>
+                    <form enctype="multipart/form-data" asp-action="UpdateProfile" method="post" class="w-75 mx-auto mt-5">
+
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="Email" class="control-label mb-0"><b>Email</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input id="Email" type="text" asp-for="Email" name="Email" class="form-control" value="@user.Email" readonly />
+                                <span class="text-danger" asp-validation-for="Email"></span>
+                            </div>
                         </div>
-                        <div class="col-sm-9 text-secondary">
-                            @user.FirstName
+                        <hr />
+                        <div class="form-group row" id="uploadImage" hidden>
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="ProfileImage" class="control-label mb-0"><b>Image</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="file" accept="image/*" asp-for="ProfileImage" name="ProfileImage" class="form-control" value="@user.ProfileImage" onchange="ReloadPic()" />
+                                <span class="text-danger" asp-validation-for="ProfileImage"></span>
+                            </div>
+
+                            <hr />
                         </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <h6 class="mb-0">Last Name</h6>
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="FirstName" class="control-label mb-0"><b>First Name</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="text" asp-for="FirstName" name="FirstName" class="form-control" value="@user.FirstName" required readonly />
+                                <span class="text-danger" asp-validation-for="FirstName"></span>
+                            </div>
                         </div>
-                        <div class="col-sm-9 text-secondary">
-                            @user.LastName
+                        <hr />
+
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="LastName" class="control-label mb-0"><b>Last Name</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="text" asp-for="LastName" name="LastName" class="form-control" value="@user.LastName" required readonly />
+                                <span class="text-danger" asp-validation-for="LastName"></span>
+                            </div>
                         </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <h6 class="mb-0">Email</h6>
+                        <hr />
+
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="Phone" class="control-label mb-0"><b>Phone</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="text" asp-for="Phone" name="Phone" class="form-control" value="@user.Phone" readonly />
+                                <span class="text-danger" asp-validation-for="Phone"></span>
+                            </div>
                         </div>
-                        <div class="col-sm-9 text-secondary">
-                            @user.Email
+                        <hr />
+
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="Birthday" class="control-label mb-0"><b>Birthday</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="date" asp-for="Birthday" name="Birthday" class="form-control" value="@user.Birthday.ToString("yyyy-MM-dd")" required readonly />
+                                <span class="text-danger" asp-validation-for="Birthday"></span>
+                            </div>
                         </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <h6 class="mb-0">Phone</h6>
+                        <hr />
+
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="Address1" class="control-label mb-0"><b>Address 1</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="text" asp-for="Address1" name="Address1" class="form-control" value="@user.Address1" readonly />
+                                <span class="text-danger" asp-validation-for="Address1"></span>
+                            </div>
                         </div>
-                        <div class="col-sm-9 text-secondary">
-                            @user.Phone
+                        <hr />
+
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="Address2" class="control-label mb-0"><b>Address 2</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="text" asp-for="Address2" name="Address2" class="form-control" value="@user.Address2" readonly />
+                                <span class="text-danger" asp-validation-for="Address2"></span>
+                            </div>
                         </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <h6 class="mb-0">birthdate</h6>
+                        <hr />
+
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="City" class="control-label mb-0"><b>City</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="text" asp-for="City" name="City" class="form-control" value="@user.City" readonly />
+                                <span class="text-danger" asp-validation-for="City"></span>
+                            </div>
                         </div>
-                        <div class="col-sm-9 text-secondary">
-                            @user.Birthday
+                        <hr />
+
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="State" class="control-label mb-0"><b>State</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <select asp-for="State" name="State" class="form-control" value="@user.State" required disabled>
+                                    @for (int i = 0; i < states.StatesList.Count; i++)
+                                    {
+                                        <option value=@states.StatesList[i].StateID>@states.StatesList[i].StateName</option>
+                                    }
+                                </select>
+                                <span class="text-danger" asp-validation-for="State"></span>
+                            </div>
                         </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <h6 class="mb-0">Address 1</h6>
+                        <hr />
+
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="Zip" class="control-label mb-0"><b>Zip</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="text" asp-for="Zip" name="Zip" class="form-control" value="@user.Zip" readonly />
+                                <span class="text-danger" asp-validation-for="Zip"></span>
+                            </div>
                         </div>
-                        <div class="col-sm-9 text-secondary">
-                            @user.Address1
+                        <hr />
+
+                        <div id="Social_Links" hidden>
+                            <div class="form-group row">
+                                <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                    <h6>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github mr-2 icon-inline">
+                                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+                                        </svg>
+                                        Github
+                                    </h6>
+                                </div>
+                                <div class="col-sm-10">
+                                    <input type="text" asp-for="gitHubLink" name="GitHubLink" class="form-control" value="@user.Github" readonly />
+                                    <span class="text-danger" asp-validation-for="gitHubLink"></span>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="form-group row">
+                                <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                    <h6 class="mb-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter mr-2 icon-inline text-info">
+                                            <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" />
+                                        </svg>
+                                        Twitter
+                                    </h6>
+                                </div>
+                                <div class="col-sm-10">
+                                    <input type="text" asp-for="TwitterLink" name="TwitterLink" class="form-control" value="@user.Twitter" readonly />
+                                    <span class="text-danger" asp-validation-for="TwitterLink"></span>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="form-group row">
+                                <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                    <h6 class="mb-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-linkedin" viewBox="0 0 16 16">
+                                            <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z" />
+                                        </svg>
+                                        LinkedIn
+                                    </h6>
+                                </div>
+                                <div class="col-sm-10">
+                                    <input type="url" asp-for="LinkedInLink" name="LinkedInLink" class="form-control" value="@user.LinkedIn" readonly />
+                                    <span class="text-danger" asp-validation-for="LinkedInLink"></span>
+                                </div>
+                            </div>
+                            <hr />
                         </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <h6 class="mb-0">Address 2</h6>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <input type="button" id="editButton" class="btn btn-primary mx-2" onclick="onEditClick()" value="Edit" />
+                                <input type="submit" id="submitButton" class="btn btn-primary mx-2" value="Save" hidden />
+                            </div>
                         </div>
-                        <div class="col-sm-9 text-secondary">
-                            @user.Address2
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <h6 class="mb-0">City</h6>
-                        </div>
-                        <div class="col-sm-9 text-secondary">
-                            @user.City
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <h6 class="mb-0">State</h6>
-                        </div>
-                        <div class="col-sm-9 text-secondary">
-                            @user.State
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <h6 class="mb-0">zip</h6>
-                        </div>
-                        <div class="col-sm-9 text-secondary">
-                            @user.Zip
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <a class="btn btn-info " target="__blank" href="#edit">Edit</a>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+    <script>
+        function ReloadPic() {
+            var image = document.getElementById('UploadedPic');
+            image.src = URL.createObjectURL(event.target.files[0]);
+  
+        }
+    </script>
+
+    <script>
+        function onEditClick() {
+            $('input').prop('readonly', false);
+            $('select').prop('disabled', false);
+            $('#submitButton').prop('hidden', false);
+            $('#uploadImage').prop('hidden', false);
+            $('#Social_Links').prop('hidden', false);
+            $('#editButton').hide();
+            $('#Email').prop('readonly', true);
+        };
+        console.log(document.getElementById('UploadedPic').src);
+    </script>
+</div>

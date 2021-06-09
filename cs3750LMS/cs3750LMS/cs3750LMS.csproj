@@ -5,6 +5,16 @@
     <CopyRefAssembliesToPublishDirectory>false</CopyRefAssembliesToPublishDirectory>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>0</WarningLevel>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="MinimumAgeAttribute.dll" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.15" />
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
@@ -26,6 +36,7 @@
 
   <ItemGroup>
     <Folder Include="UnitTests\" />
+    <Folder Include="wwwroot\Images\" />
   </ItemGroup>
 
 </Project>
