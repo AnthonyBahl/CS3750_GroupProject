@@ -92,7 +92,6 @@ namespace cs3750LMS.Controllers
 
                     User users = _context.Users.Where(x => x.Email == testUser.Email).Single();
 
-
                     users.Email = testUser.Email;
                     users.FirstName = testUser.FirstName;
                     users.LastName = testUser.LastName;
