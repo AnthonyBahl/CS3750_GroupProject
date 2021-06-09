@@ -82,12 +82,12 @@ namespace cs3750LMS.Controllers
         //updates user profile to database from the profile page
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateProfile([Bind("ProfileImage,Email,FirstName,LastName,Birthday,Password,ConfirmPassword,AccountType,ProfileImage,Address1,Address2,City,State,Zip,Phone,gitHubLink,TwitterLink,InstagramLink,FacebookLink,LinkedInLink")] UserValidationUpdate testUser)
+        public async Task<IActionResult> UpdateProfile([Bind("ProfileImage,Email,FirstName,LastName,Birthday,ProfileImage,Address1,Address2,City,State,Zip,Phone,gitHubLink,TwitterLink,InstagramLink,FacebookLink,LinkedInLink")] UserValidationUpdate testUser)
         {
             bool updateSuccess = false;
             if (ModelState.IsValid)
             {
-                if (_context.Users.Count(e => e.Email == testUser.Email) == 0)
+                if (_context.Users.Count(e => e.Email == testUser.Email) > 0)
                 {
 
                     User users = _context.Users.Where(x => x.Email == testUser.Email).Single();
@@ -96,7 +96,6 @@ namespace cs3750LMS.Controllers
                     users.FirstName = testUser.FirstName;
                     users.LastName = testUser.LastName;
                     users.Birthday = testUser.Birthday;
-                    users.Password = Sha256(testUser.Password);
                     users.AccountType = testUser.AccountType;
 
                     //start picture logic

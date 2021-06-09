@@ -33,17 +33,6 @@ namespace cs3750LMS.Models
         public DateTime Birthday { get; set; }
 
         [Required]
-        [MaxLength(255, ErrorMessage = "Password must not exceed 255 characters long")] //this was based of the entity validation. 
-        [MinLength(8, ErrorMessage = "Password must be at least 8 characters long")]
-        [Display(Name = "Password")]
-        public string Password { get; set; }
-
-        [Required]
-        [Compare("Password", ErrorMessage = "The passwords do not match")]
-        [Display(Name = "Password Confirmation")]
-        public string ConfirmPassword { get; set; }
-
-        [Required]
         public short AccountType { get; set; }
 
         public IFormFile ProfileImage { get; set; }
@@ -68,19 +57,19 @@ namespace cs3750LMS.Models
 
         public List<Link> UserLinks { get; set; }
 
-        [RegularExpression(@"^[http]", ErrorMessage = "Invalid url")]
+        //[RegularExpression(@"^[http]", ErrorMessage = "Invalid url")]
         public String gitHubLink { get; set; }
 
-        [RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
+        //[RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
         public Link TwitterLink { get; set; }
 
-        [RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
+        //[RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
         public Link InstagramLink { get; set; }
 
-        [RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
+        //[RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
         public Link FacebookLink { get; set; }
 
-        [RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
+        //[RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
         public Link LinkedInLink { get; set; }
     }
 }
