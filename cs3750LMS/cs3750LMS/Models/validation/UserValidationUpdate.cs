@@ -64,5 +64,20 @@ namespace cs3750LMS.Models
         public string Phone { get; set; }
 
         public List<Link> UserLinks { get; set; }
+
+        [RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
+        public Link gitHubLink { get; set; }
+
+        [RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
+        public Link TwitterLink { get; set; }
+
+        [RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
+        public Link InstagramLink { get; set; }
+
+        [RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
+        public Link FacebookLink { get; set; }
+
+        [RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
+        public Link LinkedInLink { get; set; }
     }
 }
