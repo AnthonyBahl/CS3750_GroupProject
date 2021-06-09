@@ -6,9 +6,6 @@
     UserSession user = (UserSession)ViewData["Message"];
     States states = (States)ViewData["States"];
     var isUpdate = user.IsUpdate;
-    Link urlGitHub = (user.UserLinks != null) ? user.UserLinks.Where(l => l.Contents.Contains("github.com")).FirstOrDefault() : null;
-    Link urlTwitter = (user.UserLinks != null) ? user.UserLinks.Where(l => l.Contents.Contains("twitter.com")).FirstOrDefault() : null;
-    Link urlLinkedIn = (user.UserLinks != null) ? user.UserLinks.Where(l => l.Contents.Contains("linkedin.com")).FirstOrDefault() : null;
 }
 @section Scripts{
     <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
@@ -152,7 +149,6 @@
                                         <option value=@states.StatesList[i].StateID>@states.StatesList[i].StateCode</option>
                                     }
                                 </select>
-                                @*<input type="text" asp-for="State" name="State" class="form-control" value="@user.State" readonly />*@
                                 <span class="text-danger" asp-validation-for="State"></span>
                             </div>
                         </div>
@@ -180,7 +176,7 @@
                                     </h6>
                                 </div>
                                 <div class="col-sm-10">
-                                    <input type="text" name="urlGitHub" class="form-control" value="@urlGitHub" readonly />
+                                    <input type="text" name="urlGitHub" class="form-control" value="@user.Github" readonly />
                                     <span class="text-danger" asp-validation-for="gitHubLink"></span>
                                 </div>
                             </div>
@@ -195,7 +191,7 @@
                                     </h6>
                                 </div>
                                 <div class="col-sm-10">
-                                    <input type="text" name="urlTwitter" class="form-control" value="@urlTwitter" readonly />
+                                    <input type="text" name="urlTwitter" class="form-control" value="@user.Twitter" readonly />
                                     <span class="text-danger" asp-validation-for="TwitterLink"></span>
                                 </div>
                             </div>
@@ -210,7 +206,7 @@
                                     </h6>
                                 </div>
                                 <div class="col-sm-10">
-                                    <input type="url" asp-for="LinkedInLink" name="urlLinkedIn" class="form-control" value="@urlLinkedIn" readonly />
+                                    <input type="url" asp-for="LinkedInLink" name="urlLinkedIn" class="form-control" value="@user.LinkedIn" readonly />
                                     <span class="text-danger" asp-validation-for="LinkedInLink"></span>
                                 </div>
                             </div>
