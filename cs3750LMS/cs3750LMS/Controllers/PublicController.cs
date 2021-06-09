@@ -111,7 +111,7 @@ namespace cs3750LMS.Controllers
 
                         string dbPath = Path.GetFileName(testUser.ProfileImage.FileName);                   //name of file, could save to db as well
                         string FullPath = Path.Combine(path, dbPath);                               //save to database for later reference
-                        FullPath += users.Email;
+                        
 
                         //delete from files
                         if (System.IO.File.Exists(users.ProfileImage))
@@ -123,7 +123,7 @@ namespace cs3750LMS.Controllers
                         {
                             testUser.ProfileImage.CopyTo(stream);
                         }
-                        users.ProfileImage = FullPath;
+                        users.ProfileImage = "/Images/"+testUser.ProfileImage.FileName;
                     }
 
                    
