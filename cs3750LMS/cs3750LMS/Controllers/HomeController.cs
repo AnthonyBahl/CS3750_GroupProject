@@ -46,6 +46,12 @@ namespace cs3750LMS.Controllers
             return View();
         }
 
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return View("~/Views/Home/Login.cshtml");
+        }
+
         public IActionResult SignUp()
         {
             return View();
@@ -104,6 +110,7 @@ namespace cs3750LMS.Controllers
                 }
                 else
                 {
+                    ViewBag.errMsg = "Invalid Email/Password";
                     return View();
                 }
                 if (userFound.Password == Sha256(testLogin.Password))

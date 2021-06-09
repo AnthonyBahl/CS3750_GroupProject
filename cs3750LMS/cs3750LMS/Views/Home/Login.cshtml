@@ -4,6 +4,9 @@
 
 <div>
     <h1 class="display-4 text-center mt-3">@ViewData["Title"]</h1>
+    <div>
+        <p class="text-center">@ViewBag.errMsg</p>
+    </div>
     <form asp-action="Login" method="post" class="w-50 mx-auto mt-5">
         <div class="form-group row">
             <div class="col-sm-2 text-right d-flex align-items-center">
@@ -32,7 +35,4 @@
         </div>
 
     </form>
-    <div class="text-center">
-        <a asp-action="SignUp">New User</a>
-    </div>
 </div>
