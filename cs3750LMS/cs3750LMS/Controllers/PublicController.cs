@@ -1,5 +1,6 @@
 ﻿using cs3750LMS.DataAccess;
 using cs3750LMS.Models;
+using cs3750LMS.Models.general;
 using cs3750LMS.Models.validation;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -65,6 +66,9 @@ namespace cs3750LMS.Controllers
                 {
                     session.UserLinks = _context.Links.Where(z=>z.UserID == userFound.UserId).ToList();
                 }
+                States states = new States();
+                states.StatesList = _context.States.ToList();
+                ViewData["States"] = states;
                 ViewData["Message"] = session;
                 return View();
             }
@@ -144,6 +148,10 @@ namespace cs3750LMS.Controllers
 
             return hash.ToString();
         }
+
+        
+
+
 
     }
 }

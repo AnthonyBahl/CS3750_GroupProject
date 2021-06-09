@@ -11,8 +11,6 @@ namespace cs3750LMS.Models
     {
         public int UserId { get; set; }
 
-        //TODO: Not sure if [DataType(DataType.text)] should be added to the model to match the database. 
-
         [Required]
         [EmailAddress]
         public string Email { get; set; }
@@ -28,8 +26,7 @@ namespace cs3750LMS.Models
         public string LastName { get; set; }
 
         [Required]
-        //[DateMinimumAge(16,ErrorMessage = "Must be at least {1} years of age")] 
-        //TODO: Once I can figure out how to connect the DLL MinimumAgeAttribute this should work. 
+        [DateRange("01/01/1921", ErrorMessage = "Must be at least 16 years old")] //age range is between 100 years old and 16 years old.  The override for this is in the DateRangeAttribute.cs     
         [DataType(DataType.Date)]  //specifies only the Date, not the Time. 
         public DateTime Birthday { get; set; }
 
@@ -59,10 +56,10 @@ namespace cs3750LMS.Models
         public string City { get; set; }
         public int State { get; set; }
 
-        [StringLength(30, ErrorMessage = "Maximum length of 100 characters")]
+        [StringLength(30, ErrorMessage = "Maximum length of 30 characters")]
         public string Zip { get; set; }
 
-        [StringLength(30, ErrorMessage = "Maximum length of 100 characters")]
+        [StringLength(30, ErrorMessage = "Maximum length of 30 characters")]
         public string Phone { get; set; }
 
         public List<Link> UserLinks { get; set; }
