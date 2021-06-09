@@ -138,9 +138,9 @@ namespace cs3750LMS.Controllers
                     users.State = testUser.State;
                     users.Zip = testUser.Zip;
                     users.Phone = testUser.Phone;
-                    users.LinkedIn = testUser.LinkedInLink.ToString();
-                    users.Github = testUser.gitHubLink.ToString();
-                    users.Twitter = testUser.TwitterLink.ToString();
+                    users.LinkedIn = testUser.LinkedInLink;
+                    users.Github = testUser.gitHubLink;
+                    users.Twitter = testUser.TwitterLink;
 
                     await _context.SaveChangesAsync();
                     updateSuccess = true;
