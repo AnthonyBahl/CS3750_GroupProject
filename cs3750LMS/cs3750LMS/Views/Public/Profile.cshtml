@@ -176,7 +176,7 @@
                                     </h6>
                                 </div>
                                 <div class="col-sm-10">
-                                    <input type="text" name="urlGitHub" class="form-control" value="@user.Github" readonly />
+                                    <input type="text" asp-for="gitHubLink"name="GitHubLink" class="form-control" value="@user.Github" readonly />
                                     <span class="text-danger" asp-validation-for="gitHubLink"></span>
                                 </div>
                             </div>
@@ -191,7 +191,7 @@
                                     </h6>
                                 </div>
                                 <div class="col-sm-10">
-                                    <input type="text" name="urlTwitter" class="form-control" value="@user.Twitter" readonly />
+                                    <input type="text" asp-for="TwitterLink"name="TwitterLink" class="form-control" value="@user.Twitter" readonly />
                                     <span class="text-danger" asp-validation-for="TwitterLink"></span>
                                 </div>
                             </div>
@@ -206,7 +206,7 @@
                                     </h6>
                                 </div>
                                 <div class="col-sm-10">
-                                    <input type="url" asp-for="LinkedInLink" name="urlLinkedIn" class="form-control" value="@user.LinkedIn" readonly />
+                                    <input type="url" asp-for="LinkedInLink" name="LinkedInLink" class="form-control" value="@user.LinkedIn" readonly />
                                     <span class="text-danger" asp-validation-for="LinkedInLink"></span>
                                 </div>
                             </div>
