@@ -59,12 +59,14 @@
             <div class="card mb-3">
                 <div class="card-body">
                     <form enctype="multipart/form-data" asp-action="UpdateProfile" method="post" class="w-75 mx-auto mt-5">
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <label class="control-label mb-0"><b>Email</b></label>
+
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="Email" class="control-label mb-0"><b>Email</b></label>
                             </div>
-                            <div class="col-sm-9 text-secondary">
-                                @user.Email
+                            <div class="col-sm-10">
+                                <input id="Email" type="text" asp-for="Email" name="Phone" class="form-control" value="@user.Email" readonly />
+                                <span class="text-danger" asp-validation-for="Email"></span>
                             </div>
                         </div>
                         <hr />
@@ -194,7 +196,7 @@
                                     </h6>
                                 </div>
                                 <div class="col-sm-10">
-                                    <input type="text" asp-for="gitHubLink"name="GitHubLink" class="form-control" value="@user.Github" readonly />
+                                    <input type="text" asp-for="gitHubLink" name="GitHubLink" class="form-control" value="@user.Github" readonly />
                                     <span class="text-danger" asp-validation-for="gitHubLink"></span>
                                 </div>
                             </div>
@@ -209,7 +211,7 @@
                                     </h6>
                                 </div>
                                 <div class="col-sm-10">
-                                    <input type="text" asp-for="TwitterLink"name="TwitterLink" class="form-control" value="@user.Twitter" readonly />
+                                    <input type="text" asp-for="TwitterLink" name="TwitterLink" class="form-control" value="@user.Twitter" readonly />
                                     <span class="text-danger" asp-validation-for="TwitterLink"></span>
                                 </div>
                             </div>
