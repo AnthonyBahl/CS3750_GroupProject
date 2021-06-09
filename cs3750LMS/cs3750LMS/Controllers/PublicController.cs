@@ -2,9 +2,11 @@
 using cs3750LMS.Models;
 using cs3750LMS.Models.general;
 using cs3750LMS.Models.validation;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -15,9 +17,11 @@ namespace cs3750LMS.Controllers
     public class PublicController : Controller
     {
         private readonly cs3750Context _context;
-        public PublicController(cs3750Context context)
+        private IHostingEnvironment Environment;
+        public PublicController(cs3750Context context, IHostingEnvironment _enrionment)
         {
             _context = context;
+            Environment = _enrionment;
         }
 
         //sends user to calendar page if logged in and passes needed session data to view
@@ -53,7 +57,7 @@ namespace cs3750LMS.Controllers
                     LastName = userFound.LastName,
                     Birthday = userFound.Birthday,
                     AccountType = userFound.AccountType,
-                    ////////////////////////////////////////////////ProflieImage = userFound.ProfileImage,///////////////////////// still need profile image in database
+                    ProfileImage = userFound.ProfileImage,
                     Address1 = userFound.Address1,
                     Address2 = userFound.Address2,
                     City = userFound.City,
@@ -78,7 +82,7 @@ namespace cs3750LMS.Controllers
         //updates user profile to database from the profile page
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateProfile([Bind("Email,FirstName,LastName,Birthday,Password,ConfirmPassword,AccountType,ProfileImage,Address1,Address2,City,State,Zip,Phone,UserLinks")] UserValidationUpdate testUser)
+        public async Task<IActionResult> UpdateProfile([Bind("ProfileImage,Email,FirstName,LastName,Birthday,Password,ConfirmPassword,AccountType,ProfileImage,Address1,Address2,City,State,Zip,Phone,UserLinks")] UserValidationUpdate testUser)
         {
             bool updateSuccess = false;
             if (ModelState.IsValid)
@@ -95,7 +99,34 @@ namespace cs3750LMS.Controllers
                     users.Birthday = testUser.Birthday;
                     users.Password = Sha256(testUser.Password);
                     users.AccountType = testUser.AccountType;
-                    ///////////////////////////////////////ProfileImage = testUser.ProfileImage;///////////////////need to implement new field in database
+
+                    //start picture logic
+                    string wwwPath = this.Environment.WebRootPath;
+                    string contentPath = this.Environment.ContentRootPath;
+                    string path = Path.Combine(this.Environment.WebRootPath, "Images");
+
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+
+                    string dbPath = Path.GetFileName(testUser.ProfileImage.FileName);                   //name of file, could save to db as well
+                    string FullPath = Path.Combine(path, dbPath);                               //save to database for later reference
+                    FullPath += users.Email;
+
+                    //delete from files
+                    if (System.IO.File.Exists(users.ProfileImage))
+                    {
+                        System.IO.File.Delete(users.ProfileImage);
+                    }
+                    //add to files
+                    using (FileStream stream = new FileStream(FullPath, FileMode.Create))
+                    {
+                        testUser.ProfileImage.CopyTo(stream);
+                    }
+
+                    users.ProfileImage = FullPath;
+                    //////////////////////////end pic logic
                     users.Address1 = testUser.Address1;
                     users.Address2 = testUser.Address2;
                     users.City = testUser.City;
@@ -115,7 +146,7 @@ namespace cs3750LMS.Controllers
                 LastName = userFound.LastName,
                 Birthday = userFound.Birthday,
                 AccountType = userFound.AccountType,
-                ////////////////////////////////////////////////ProflieImage = userFound.ProfileImage,///////////////////////// still need profile image in database
+                ProfileImage = userFound.ProfileImage,
                 Address1 = userFound.Address1,
                 Address2 = userFound.Address2,
                 City = userFound.City,

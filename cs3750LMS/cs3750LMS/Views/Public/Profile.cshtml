@@ -51,7 +51,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex flex-column align-items-center text-center">
-                        <img src=@user.ProfileImage alt="Admin" class="rounded-circle" width="150">
+                        <img id="UploadedPic" src=@user.ProfileImage alt="Admin" class="rounded-circle" width="150">
                         <div class="mt-3">
                             <h4>John Doe</h4>
                             <ul class="list-group list-group-flush">
@@ -84,6 +84,16 @@
             <div class="card mb-3">
                 <div class="card-body">
                     <form asp-action="UpdateProfile" method="post" class="w-75 mx-auto mt-5">
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="ProfileImage" class="control-label mb-0"><b>Image</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="file" accept="image/*" asp-for="ProfileImage" name="ProfileImage" class="form-control" value="@user.ProfileImage" onchange="ReloadPic()" required />
+                                <span class="text-danger" asp-validation-for="ProfileImage"></span>
+                            </div>
+                        </div>
+                        <hr />
                         <div class="form-group row">
                             <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
                                 <label asp-for="FirstName" class="control-label mb-0"><b>First Name</b></label>
@@ -293,7 +303,7 @@
 
                         <div class="row">
                             <div class="col-sm-12">
-                                    <input type="submit" id="formButton" class="btn btn-primary mx-2" onsubmit="return onSubmitClick(this);" />
+                                <input type="submit" id="formButton" class="btn btn-primary mx-2" onsubmit="return onSubmitClick(this);" />
                             </div>
                         </div>
                     </form>
@@ -301,3 +311,12 @@
             </div>
         </div>
     </div>
+    <script>
+        function ReloadPic() {
+            var image = document.getElementById('UploadedPic');
+            image.src = URL.createObjectURL(event.target.files[0]);
+            console.log(image.src);
+            console.log(event.target.value);
+        }
+    </script>
+  

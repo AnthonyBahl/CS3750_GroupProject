@@ -93,6 +93,11 @@ namespace cs3750LMS.Models
                     .HasMaxLength(30)
                     .IsUnicode(false)
                     .HasColumnName("phone");
+
+                entity.Property(e => e.ProfileImage)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("image");
             });
 
             modelBuilder.Entity<Link>(entity =>

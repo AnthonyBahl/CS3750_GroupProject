@@ -1,7 +1,7 @@
 USE [cs3750]
 GO
 
-/****** Object:  Table [dbo].[Users]    Script Date: 6/2/2021 9:05:32 PM ******/
+/****** Object:  Table [dbo].[Users]    Script Date: 6/9/2021 3:38:24 AM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -22,9 +22,12 @@ CREATE TABLE [dbo].[Users](
 	[state] [int] NULL,
 	[zip] [varchar](30) NULL,
 	[phone] [varchar](30) NULL,
+	[image] [varchar](256) NULL,
  CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED 
 (
 	[userID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
+
+

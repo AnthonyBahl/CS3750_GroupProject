@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Drawing;
 using cs3750LMS.Models.validation;
+using Microsoft.AspNetCore.Http;
 
 namespace cs3750LMS.Models
 {
@@ -45,7 +46,7 @@ namespace cs3750LMS.Models
         [Required]
         public short AccountType { get; set; }
 
-        public byte[] ProfileImage { get; set; }
+        public IFormFile ProfileImage { get; set; }
 
         [StringLength(100, ErrorMessage = "Maximum length of 100 characters")]
         public string Address1 { get; set; }
