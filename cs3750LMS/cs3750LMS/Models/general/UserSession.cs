@@ -23,5 +23,8 @@ namespace cs3750LMS.Models
         public string Phone { get; set; }
         public List<Link> UserLinks { get; set; }
         public bool IsUpdate { get; set; }
+        public string LinkedIn { get; set;}
+        public string Github { get; set; }
+        public string  Twitter { get; set; }
     }
 }

@@ -63,7 +63,11 @@ namespace cs3750LMS.Controllers
                     City = userFound.City,
                     State = userFound.State,
                     Zip = userFound.Zip,
-                    Phone = userFound.Phone
+                    Phone = userFound.Phone,
+                    LinkedIn = userFound.LinkedIn,
+                    Github = userFound.Github,
+                    Twitter = userFound.Twitter
+
                 };
                 int userLinkCount = _context.Links.Count(z => z.UserID == userFound.UserId);
                 if ( userLinkCount > 0)
@@ -82,7 +86,7 @@ namespace cs3750LMS.Controllers
         //updates user profile to database from the profile page
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateProfile([Bind("ProfileImage,Email,FirstName,LastName,Birthday,ProfileImage,Address1,Address2,City,State,Zip,Phone,gitHubLink,TwitterLink,InstagramLink,FacebookLink,LinkedInLink")] UserValidationUpdate testUser)
+        public async Task<IActionResult> UpdateProfile([Bind("ProfileImage,Email,FirstName,LastName,Birthday,ProfileImage,Address1,Address2,City,State,Zip,Phone,gitHubLink,TwitterLink,LinkedInLink")] UserValidationUpdate testUser)
         {
             bool updateSuccess = false;
             if (ModelState.IsValid)
@@ -134,6 +138,9 @@ namespace cs3750LMS.Controllers
                     users.State = testUser.State;
                     users.Zip = testUser.Zip;
                     users.Phone = testUser.Phone;
+                    users.LinkedIn = testUser.LinkedInLink.ToString();
+                    users.Github = testUser.gitHubLink.ToString();
+                    users.Twitter = testUser.TwitterLink.ToString();
 
                     await _context.SaveChangesAsync();
                     updateSuccess = true;
@@ -154,7 +161,10 @@ namespace cs3750LMS.Controllers
                 State = userFound.State,
                 Zip = userFound.Zip,
                 Phone = userFound.Phone,
-                IsUpdate = updateSuccess
+                IsUpdate = updateSuccess,
+                LinkedIn = userFound.LinkedIn,
+                Github = userFound.Github,
+                Twitter = userFound.Twitter
             };
 
             int userLinkCount = _context.Links.Count(z => z.UserID == userFound.UserId);
