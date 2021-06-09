@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Drawing;
+using cs3750LMS.Models.validation;
 
 namespace cs3750LMS.Models
 {

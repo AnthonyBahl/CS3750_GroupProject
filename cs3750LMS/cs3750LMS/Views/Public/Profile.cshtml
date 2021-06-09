@@ -3,12 +3,7 @@
 @{
     ViewData["Title"] = "profile Page";
     UserSession user = (UserSession)ViewData["Message"];
-    States states = (States)ViewData["States"];
-    //shows access examples =>
-    //name should pass the stateID (number id)
-    var a = states.StatesList[0].StateName;
-    var b = states.StatesList[1].StateCode;
-    var c = states.StatesList[2].StateID;
+    States states = (States)ViewData["States"]; 
 }
 <head>
     <script>
@@ -162,7 +157,12 @@
                                 <label asp-for="State" class="control-label mb-0"><b>State</b></label>
                             </div>
                             <div class="col-sm-10">
-                                <input type="text" asp-for="State" name="State" class="form-control" value="@user.State" required />
+                                <select asp-for="State" name="State" class="form-control" value="@user.State">
+                                    @for (int i = 0; i < states.StatesList.Count; i++)
+                                    {
+                                        <option value="@states.StatesList[i].StateID">@states.StatesList[i].StateCode</option>
+                                    }
+                                </select>
                                 <span class="text-danger" asp-validation-for="State"></span>
                             </div>
                         </div>
