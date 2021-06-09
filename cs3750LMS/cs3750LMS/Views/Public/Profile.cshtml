@@ -59,7 +59,7 @@
                                 <label asp-for="ProfileImage" class="control-label mb-0"><b>Image</b></label>
                             </div>
                             <div class="col-sm-10">
-                                <input type="file" accept="image/*" asp-for="ProfileImage" name="ProfileImage" class="form-control" value="@user.ProfileImage" onchange="()" required />
+                                <input type="file" accept="image/*" asp-for="ProfileImage" name="ProfileImage" class="form-control" value="@user.ProfileImage" onchange="()" />
                                 <span class="text-danger" asp-validation-for="ProfileImage"></span>
                             </div>
 
@@ -103,7 +103,7 @@
                                 <label asp-for="Phone" class="control-label mb-0"><b>Phone</b></label>
                             </div>
                             <div class="col-sm-10">
-                                <input type="text" asp-for="Phone" name="Phone" class="form-control" value="@user.Phone" required readonly />
+                                <input type="text" asp-for="Phone" name="Phone" class="form-control" value="@user.Phone" readonly />
                                 <span class="text-danger" asp-validation-for="Phone"></span>
                             </div>
                         </div>
@@ -114,7 +114,7 @@
                                 <label asp-for="Birthday" class="control-label mb-0"><b>Birthday</b></label>
                             </div>
                             <div class="col-sm-10">
-                                <input type="date" asp-for="Birthday" name="Birthday" class="form-control" value="@user.Birthday" required readonly />
+                                <input type="date" asp-for="Birthday" name="Birthday" class="form-control" value="@user.Birthday.ToString("yyyy-MM-dd")" required readonly />
                                 <span class="text-danger" asp-validation-for="Birthday"></span>
                             </div>
                         </div>
@@ -125,7 +125,7 @@
                                 <label asp-for="Address1" class="control-label mb-0"><b>Address 1</b></label>
                             </div>
                             <div class="col-sm-10">
-                                <input type="text" asp-for="Address1" name="Address1" class="form-control" value="@user.Address1" required readonly />
+                                <input type="text" asp-for="Address1" name="Address1" class="form-control" value="@user.Address1" readonly />
                                 <span class="text-danger" asp-validation-for="Address1"></span>
                             </div>
                         </div>
@@ -147,7 +147,7 @@
                                 <label asp-for="City" class="control-label mb-0"><b>City</b></label>
                             </div>
                             <div class="col-sm-10">
-                                <input type="text" asp-for="City" name="City" class="form-control" value="@user.City" required readonly />
+                                <input type="text" asp-for="City" name="City" class="form-control" value="@user.City"  readonly />
                                 <span class="text-danger" asp-validation-for="City"></span>
                             </div>
                         </div>
@@ -158,13 +158,13 @@
                                 <label asp-for="State" class="control-label mb-0"><b>State</b></label>
                             </div>
                             <div class="col-sm-10">
-                                @*<select asp-for="State" name="State" class="form-control" value="@user.State" required disabled>
-            @for (int i = 0; i < states.StatesList.Count; i++)
-            {
-                <option value="@states.StatesList[i].StateID">@states.StatesList[i].StateCode</option>
-            }
-        </select>*@
-                                <input type="text" asp-for="State" name="State" class="form-control" value="@user.State" required readonly />
+                                <select asp-for="State" name="State" class="form-control" value="@user.State" required disabled>
+                                    @for (int i = 0; i < states.StatesList.Count; i++)
+                                    {
+                                        <option value=@states.StatesList[i].StateID>@states.StatesList[i].StateCode</option>
+                                    }
+                                </select>
+                                @*<input type="text" asp-for="State" name="State" class="form-control" value="@user.State" readonly />*@
                                 <span class="text-danger" asp-validation-for="State"></span>
                             </div>
                         </div>
@@ -175,7 +175,7 @@
                                 <label asp-for="Zip" class="control-label mb-0"><b>Zip</b></label>
                             </div>
                             <div class="col-sm-10">
-                                <input type="text" asp-for="Zip" name="Zip" class="form-control" value="@user.Zip" required readonly />
+                                <input type="text" asp-for="Zip" name="Zip" class="form-control" value="@user.Zip" readonly />
                                 <span class="text-danger" asp-validation-for="Zip"></span>
                             </div>
                         </div>

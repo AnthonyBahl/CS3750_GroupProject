@@ -32,20 +32,6 @@ namespace cs3750LMS.Models
         [DataType(DataType.Date)]  //specifies only the Date, not the Time. 
         public DateTime Birthday { get; set; }
 
-        [Required]
-        [MaxLength(255, ErrorMessage = "Password must not exceed 255 characters long")] //this was based of the entity validation. 
-        [MinLength(8, ErrorMessage = "Password must be at least 8 characters long")]
-        [Display(Name = "Password")]
-        public string Password { get; set; }
-
-        [Required]
-        [Compare("Password", ErrorMessage = "The passwords do not match")]
-        [Display(Name = "Password Confirmation")]
-        public string ConfirmPassword { get; set; }
-
-        [Required]
-        public short AccountType { get; set; }
-
         public IFormFile ProfileImage { get; set; }
 
         [StringLength(100, ErrorMessage = "Maximum length of 100 characters")]

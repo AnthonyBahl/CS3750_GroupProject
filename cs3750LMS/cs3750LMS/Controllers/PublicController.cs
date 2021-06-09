@@ -87,7 +87,7 @@ namespace cs3750LMS.Controllers
             bool updateSuccess = false;
             if (ModelState.IsValid)
             {
-                if (_context.Users.Count(e => e.Email == testUser.Email) == 0)
+                if (_context.Users.Count(e => e.Email == testUser.Email) == 1)
                 {
 
                     User users = _context.Users.Where(x => x.Email == testUser.Email).Single();
@@ -96,35 +96,36 @@ namespace cs3750LMS.Controllers
                     users.FirstName = testUser.FirstName;
                     users.LastName = testUser.LastName;
                     users.Birthday = testUser.Birthday;
-                    users.Password = Sha256(testUser.Password);
-                    users.AccountType = testUser.AccountType;
 
-                    //start picture logic
-                    string wwwPath = this.Environment.WebRootPath;
-                    string contentPath = this.Environment.ContentRootPath;
-                    string path = Path.Combine(this.Environment.WebRootPath, "Images");
+                    if (testUser.ProfileImage != null) {
+                        //start picture logic
+                        string wwwPath = this.Environment.WebRootPath;
+                        string contentPath = this.Environment.ContentRootPath;
+                        string path = Path.Combine(this.Environment.WebRootPath, "Images");
 
-                    if (!Directory.Exists(path))
-                    {
-                        Directory.CreateDirectory(path);
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+
+                        string dbPath = Path.GetFileName(testUser.ProfileImage.FileName);                   //name of file, could save to db as well
+                        string FullPath = Path.Combine(path, dbPath);                               //save to database for later reference
+                        FullPath += users.Email;
+
+                        //delete from files
+                        if (System.IO.File.Exists(users.ProfileImage))
+                        {
+                            System.IO.File.Delete(users.ProfileImage);
+                        }
+                        //add to files
+                        using (FileStream stream = new FileStream(FullPath, FileMode.Create))
+                        {
+                            testUser.ProfileImage.CopyTo(stream);
+                        }
+                        users.ProfileImage = FullPath;
                     }
 
-                    string dbPath = Path.GetFileName(testUser.ProfileImage.FileName);                   //name of file, could save to db as well
-                    string FullPath = Path.Combine(path, dbPath);                               //save to database for later reference
-                    FullPath += users.Email;
-
-                    //delete from files
-                    if (System.IO.File.Exists(users.ProfileImage))
-                    {
-                        System.IO.File.Delete(users.ProfileImage);
-                    }
-                    //add to files
-                    using (FileStream stream = new FileStream(FullPath, FileMode.Create))
-                    {
-                        testUser.ProfileImage.CopyTo(stream);
-                    }
-
-                    users.ProfileImage = FullPath;
+                   
                     //////////////////////////end pic logic
                     users.Address1 = testUser.Address1;
                     users.Address2 = testUser.Address2;
@@ -160,7 +161,9 @@ namespace cs3750LMS.Controllers
             {
                 session.UserLinks = _context.Links.Where(z => z.UserID == userFound.UserId).ToList();
             }
-
+            States states = new States();
+            states.StatesList = _context.States.ToList();
+            ViewData["States"] = states;
             ViewData["Message"] = session;
             return View("Profile");
         }
