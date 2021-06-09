@@ -1,10 +1,16 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model UserValidationUpdate
 @{
     ViewData["Title"] = "profile Page";
     UserSession user = (UserSession)ViewData["Message"];
 }
+<head>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            $('input').prop('readonly', true);
+            document.getElementById("GFG_down").innerHTML
+                = "Read-Only attribute enabled";
+    </script>
+</head>
 
 <div class="container">
     <div class="row">
@@ -41,101 +47,137 @@
         <div class="col-md-8">
             <div class="card mb-3">
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <h6 class="mb-0">First Name</h6>
+                    <form asp-action="ProfileUpdate" method="post" class="w-75 mx-auto mt-5">
+
+                        <p id="GFG_down" style="color: green; font-size: 20px; font-weight: bold;">
+                            test
+                        </p>
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="FirstName" class="control-label mb-0"><b>First Name</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="text" asp-for="FirstName" name="FirstName" class="form-control" value="@user.FirstName" />
+                                <span class="text-danger" asp-validation-for="FirstName"></span>
+                            </div>
                         </div>
-                        <div class="col-sm-9 text-secondary">
-                            @user.FirstName
+                        <hr />
+
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="LastName" class="control-label mb-0"><b>Last Name</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="text" asp-for="LastName" name="LastName" class="form-control" value="@user.LastName" required />
+                                <span class="text-danger" asp-validation-for="LastName"></span>
+                            </div>
                         </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <h6 class="mb-0">Last Name</h6>
+                        <hr />
+
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="Email" class="control-label mb-0"><b>Email</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="email" asp-for="Email" name="Email" class="form-control" value="@user.Email" required />
+                                <span class="text-danger" asp-validation-for="Email"></span>
+                            </div>
                         </div>
-                        <div class="col-sm-9 text-secondary">
-                            @user.LastName
+                        <hr />
+
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="Phone" class="control-label mb-0"><b>Phone</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="text" asp-for="Phone" name="Phone" class="form-control" value="@user.Phone" required />
+                                <span class="text-danger" asp-validation-for="Phone"></span>
+                            </div>
                         </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <h6 class="mb-0">Email</h6>
+                        <hr />
+
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="Birthday" class="control-label mb-0"><b>Birthday</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="date" asp-for="Birthday" name="Birthday" class="form-control" value="@user.Birthday" required />
+                                <span class="text-danger" asp-validation-for="Birthday"></span>
+                            </div>
                         </div>
-                        <div class="col-sm-9 text-secondary">
-                            @user.Email
+                        <hr />
+
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="Phone" class="control-label mb-0"><b>Phone</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="text" asp-for="Phone" name="Phone" class="form-control" value="@user.Phone" required />
+                                <span class="text-danger" asp-validation-for="Phone"></span>
+                            </div>
                         </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <h6 class="mb-0">Phone</h6>
+                        <hr />
+
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="Address1" class="control-label mb-0"><b>Address 1</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="text" asp-for="Address1" name="Address1" class="form-control" value="@user.Address1" required />
+                                <span class="text-danger" asp-validation-for="Address1"></span>
+                            </div>
                         </div>
-                        <div class="col-sm-9 text-secondary">
-                            @user.Phone
+                        <hr />
+
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="Address2" class="control-label mb-0"><b>Address 2</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="text" asp-for="Address2" name="Address2" class="form-control" value="@user.Address2" required />
+                                <span class="text-danger" asp-validation-for="Address2"></span>
+                            </div>
                         </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <h6 class="mb-0">birthdate</h6>
+                        <hr />
+
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="City" class="control-label mb-0"><b>City</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="text" asp-for="City" name="City" class="form-control" value="@user.City" required />
+                                <span class="text-danger" asp-validation-for="City"></span>
+                            </div>
                         </div>
-                        <div class="col-sm-9 text-secondary">
-                            @user.Birthday
+                        <hr />
+
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="State" class="control-label mb-0"><b>State</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="text" asp-for="State" name="State" class="form-control" value="@user.State" required />
+                                <span class="text-danger" asp-validation-for="State"></span>
+                            </div>
                         </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <h6 class="mb-0">Address 1</h6>
+                        <hr />
+
+                        <div class="form-group row">
+                            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                                <label asp-for="Zip" class="control-label mb-0"><b>Zip</b></label>
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="text" asp-for="Zip" name="Zip" class="form-control" value="@user.Zip" required />
+                                <span class="text-danger" asp-validation-for="Zip"></span>
+                            </div>
                         </div>
-                        <div class="col-sm-9 text-secondary">
-                            @user.Address1
+                        <hr />
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <a class="btn btn-info " target="__blank" href="#edit">Edit</a>
+                            </div>
                         </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <h6 class="mb-0">Address 2</h6>
-                        </div>
-                        <div class="col-sm-9 text-secondary">
-                            @user.Address2
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <h6 class="mb-0">City</h6>
-                        </div>
-                        <div class="col-sm-9 text-secondary">
-                            @user.City
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <h6 class="mb-0">State</h6>
-                        </div>
-                        <div class="col-sm-9 text-secondary">
-                            @user.State
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <h6 class="mb-0">zip</h6>
-                        </div>
-                        <div class="col-sm-9 text-secondary">
-                            @user.Zip
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <a class="btn btn-info " target="__blank" href="#edit">Edit</a>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
