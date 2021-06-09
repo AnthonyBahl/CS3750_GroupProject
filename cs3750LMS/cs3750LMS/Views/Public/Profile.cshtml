@@ -5,6 +5,7 @@
     ViewData["Title"] = "profile Page";
     UserSession user = (UserSession)ViewData["Message"];
     States states = (States)ViewData["States"];
+    user.IsUpdate = true;
     Link urlGitHub = (user.UserLinks != null) ? user.UserLinks.Where(l => l.Contents.Contains("github.com")).FirstOrDefault() : null;
     Link urlTwitter = (user.UserLinks != null) ? user.UserLinks.Where(l => l.Contents.Contains("twitter.com")).FirstOrDefault() : null;
     Link urlInstagram = (user.UserLinks != null) ? user.UserLinks.Where(l => l.Contents.Contains("instagram.com")).FirstOrDefault() : null;
