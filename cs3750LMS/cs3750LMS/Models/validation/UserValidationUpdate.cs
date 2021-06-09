@@ -56,18 +56,20 @@ namespace cs3750LMS.Models
 
         [StringLength(100, ErrorMessage = "Maximum length of 100 characters")]
         public string City { get; set; }
+
         public int State { get; set; }
 
         [StringLength(30, ErrorMessage = "Maximum length of 30 characters")]
         public string Zip { get; set; }
 
         [StringLength(30, ErrorMessage = "Maximum length of 30 characters")]
+        [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$", ErrorMessage = "Invalid Phone Number")]
         public string Phone { get; set; }
 
         public List<Link> UserLinks { get; set; }
 
-        [RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
-        public Link gitHubLink { get; set; }
+        [RegularExpression(@"^[http]", ErrorMessage = "Invalid url")]
+        public String gitHubLink { get; set; }
 
         [RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
         public Link TwitterLink { get; set; }
