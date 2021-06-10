@@ -1,5 +1,240 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model ClassValidationAdd;
 @{
+    UserSession user = (UserSession)ViewData["Message"];
+    ViewData["Title"] = "Add Class";
+    Departments depts = (Departments)ViewData["DepartmentData"];
+    Courses courses = (Courses)ViewData["Courses"];
 }
+<!--View Classes Section-->
+<div id="ClassView">
+
+</div>
+<!--End View Classes Section-->
+
+<!--Add Class Section-->
+<div id="AddClass>
+    <h1 class="display-4 text-center mt-3">@ViewData["Title"]</h1>
+    <form asp-action="AddClass" method="post" class="w-75 mx-auto mt-5">
+        <div asp-validation-summary="ModelOnly"></div>
+        <div>
+            <input type="text" asp-for="Instructor" name="Instructor" class="form-control" hidden value="@user.FirstName @user.LastName" />
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                <label asp-for="Department" class="control-label mb-0"><b>Department</b></label>
+            </div>
+            <div class="col-sm-10">
+                <select asp-for="Department" name="Department" class="form-control" value="0" required>
+                    @for (int i = 0; i < depts.DeptsList.Count; i++)
+                    {
+                        <option value=@depts.DeptsList[i].DeptID>@depts.DeptsList[i].DeptName</option>
+                    }
+                </select>
+                <span class="text-danger" asp-validation-for="Department"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                <label asp-for="ClassNumber" class="control-label mb-0">Class Number</label>
+            </div>
+            <div class="col-sm-10">
+                <input type="text" asp-for="ClassNumber" name="ClassNumber" class="form-control" required />
+                <span class="text-danger" asp-validation-for="ClassNumber"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                <label asp-for="ClassTitle" class="control-label mb-0">Title</label>
+            </div>
+            <div class="col-sm-10">
+                <input type="text" asp-for="ClassTitle" name="ClassTitle" class="form-control" required />
+                <span class="text-danger" asp-validation-for="ClassTitle"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                <label asp-for="Description" class="control-label mb-0">Description</label>
+            </div>
+            <div class="col-sm-10">
+                <textarea type="" asp-for="Description" name="Description" class="form-control" required rows="3" cols="50">
+                </textarea>
+                <span class="text-danger" asp-validation-for="Description"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                <label asp-for="Location" class="control-label mb-0">Location</label>
+            </div>
+            <div class="col-sm-10">
+                <input type="text" asp-for="Location" name="Location" class="form-control" required />
+                <span class="text-danger" asp-validation-for="Location"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                <label asp-for="Credits" class="control-label mb-0">Credits</label>
+            </div>
+            <div class="col-sm-10">
+                <input type="text" asp-for="Credits" name="Credits" class="form-control" required />
+                <span class="text-danger" asp-validation-for="Credits"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                <label asp-for="Capacity" class="control-label mb-0">Capacity</label>
+            </div>
+            <div class="col-sm-10">
+                <input type="text" asp-for="Capacity" name="Capacity" class="form-control" required />
+                <span class="text-danger" asp-validation-for="Capacity"></span>
+            </div>
+        </div>
+
+        <div id="daySelect" class="form-group row">
+            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                <label asp-for="MeetDays" class="control-label mb-0">Meeting Days</label>
+            </div>
+            <div class="col-sm-10 d-flex align-items-center justify-content-center p-0">
+
+                <button id="Sunday" type="button" onclick="ToggleDay(0)">Sunday</button> <button id="Monday" type="button" onclick="ToggleDay(1)">Monday</button> <button id="Tuesday" type="button" onclick="ToggleDay(2)">Tuesday</button> <button id="Wednesday" type="button" onclick="ToggleDay(3)">Wednesday</button> <button id="Thursday" type="button" onclick="ToggleDay(4)">Thursday</button> <button id="Friday" type="button" onclick="ToggleDay(5)">Friday</button> <button id="Saturday" type="button" onclick="ToggleDay(6)">Saturday</button>
+                <input id="InputMeetDays" type="text" asp-for="MeetDays" name="MeetDays" class="form-control" value="xxxxxxx" hidden />
+            </div>
+
+        </div>
+        
+
+        <div class="form-group row">
+            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                <label asp-for="StartTime" class="control-label mb-0">Start Time</label>
+            </div>
+            <div class="col-sm-10">
+                <input type="time" asp-for="StartTime" name="StartTime" class="form-control" required />
+                <span class="text-danger" asp-validation-for="StartTime"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
+                <label asp-for="EndTime" class="control-label mb-0">End Time</label>
+            </div>
+            <div class="col-sm-10">
+                <input type="time" asp-for="EndTime" name="EndTime" class="form-control" required />
+                <span class="text-danger" asp-validation-for="EndTime"></span>
+            </div>
+        </div>
+
+        <div class="form-group text-center">
+            <input type="submit" value="Add Class" class="btn btn-primary mx-2" />
+        </div>
+
+    </form>
+</div>
+<!--End Add Class Section-->
+
+<!--Delete Confirmation-->
+
+<!--End Delete Confirmation-->
+
+<!--Update Section-->
+
+<!--End Update Section-->
+
+<script>
+    //Declare static variables
+    var ButtonOff = "background-color:aliceblue;";
+    var ButtonOn = "background-color:lightcoral;";
+
+    var input = document.getElementById("InputMeetDays");
+
+    var Monday = document.getElementById("Monday");
+    var Tuesday = document.getElementById("Tuesday");
+    var Wednesday = document.getElementById("Wednesday");
+    var Thursday = document.getElementById("Thursday");
+    var Friday = document.getElementById("Friday");
+    var Saturday = document.getElementById("Saturday");
+    var Sunday = document.getElementById("Sunday");
+
+    //declare button states
+    var stMon = { on :false};
+    var stTue = { on: false };
+    var stWed = { on: false };
+    var stThu = { on: false };
+    var stFri = { on: false };
+    var stSat = { on: false };
+    var stSun = { on: false };
+    
+    //set default button states
+    window.onload = function () {
+        Monday.style = ButtonOff;
+        Tuesday.style = ButtonOff;
+        Wednesday.style = ButtonOff;
+        Thursday.style = ButtonOff;
+        Friday.style = ButtonOff;
+        Saturday.style = ButtonOff;
+        Sunday.style = ButtonOff;
+    };
+
+    //toggle input string and visual states
+    function ToggleDay(val) {
+        switch (val) {
+            case 0:
+                ToggleColor(stSun, Sunday);
+                break;
+            case 1:
+                ToggleColor(stMon, Monday);
+                break;
+            case 2:
+                ToggleColor(stTue, Tuesday);
+                break;
+            case 3:
+                ToggleColor(stWed, Wednesday);
+                break;
+            case 4:
+                ToggleColor(stThu, Thursday);
+                break;
+            case 5:
+                ToggleColor(stFri, Friday);
+                break;
+            case 6:
+                ToggleColor(stSat, Saturday);
+                break;
+        }
+        UpdateDays(val);
+    }
+
+    //toggle button color, and button status
+    function ToggleColor(val, day) {
+        if (val.on) {
+            day.style = ButtonOff
+            val.on = false;
+        }
+        else {
+            day.style = ButtonOn
+            val.on = true;
+        }
+    }
+
+    //update input meeting string
+    function UpdateDays(val) {
+        var Meetings = input.value;
+        if (Meetings.charAt(val) == 'x') {
+            Meetings = Meetings.replaceAt(val, "y");
+        }
+        else {
+            Meetings = Meetings.replaceAt(val, "x");
+        }
+        input.value = Meetings;
+    }
+
+    //update string index position
+    String.prototype.replaceAt = function(index, char) {
+        return this.substr(0, index) + char + this.substr(index + char.length);
+
+    };
+</script>
