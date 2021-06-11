@@ -25,5 +25,27 @@ namespace cs3750LMS.Models
                     .Single());
             }
         }
+
+        public string ParseDays(int index)
+        {
+            string days = "";
+            Course selected = CourseList[index];
+            if (selected.MeetDays[0] == 'y')
+                days += "Sunday ";
+            if (selected.MeetDays[1] == 'y')
+                days += "Monday ";
+            if (selected.MeetDays[2] == 'y')
+                days += "Tuesday ";
+            if (selected.MeetDays[3] == 'y')
+                days += "Wednesday ";
+            if (selected.MeetDays[4] == 'y')
+                days += "Thursday ";
+            if (selected.MeetDays[5] == 'y')
+                days += "Friday ";
+            if (selected.MeetDays[6] == 'y')
+                days += "Saturday ";
+
+            return days;
+        }
     }
 }
