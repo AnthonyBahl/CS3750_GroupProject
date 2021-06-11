@@ -1,6 +1,7 @@
 ﻿using System;
 using cs3750LMS.DataAccess;
 using cs3750LMS.Models;
+using cs3750LMS.Models.entites;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -22,6 +23,8 @@ namespace cs3750LMS.Models
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Link> Links { get; set; }
         public virtual DbSet<State> States { get; set; }
+        public virtual DbSet<Course> Courses { get; set; }
+        public virtual DbSet<Department> Departments { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -138,6 +141,56 @@ namespace cs3750LMS.Models
                     .HasColumnName("stateName");
             });
 
+            modelBuilder.Entity<Course>(entity =>
+            {
+                entity.Property(e => e.CourseID).HasColumnName("CourseID");
+
+
+
+                entity.Property(e => e.InstructorID).HasColumnName("InstructorID");
+
+                entity.Property(e => e.Department).HasColumnName("DeptID");
+
+                entity.Property(e => e.ClassNumber)
+                .HasMaxLength(30)
+                .HasColumnName("ClassNumber");
+
+                entity.Property(e => e.ClassTitle)
+                .HasMaxLength(60)
+                .HasColumnName("ClassTitle");
+
+                entity.Property(e => e.Description)
+                .HasMaxLength(255)
+                .HasColumnName("Description");
+
+                entity.Property(e => e.Location)
+                .HasMaxLength(100)
+                .HasColumnName("Location");
+
+                entity.Property(e => e.Credits).HasColumnName("Credits");
+
+                entity.Property(e => e.Capacity).HasColumnName("Capacity");
+
+                entity.Property(e => e.MeetDays)
+                .HasMaxLength(10)
+                .HasColumnName("MeetDays");
+
+                entity.Property(e => e.StartTime).HasColumnName("StartTime");
+                entity.Property(e => e.EndTime).HasColumnName("EndTime");
+            });
+
+            modelBuilder.Entity<Department>(entity => {
+                entity.Property(e => e.DeptID).HasColumnName("DeptID");
+
+                entity.Property(e => e.DeptName)
+                .HasMaxLength(30)
+                .HasColumnName("DeptName");
+
+
+                entity.Property(e => e.DeptCode)
+                .HasMaxLength(30)
+                .HasColumnName("DeptCode");
+            });
 
 
                 OnModelCreatingPartial(modelBuilder);
