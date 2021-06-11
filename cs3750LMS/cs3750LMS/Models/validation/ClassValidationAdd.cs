@@ -32,6 +32,7 @@ namespace cs3750LMS.Models
         [Required]
         public int Capacity { get; set; }
         [Required]
+        [RegularExpression("^(?!xxxxxxx).*$", ErrorMessage = "Must Select at least one day to meet")]
         public string MeetDays { get; set; }
         [Required]
         public TimeSpan StartTime { get; set; }

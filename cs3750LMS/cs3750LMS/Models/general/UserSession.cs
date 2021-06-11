@@ -26,6 +26,6 @@ namespace cs3750LMS.Models
         public string LinkedIn { get; set;}
         public string Github { get; set; }
         public string  Twitter { get; set; }
-        public bool Success { get; set; }
+        public int ClassState { get; set; }
     }
 }

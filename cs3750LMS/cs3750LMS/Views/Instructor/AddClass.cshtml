@@ -4,6 +4,16 @@
     ViewData["Title"] = "Class Editor";
     Departments depts = (Departments)ViewData["DepartmentData"];
     Courses courses = (Courses)ViewData["Courses"];
+    string viewState = "block;";
+    string createState = "none;";
+    string deleteState = "none;";
+    string editState = "none;";
+    if (user.ClassState != null && user.ClassState == 1)
+    {
+        viewState = "none;";
+        createState = "block;";
+    }
+
 }
 @section Scripts{
     <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
@@ -11,7 +21,7 @@
 }
 
 <!--View Classes Section-->
-<div id="ClassView">
+<div id="ClassView" style="display:@viewState">
     <h1 class="display-2 text-center mt-3">@ViewData["Title"]</h1>
     @for (int i = 0; i < courses.CourseList.Count; i++)
     {
@@ -42,7 +52,7 @@
 </div>
 <!--End View Classes Section-->
 <!--Add Class Section-->
-<div id="AddClassView" style="display: none;">
+<div id="AddClassView" style="display: @createState">
     <h1 class="display-2 text-center">Create New Class</h1>
     <form asp-action="AddClass" method="post" class="w-75 mx-auto mt-5">
         <div asp-validation-summary="ModelOnly"></div>
@@ -55,7 +65,7 @@
                 <label asp-for="Department" class="control-label mb-0"><b>Department</b></label>
             </div>
             <div class="col-sm-10">
-                <select asp-for="Department" name="Department" class="form-control" value="0" required>
+                <select id="inDepartment" asp-for="Department" name="Department" class="form-control" value="0" required>
                     @for (int i = 0; i < depts.DeptsList.Count; i++)
                     {
                         <option value=@depts.DeptsList[i].DeptID>@depts.DeptsList[i].DeptName</option>
@@ -70,7 +80,7 @@
                 <label asp-for="ClassNumber" class="control-label mb-0">Class Number</label>
             </div>
             <div class="col-sm-10">
-                <input type="text" asp-for="ClassNumber" name="ClassNumber" class="form-control" required />
+                <input id="inClassNumber" type="text" asp-for="ClassNumber" name="ClassNumber" class="form-control" required />
                 <span class="text-danger" asp-validation-for="ClassNumber"></span>
             </div>
         </div>
@@ -80,7 +90,7 @@
                 <label asp-for="ClassTitle" class="control-label mb-0">Title</label>
             </div>
             <div class="col-sm-10">
-                <input type="text" asp-for="ClassTitle" name="ClassTitle" class="form-control" required />
+                <input id="inClassTitle" type="text" asp-for="ClassTitle" name="ClassTitle" class="form-control" required />
                 <span class="text-danger" asp-validation-for="ClassTitle"></span>
             </div>
         </div>
@@ -90,7 +100,7 @@
                 <label asp-for="Description" class="control-label mb-0">Description</label>
             </div>
             <div class="col-sm-10">
-                <textarea type="" asp-for="Description" name="Description" class="form-control" required rows="3" cols="50">
+                <textarea id="inDescription" asp-for="Description" name="Description" class="form-control" required rows="3" cols="50">
                 </textarea>
                 <span class="text-danger" asp-validation-for="Description"></span>
             </div>
@@ -101,7 +111,7 @@
                 <label asp-for="Location" class="control-label mb-0">Location</label>
             </div>
             <div class="col-sm-10">
-                <input type="text" asp-for="Location" name="Location" class="form-control" required />
+                <input id="inLocation" type="text" asp-for="Location" name="Location" class="form-control" required />
                 <span class="text-danger" asp-validation-for="Location"></span>
             </div>
         </div>
@@ -111,7 +121,7 @@
                 <label asp-for="Credits" class="control-label mb-0">Credits</label>
             </div>
             <div class="col-sm-10">
-                <input type="text" asp-for="Credits" name="Credits" class="form-control" required />
+                <input id="inCredits" type="text" asp-for="Credits" name="Credits" class="form-control" required />
                 <span class="text-danger" asp-validation-for="Credits"></span>
             </div>
         </div>
@@ -121,7 +131,7 @@
                 <label asp-for="Capacity" class="control-label mb-0">Capacity</label>
             </div>
             <div class="col-sm-10">
-                <input type="text" asp-for="Capacity" name="Capacity" class="form-control" required />
+                <input id="inCapacity" type="text" asp-for="Capacity" name="Capacity" class="form-control" required />
                 <span class="text-danger" asp-validation-for="Capacity"></span>
             </div>
         </div>
@@ -130,13 +140,17 @@
             <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
                 <label asp-for="MeetDays" class="control-label mb-0">Meeting Days</label>
             </div>
-            <div class="col-sm-10 d-flex align-items-center justify-content-center p-0">
+            <div class="col-sm-8 d-flex align-items-center justify-content-center p-0">
 
                 <button id="Sunday" type="button" onclick="ToggleDay(0)">Sunday</button> <button id="Monday" type="button" onclick="ToggleDay(1)">Monday</button> <button id="Tuesday" type="button" onclick="ToggleDay(2)">Tuesday</button> <button id="Wednesday" type="button" onclick="ToggleDay(3)">Wednesday</button> <button id="Thursday" type="button" onclick="ToggleDay(4)">Thursday</button> <button id="Friday" type="button" onclick="ToggleDay(5)">Friday</button> <button id="Saturday" type="button" onclick="ToggleDay(6)">Saturday</button>
-                <input id="InputMeetDays" type="text" asp-for="MeetDays" name="MeetDays" class="form-control" value="xxxxxxx" hidden />
-            </div>
 
+
+            </div>
+            <div class="col-2">
+                <span class="text-danger text-right" asp-validation-for="MeetDays"></span>
+            </div>
         </div>
+        <input id="InputMeetDays" type="text" asp-for="MeetDays" name="MeetDays" class="form-control" value="xxxxxxx" hidden />
 
 
         <div class="form-group row">
@@ -144,7 +158,7 @@
                 <label asp-for="StartTime" class="control-label mb-0">Start Time</label>
             </div>
             <div class="col-sm-10">
-                <input type="time" asp-for="StartTime" name="StartTime" class="form-control" required />
+                <input id="inStartTime" type="time" asp-for="StartTime" name="StartTime" class="form-control" required />
                 <span class="text-danger" asp-validation-for="StartTime"></span>
             </div>
         </div>
@@ -154,7 +168,7 @@
                 <label asp-for="EndTime" class="control-label mb-0">End Time</label>
             </div>
             <div class="col-sm-10">
-                <input type="time" asp-for="EndTime" name="EndTime" class="form-control" required />
+                <input id="inEndTime" type="time" asp-for="EndTime" name="EndTime" class="form-control" required />
                 <span class="text-danger" asp-validation-for="EndTime"></span>
             </div>
         </div>
@@ -210,6 +224,7 @@
         Friday.style = ButtonOff;
         Saturday.style = ButtonOff;
         Sunday.style = ButtonOff;
+        ClearCreateFields();
     };
 
     //toggle input string and visual states
@@ -274,8 +289,10 @@
     function ToggleView(val, option) {
         switch (val) {
             case 0:
+                ClearCreateFields();
                 viewClass.style.setProperty("display", "block");
                 createClass.style.setProperty("display", "none");
+                
                 break;
 
             case 1:
@@ -290,5 +307,47 @@
             case 3:
                 break;
         }
+    }
+
+    function ClearCreateFields() {
+        document.getElementById("inClassNumber").value = null;
+        document.getElementById("inClassTitle").value = null;
+        document.getElementById("inDescription").value = null;
+        document.getElementById("inLocation").value = null;
+        document.getElementById("inCredits").value = null;
+        document.getElementById("inCapacity").value = null;
+        document.getElementById("inStartTime").value = null;
+        document.getElementById("inEndTime").value = null;
+
+        if (stSun.on) {
+            ToggleColor(stSun, Sunday);
+            UpdateDays(0);
+        }
+        if (stMon.on) {
+            ToggleColor(stMon, Monday);
+            UpdateDays(1);
+        }
+        if (stTue.on) {
+            ToggleColor(stTue, Tuesday);
+            UpdateDays(2);
+        }
+        if (stWed.on) {
+            ToggleColor(stWed, Wednesday);
+            UpdateDays(3);
+        }
+        if (stThu.on) {
+            ToggleColor(stThu, Thursday);
+            UpdateDays(4);
+        }
+        if (stFri.on) {
+            ToggleColor(stFri, Friday);
+            UpdateDays(5);
+        }
+        if (stSat.on) {
+            ToggleColor(stSat, Saturday);
+            UpdateDays(6);
+        }
+ 
+
     }
 </script>

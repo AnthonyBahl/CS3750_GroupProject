@@ -91,7 +91,14 @@ namespace cs3750LMS.Controllers
             }
 
             //set courses object, and success for next pass
-            session.Success = success;
+            if (success)
+            {
+                session.ClassState = 0;
+            }
+            else
+            {
+                session.ClassState = 1;
+            }
             Courses courses = new Courses
             {
                 CourseList = _context.Courses.Where(x => x.InstructorID == userFound.UserId).ToList()
