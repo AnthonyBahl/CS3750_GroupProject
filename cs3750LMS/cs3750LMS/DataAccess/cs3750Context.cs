@@ -116,6 +116,11 @@ namespace cs3750LMS.Models
                     .HasMaxLength(255)
                     .IsUnicode(false)
                     .HasColumnName("Twitter");
+
+                entity.Property(e => e.Bio)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("Bio");
             });
 
             modelBuilder.Entity<Link>(entity =>
