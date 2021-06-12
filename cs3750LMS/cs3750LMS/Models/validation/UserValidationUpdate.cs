@@ -55,20 +55,25 @@ namespace cs3750LMS.Models
         public List<Link> UserLinks { get; set; }
 
         //[RegularExpression(@"^[http]", ErrorMessage = "Invalid url")]
+        [StringLength(255, ErrorMessage = "Maximum length of 255 characters")]
         public string gitHubLink { get; set; }
 
         //[RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
+        [StringLength(255, ErrorMessage = "Maximum length of 255 characters")]
         public string TwitterLink { get; set; }
 
         //[RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
+        [StringLength(255, ErrorMessage = "Maximum length of 255 characters")]
         public string InstagramLink { get; set; }
 
         //[RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
+        [StringLength(255, ErrorMessage = "Maximum length of 255 characters")]
         public string FacebookLink { get; set; }
 
         //[RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
+        [StringLength(255, ErrorMessage = "Maximum length of 255 characters")]
         public string LinkedInLink { get; set; }
-
+        [StringLength(255, ErrorMessage = "Maximum length of 255 characters")]
         public string Bio { get; set; }
     }
 }
