@@ -68,5 +68,7 @@ namespace cs3750LMS.Models
 
         //[RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
         public string LinkedInLink { get; set; }
+
+        public string Bio { get; set; }
     }
 }

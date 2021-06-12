@@ -27,5 +27,6 @@ namespace cs3750LMS.Models
         public string Github { get; set; }
         public string  Twitter { get; set; }
         public int ClassState { get; set; }
+        public string Bio { get; set; }
     }
 }
