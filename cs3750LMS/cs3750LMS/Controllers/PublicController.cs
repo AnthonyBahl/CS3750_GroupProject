@@ -140,7 +140,7 @@ namespace cs3750LMS.Controllers
                     users.Zip = testUser.Zip;
                     users.Phone = testUser.Phone;
                     users.LinkedIn = testUser.LinkedInLink;
-                    users.Github = testUser.gitHubLink;
+                    users.Github = testUser.GitHubLink;
                     users.Twitter = testUser.TwitterLink;
                     users.Bio = testUser.Bio;
 
