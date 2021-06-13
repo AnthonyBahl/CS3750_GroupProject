@@ -54,19 +54,19 @@ namespace cs3750LMS.Models
 
         public List<Link> UserLinks { get; set; }
 
-        //[RegularExpression(@"^[http]", ErrorMessage = "Invalid url")]
-        public string gitHubLink { get; set; }
+        [RegularExpression(@"(?i)^(http\:\/\/|https\:\/\/)?(github\.com\/)[a-z0-9][a-z0-9\-]*$", ErrorMessage = "Invalid url")]
+        public string GitHubLink { get; set; }
 
-        //[RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
+        [RegularExpression(@"(?i)^(http\:\/\/|https\:\/\/)?(twitter\.com\/)[a-z0-9][a-z0-9\-]*$", ErrorMessage = "Invalid url")]
         public string TwitterLink { get; set; }
 
-        //[RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
+        [RegularExpression(@"(?i)^(http\:\/\/|https\:\/\/)?(instagram\.com\/)[a-z0-9][a-z0-9\-]*$", ErrorMessage = "Invalid url")]
         public string InstagramLink { get; set; }
 
-        //[RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
+        [RegularExpression(@"(?i)^(http\:\/\/|https\:\/\/)?(facebook\.com\/)[a-z0-9][a-z0-9\-]*$", ErrorMessage = "Invalid url")]
         public string FacebookLink { get; set; }
 
-        //[RegularExpression(@"^(http\:\/\/|https\:\/\/)?([a - z0 - 9][a - z0 - 9\-]*\.)+[a-z0-9] [a-z0-9\-]*$@i", ErrorMessage = "Invalid url")]
+        [RegularExpression(@"(?i)^(http\:\/\/|https\:\/\/)?(linkedin\.com\/)[a-z0-9][a-z0-9\-]*$", ErrorMessage = "Invalid url")]
         public string LinkedInLink { get; set; }
     }
 }
