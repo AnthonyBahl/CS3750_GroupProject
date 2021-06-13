@@ -39,10 +39,25 @@ namespace cs3750LMS.Controllers
                         EnrollmentList = _context.Enrollments.Where(x => x.studentID == userFound.UserId).ToList()
                     };
 
+                    Instructors instructors = new Instructors
+                    {
+                        InstructorUsers = _context.Users.Where(x => x.AccountType == 1).ToList(),
+                        InstructorList = new List<Instructor>()
+                    };
+
+                    for (int i = 0; i < instructors.InstructorUsers.Count; i++)
+                    {
+                        Instructor newInstructor = new Instructor();
+                        newInstructor.UserId = instructors.InstructorUsers[i].UserId;
+                        newInstructor.FirstName = instructors.InstructorUsers[i].FirstName;
+                        newInstructor.LastName = instructors.InstructorUsers[i].LastName;
+                        instructors.InstructorList.Add(newInstructor);
+                    }
+
                     Courses courses = new Courses
                     {
                         CourseList = _context.Courses.ToList(),
-                        InstructorList = _context.Users.Where(x => x.AccountType == 1).ToList()
+                        CourseInstructors = instructors.InstructorList
                     };
 
                     Courses studentCourses = new Courses
@@ -112,11 +127,25 @@ namespace cs3750LMS.Controllers
             {
                 EnrollmentList = _context.Enrollments.Where(x => x.studentID == userFound.UserId).ToList()
             };
+            Instructors instructors = new Instructors
+            {
+                InstructorUsers = _context.Users.Where(x => x.AccountType == 1).ToList(),
+                InstructorList = new List<Instructor>()
+            };
+
+            for (int i = 0; i < instructors.InstructorUsers.Count; i++)
+            {
+                Instructor newInstructor = new Instructor();
+                newInstructor.UserId = instructors.InstructorUsers[i].UserId;
+                newInstructor.FirstName = instructors.InstructorUsers[i].FirstName;
+                newInstructor.LastName = instructors.InstructorUsers[i].LastName;
+                instructors.InstructorList.Add(newInstructor);
+            }
 
             Courses courses = new Courses
             {
                 CourseList = _context.Courses.ToList(),
-                InstructorList = _context.Users.Where(x => x.AccountType == 1).ToList()
+                CourseInstructors = instructors.InstructorList
             };
 
             Courses studentCourses = new Courses
