@@ -10,6 +10,7 @@ namespace cs3750LMS.Models
     {
         public List<Course> CourseList { get; set; }
         public List<String> InstructorNames { get; set; }
+        public List<User> InstructorList { get; set; }
 
         //By passingin the user list, will match from this objects course list
         // and will fill the instructor full names in order to match with this object's

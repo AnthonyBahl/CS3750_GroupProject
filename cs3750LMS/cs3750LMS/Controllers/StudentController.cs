@@ -41,7 +41,8 @@ namespace cs3750LMS.Controllers
 
                     Courses courses = new Courses
                     {
-                        CourseList = _context.Courses.ToList()
+                        CourseList = _context.Courses.ToList(),
+                        InstructorList = _context.Users.Where(x => x.AccountType == 1).ToList()
                     };
 
                     Courses studentCourses = new Courses
@@ -61,7 +62,6 @@ namespace cs3750LMS.Controllers
                     }
 
                     ViewData["Message"] = session;
-                    ViewData["Enrollment"] = enrollment;
                     ViewData["Courses"] = courses;
                     ViewData["StudentCourses"] = studentCourses;
                     return View();
@@ -115,7 +115,8 @@ namespace cs3750LMS.Controllers
 
             Courses courses = new Courses
             {
-                CourseList = _context.Courses.ToList()
+                CourseList = _context.Courses.ToList(),
+                InstructorList = _context.Users.Where(x => x.AccountType == 1).ToList()
             };
 
             Courses studentCourses = new Courses
@@ -135,7 +136,6 @@ namespace cs3750LMS.Controllers
             }
 
             ViewData["Message"] = session;
-            ViewData["Enrollment"] = enrollment;
             ViewData["Courses"] = courses;
             ViewData["StudentCourses"] = studentCourses;
             return View("~/Views/Student/Register.cshtml");
