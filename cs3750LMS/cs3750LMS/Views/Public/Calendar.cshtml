@@ -1,6 +1,8 @@
 ﻿@{
     ViewBag.Title = "Calendar";
     String _currentDate = DateTime.Now.ToString("yyyy-MM-dd");
+    UserSession user = (UserSession)ViewData["Message"];
+    Courses userCourses = (Courses)ViewData["userCourses"];
 }
 @*
     Things to do:
@@ -22,63 +24,32 @@
                 selectable: true,
                 businessHours: true,
                 dayMaxEvents: true, // allow "more" link when too many events
-                events: [
-                    {
-                        title: 'All Day Event',
-                        start: '2020-09-01'
-                    },
-                    {
-                        title: 'Long Event',
-                        start: '2021-06-07',
-                        end: '2021-06-10'
-                    },
-                    {
-                        groupId: 999,
-                        title: 'Repeating Event',
-                        start: '2021-06-09T16:00:00'
-                    },
-                    {
-                        groupId: 999,
-                        title: 'Repeating Event',
-                        start: '2021-06-16T16:00:00'
-                    },
-                    {
-                        title: 'Conference',
-                        start: '2021-06-11',
-                        end: '2021-06-13'
-                    },
-                    {
-                        title: 'Meeting',
-                        start: '2021-06-12T10:30:00',
-                        end: '2021-06-12T12:30:00'
-                    },
-                    {
-                        title: 'Lunch',
-                        start: '2021-06-12T12:00:00'
-                    },
-                    {
-                        title: 'Meeting',
-                        start: '2021-06-12T14:30:00'
-                    },
-                    {
-                        title: 'Happy Hour',
-                        start: '2021-06-12T17:30:00'
-                    },
-                    {
-                        title: 'Dinner',
-                        start: '2021-06-12T20:00:00'
-                    },
-                    {
-                        title: 'Birthday Party',
-                        start: '2021-06-13T07:00:00'
-                    },
-                    {
-                        title: 'Click for Google',
-                        url: 'http://google.com/',
-                        start: '2021-06-28'
-                    }
-                ]
+                events: []
             });
+
+            let _userCourses = @userCourses;
+            for (var i = 0; i < _userCourses.CourseList.Count; i++) {
+                let arrDaysOfWeek = [];
+                let sDays = _userCourses.CourseList[i].daysOfWeek;
+
+                for (let j = 0; j < 7; j++) {
+                    if (sDays[i] == 'y') {
+                        arrDaysOfWeek.add = i;
+                    }
+                }
+
+                calendar.events.add(
+                    {
+                        groupId: _userCourses.CourseList[i].CourseID.ToString(),        // Probably the Class name
+                        title: _userCourses.CourseList[i].ClassTitle,      // Class Name
+                        startRecur: '2021-06-01',
+                        endRecur: '2021-08-31',
+                        daysOfWeek: arrDaysOfWeek, // these recurrent events move separately
+                        startTime: _userCourses.CourseList[i].startTime.ToString(),
+                        endTime: _userCourses.CourseList[i].endTime.ToString(),
+                        color: _userCourses.CourseList[i].color
+                    });
+            }
 
             calendar.render();
         });
