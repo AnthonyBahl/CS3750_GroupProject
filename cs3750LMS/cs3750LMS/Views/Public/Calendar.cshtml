@@ -27,14 +27,14 @@
                 events: []
             });
 
-            let _userCourses = @userCourses;
+            var _userCourses = @userCourses;
             for (var i = 0; i < _userCourses.CourseList.Count; i++) {
                 let arrDaysOfWeek = [];
                 let sDays = _userCourses.CourseList[i].daysOfWeek;
 
                 for (let j = 0; j < 7; j++) {
-                    if (sDays[i] == 'y') {
-                        arrDaysOfWeek.add = i;
+                    if (sDays[j] == 'y') {
+                        arrDaysOfWeek.add = j;
                     }
                 }
 
