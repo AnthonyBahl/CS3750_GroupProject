@@ -1,5 +1,6 @@
 ﻿using cs3750LMS.DataAccess;
 using cs3750LMS.Models;
+using cs3750LMS.Models.entites;
 using cs3750LMS.Models.general;
 using cs3750LMS.Models.validation;
 using Microsoft.AspNetCore.Hosting;
@@ -38,6 +39,45 @@ namespace cs3750LMS.Controllers
                     Birthday = userFound.Birthday,
                     AccountType = userFound.AccountType
                 };
+
+                // Get Courses from Database
+                Courses courses = new Courses
+                {
+                    CourseList = _context.Courses.ToList()
+                };
+
+                Courses userCourses = new Courses
+                {
+                    CourseList = new List<Course>()
+                };
+
+                // If the user is a student
+                if (session.AccountType == 0)
+                {
+
+                    //set enrollment object for next pass
+                    Enrollments enrollment = new Enrollments
+                    {
+                        EnrollmentList = _context.Enrollments.Where(x => x.studentID == userFound.UserId).ToList()
+                    };
+
+                    // Populating the user course list
+                    for (int i = 0; i < courses.CourseList.Count; i++)
+                    {
+                        for (int j = 0; j < enrollment.EnrollmentList.Count; j++)
+                        {
+                            if (courses.CourseList[i].CourseID == enrollment.EnrollmentList[j].courseID)
+                            {
+                                userCourses.CourseList.Add(courses.CourseList[i]);
+                            }
+                        }
+                    }
+
+                }
+
+                ViewData["Message"] = session;
+                ViewData["Courses"] = courses;
+                ViewData["StudentCourses"] = userCourses;
                 ViewData["Message"] = session;
                 return View();
             }
