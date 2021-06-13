@@ -25,6 +25,7 @@ namespace cs3750LMS.Models
         public virtual DbSet<State> States { get; set; }
         public virtual DbSet<Course> Courses { get; set; }
         public virtual DbSet<Department> Departments { get; set; }
+        public virtual DbSet<Enrollment> Enrollments { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -116,6 +117,11 @@ namespace cs3750LMS.Models
                     .HasMaxLength(255)
                     .IsUnicode(false)
                     .HasColumnName("Twitter");
+
+                entity.Property(e => e.Bio)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("Bio");
             });
 
             modelBuilder.Entity<Link>(entity =>
@@ -192,8 +198,17 @@ namespace cs3750LMS.Models
                 .HasColumnName("DeptCode");
             });
 
+            modelBuilder.Entity<Enrollment>(entity =>
+            {
+                entity.Property(e => e.enrollmentID).HasColumnName("enrollmentID");
 
-                OnModelCreatingPartial(modelBuilder);
+                entity.Property(e => e.studentID).HasColumnName("studentID");
+
+                entity.Property(e => e.courseID).HasColumnName("courseID");
+            });
+
+
+            OnModelCreatingPartial(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

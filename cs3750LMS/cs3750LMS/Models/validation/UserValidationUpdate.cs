@@ -68,5 +68,8 @@ namespace cs3750LMS.Models
 
         [RegularExpression(@"(?i)^(http\:\/\/|https\:\/\/)?(linkedin\.com\/)[a-z0-9][a-z0-9\-]*$", ErrorMessage = "Invalid url")]
         public string LinkedInLink { get; set; }
+      
+        [StringLength(255, ErrorMessage = "Maximum length of 255 characters")]
+        public string Bio { get; set; }
     }
 }

@@ -66,7 +66,8 @@ namespace cs3750LMS.Controllers
                     Phone = userFound.Phone,
                     LinkedIn = userFound.LinkedIn,
                     Github = userFound.Github,
-                    Twitter = userFound.Twitter
+                    Twitter = userFound.Twitter,
+                    Bio = userFound.Bio
 
                 };
                 int userLinkCount = _context.Links.Count(z => z.UserID == userFound.UserId);
@@ -86,7 +87,7 @@ namespace cs3750LMS.Controllers
         //updates user profile to database from the profile page
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateProfile([Bind("ProfileImage,Email,FirstName,LastName,Birthday,ProfileImage,Address1,Address2,City,State,Zip,Phone,gitHubLink,TwitterLink,LinkedInLink")] UserValidationUpdate testUser)
+        public async Task<IActionResult> UpdateProfile([Bind("ProfileImage,Email,FirstName,LastName,Birthday,ProfileImage,Address1,Address2,City,State,Zip,Phone,gitHubLink,TwitterLink,LinkedInLink,Bio")] UserValidationUpdate testUser)
         {
             bool updateSuccess = false;
             if (ModelState.IsValid)
@@ -141,6 +142,7 @@ namespace cs3750LMS.Controllers
                     users.LinkedIn = testUser.LinkedInLink;
                     users.Github = testUser.GitHubLink;
                     users.Twitter = testUser.TwitterLink;
+                    users.Bio = testUser.Bio;
 
                     await _context.SaveChangesAsync();
                     updateSuccess = true;
@@ -164,7 +166,8 @@ namespace cs3750LMS.Controllers
                 IsUpdate = updateSuccess,
                 LinkedIn = userFound.LinkedIn,
                 Github = userFound.Github,
-                Twitter = userFound.Twitter
+                Twitter = userFound.Twitter,
+                Bio = userFound.Bio
             };
 
             int userLinkCount = _context.Links.Count(z => z.UserID == userFound.UserId);
