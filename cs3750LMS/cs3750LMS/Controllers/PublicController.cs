@@ -74,10 +74,20 @@ namespace cs3750LMS.Controllers
                     }
 
                 }
+                // If the user is an instructor
+                else
+                {
+                    // Populating the user course list
+                    for (int i = 0; i < courses.CourseList.Count; i++)
+                    {
+                        if (courses.CourseList[i].InstructorID == session.UserId)
+                        {
+                            userCourses.CourseList.Add(courses.CourseList[i]);
+                        }
+                    }
+                }
 
-                ViewData["Message"] = session;
-                ViewData["Courses"] = courses;
-                ViewData["StudentCourses"] = userCourses;
+                ViewData["UserCourses"] = userCourses;
                 ViewData["Message"] = session;
                 return View();
             }
