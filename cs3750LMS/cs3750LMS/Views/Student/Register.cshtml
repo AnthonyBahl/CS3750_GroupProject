@@ -19,8 +19,7 @@
                 <th scope="col">Course Title</th>
                 <th scope="col">Instructor</th>
                 <th scope="col">Days</th>
-                <th scope="col">Start Time</th>
-                <th scope="col">End Time</th>
+                <th scope="col">Time</th>
                 <th scope="col">Location</th>
                 <th scope="col">Action</th>
             </tr>
@@ -38,9 +37,8 @@
                         <span>@courses.CourseInstructors.Find(x => x.UserId == courses.CourseList[i].InstructorID).LastName</span>
                     }
                 </td>
-                <td>@courses.ParseDays(i)</td>
-                <td>@courses.CourseList[i].StartTime.ToString()</td>
-                <td>@courses.CourseList[i].EndTime.ToString()</td>
+                <td>@courses.ParseDaysShort(i)</td>
+                <td>@courses.CourseList[i].StartTime.ToString() - @courses.CourseList[i].EndTime.ToString()</td>
                 <td>@courses.CourseList[i].Location</td>
                 <td>
                     @if (studentCourses.CourseList.Count != 0)
