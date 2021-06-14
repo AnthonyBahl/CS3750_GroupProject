@@ -33,6 +33,7 @@ namespace cs3750LMS.Controllers
                 User userFound = _context.Users.Where(u => u.Email == HttpContext.Session.Get<string>("user")).Single();
                 UserSession session = new UserSession
                 {
+                    UserId = userFound.UserId,
                     Email = userFound.Email,
                     FirstName = userFound.FirstName,
                     LastName = userFound.LastName,
@@ -75,7 +76,7 @@ namespace cs3750LMS.Controllers
 
                 }
                 // If the user is an instructor
-                else
+                else if (session.AccountType == 1)
                 {
                     // Populating the user course list
                     for (int i = 0; i < courses.CourseList.Count; i++)
