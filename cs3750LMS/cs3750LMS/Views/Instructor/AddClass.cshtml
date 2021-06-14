@@ -23,28 +23,39 @@
 <!--View Classes Section-->
 <div id="ClassView" style="display:@viewState">
     <h1 class="display-2 text-center mt-3">@ViewData["Title"]</h1>
-    @for (int i = 0; i < courses.CourseList.Count; i++)
-    {
-
-        <div class="col-12">
-            <a href="#" class="col-sm-8">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">@courses.CourseList[i].ClassTitle </h5>
-                        <h6 class="card-subtitle mb-2 text-muted">@courses.ParseDays(i) <br />StartTime: @courses.CourseList[i].StartTime.ToString() EndTime: @courses.CourseList[i].EndTime.ToString()</h6>
-                        <p class="card-text">Location: @courses.CourseList[i].Location <br /> @courses.CourseList[i].ClassNumber</p>
-                    </div>
-                </div>
-            </a>
-            <div class="col-sm-4" style="float:right">
-                <button type="button" class=" btn-primary mx-2">Edit</button>
-                <button type="button" class=" btn-primary mx-2">Delete</button>
-            </div>
-        </div>
-
-
-
-    }
+    <table class="table table-hover bg-white mt-5">
+        <thead>
+            <tr>
+                <th scope="col">Course Number</th>
+                <th scope="col">Course Title</th>
+                <th scope="col">Meeting Days</th>
+                <th scope="col">Start Time</th>
+                <th scope="col">End Time</th>
+                <th scope="col">Location</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < courses.CourseList.Count; i++)
+            {
+            <tr>
+                <th scope="row">@courses.CourseList[i].ClassNumber</th>
+                <td>@courses.CourseList[i].ClassTitle</td>
+                <td>@courses.ParseDays(i)</td>
+                <td>@courses.CourseList[i].StartTime.ToString()</td>
+                <td>@courses.CourseList[i].EndTime.ToString()</td>
+                <td>@courses.CourseList[i].Location</td>
+                <td>
+                    <button type="button">Edit</button>
+                </td>
+                <td>
+                    <button type="button">Delete</button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
     <br />
     <div class="text-center mt-3">
         <button type="button" class=" btn-primary mx-2" onclick="ToggleView(1,1)">Add Class</button>
