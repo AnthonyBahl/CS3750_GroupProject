@@ -1,5 +1,6 @@
 ﻿using cs3750LMS.DataAccess;
 using cs3750LMS.Models;
+using cs3750LMS.Models.entites;
 using cs3750LMS.Models.general;
 using cs3750LMS.Models.validation;
 using Microsoft.AspNetCore.Hosting;
@@ -32,12 +33,62 @@ namespace cs3750LMS.Controllers
                 User userFound = _context.Users.Where(u => u.Email == HttpContext.Session.Get<string>("user")).Single();
                 UserSession session = new UserSession
                 {
+                    UserId = userFound.UserId,
                     Email = userFound.Email,
                     FirstName = userFound.FirstName,
                     LastName = userFound.LastName,
                     Birthday = userFound.Birthday,
                     AccountType = userFound.AccountType
                 };
+
+                // Get Courses from Database
+                Courses courses = new Courses
+                {
+                    CourseList = _context.Courses.ToList()
+                };
+
+                Courses userCourses = new Courses
+                {
+                    CourseList = new List<Course>()
+                };
+
+                // If the user is a student
+                if (session.AccountType == 0)
+                {
+
+                    //set enrollment object for next pass
+                    Enrollments enrollment = new Enrollments
+                    {
+                        EnrollmentList = _context.Enrollments.Where(x => x.studentID == userFound.UserId).ToList()
+                    };
+
+                    // Populating the user course list
+                    for (int i = 0; i < courses.CourseList.Count; i++)
+                    {
+                        for (int j = 0; j < enrollment.EnrollmentList.Count; j++)
+                        {
+                            if (courses.CourseList[i].CourseID == enrollment.EnrollmentList[j].courseID)
+                            {
+                                userCourses.CourseList.Add(courses.CourseList[i]);
+                            }
+                        }
+                    }
+
+                }
+                // If the user is an instructor
+                else if (session.AccountType == 1)
+                {
+                    // Populating the user course list
+                    for (int i = 0; i < courses.CourseList.Count; i++)
+                    {
+                        if (courses.CourseList[i].InstructorID == session.UserId)
+                        {
+                            userCourses.CourseList.Add(courses.CourseList[i]);
+                        }
+                    }
+                }
+
+                ViewData["UserCourses"] = userCourses;
                 ViewData["Message"] = session;
                 return View();
             }
@@ -66,7 +117,8 @@ namespace cs3750LMS.Controllers
                     Phone = userFound.Phone,
                     LinkedIn = userFound.LinkedIn,
                     Github = userFound.Github,
-                    Twitter = userFound.Twitter
+                    Twitter = userFound.Twitter,
+                    Bio = userFound.Bio
 
                 };
                 int userLinkCount = _context.Links.Count(z => z.UserID == userFound.UserId);
@@ -86,7 +138,7 @@ namespace cs3750LMS.Controllers
         //updates user profile to database from the profile page
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateProfile([Bind("ProfileImage,Email,FirstName,LastName,Birthday,ProfileImage,Address1,Address2,City,State,Zip,Phone,gitHubLink,TwitterLink,LinkedInLink")] UserValidationUpdate testUser)
+        public async Task<IActionResult> UpdateProfile([Bind("ProfileImage,Email,FirstName,LastName,Birthday,ProfileImage,Address1,Address2,City,State,Zip,Phone,gitHubLink,TwitterLink,LinkedInLink,Bio")] UserValidationUpdate testUser)
         {
             bool updateSuccess = false;
             if (ModelState.IsValid)
@@ -139,8 +191,9 @@ namespace cs3750LMS.Controllers
                     users.Zip = testUser.Zip;
                     users.Phone = testUser.Phone;
                     users.LinkedIn = testUser.LinkedInLink;
-                    users.Github = testUser.gitHubLink;
+                    users.Github = testUser.GitHubLink;
                     users.Twitter = testUser.TwitterLink;
+                    users.Bio = testUser.Bio;
 
                     await _context.SaveChangesAsync();
                     updateSuccess = true;
@@ -164,7 +217,8 @@ namespace cs3750LMS.Controllers
                 IsUpdate = updateSuccess,
                 LinkedIn = userFound.LinkedIn,
                 Github = userFound.Github,
-                Twitter = userFound.Twitter
+                Twitter = userFound.Twitter,
+                Bio = userFound.Bio
             };
 
             int userLinkCount = _context.Links.Count(z => z.UserID == userFound.UserId);
