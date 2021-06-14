@@ -12,68 +12,75 @@
 <!--View Registration Section-->
 <div id="RegistrationView">
     <h1 class="display-2 text-center mt-3">@ViewData["Title"]</h1>
-    @for (int i = 0; i < courses.CourseList.Count; i++)
-    {
-        <div class="col-12">
-            <a href="#" class="col-sm-8">
-                <div class="card">
-                    <div class="card-body row">
-                        <div class="col-sm-8">
-                            <h5 class="card-title">@courses.CourseList[i].ClassTitle </h5>
-                            <h6 class="card-subtitle mb-2 text-muted">@courses.ParseDays(i) <br />StartTime: @courses.CourseList[i].StartTime.ToString() EndTime: @courses.CourseList[i].EndTime.ToString()</h6>
-                            <p class="card-text">
-                                Instructor:
-                                @if (courses.CourseInstructors.Any(x => x.UserId == courses.CourseList[i].InstructorID))
-                                {
-                                    <span>@courses.CourseInstructors.Find(x => x.UserId == courses.CourseList[i].InstructorID).FirstName</span>
-                                    <span>@courses.CourseInstructors.Find(x => x.UserId == courses.CourseList[i].InstructorID).LastName</span>
-                                }
-                                <br />
-                                Location: @courses.CourseList[i].Location <br /> @courses.CourseList[i].ClassNumber
-                            </p>
-                        </div>
-
-                        <div class="col-sm-4 row align-items-end justify-content-end">
-                            @if (studentCourses.CourseList.Count != 0)
-                            {
-                                @if (studentCourses.CourseList.Any(x => x.CourseID == courses.CourseList[i].CourseID))
-                                {
-                                    <form>
-                                        <div style="display:none">
-                                            <input type="number" name="studentID" value=@user.UserId />
-                                            <input type="number" name="courseID" value=@courses.CourseList[i].CourseID />
-                                        </div>
-                                        <button type="submit" class=" btn-danger mx-2">Drop</button>
-                                    </form>
-                                }
-                                else
-                                {
-                                    <form asp-action="Register" method="post">
-                                        <div style="display:none">
-                                            <input type="number" name="studentID" value=@user.UserId />
-                                            <input type="number" name="courseID" value=@courses.CourseList[i].CourseID />
-                                            <p>This is from the inner form.</p>
-                                        </div>
-                                        <button type="submit" class=" btn-success mx-2">Register</button>
-                                    </form>
-                                }
-                            }
-                            else if (studentCourses.CourseList.Count == 0)
-                            {
-                                <form asp-action="Register" method="post">
-                                    <div style="display:none">
-                                        <input type="number" name="studentID" value=@user.UserId />
-                                        <input type="number" name="courseID" value=@courses.CourseList[i].CourseID />
-                                        <p>This is from the outer form.</p>
-                                    </div>
-                                    <button type="submit" class=" btn-success mx-2">Register</button>
-                                </form>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
-    }
-</div>
+    <table class="table table-hover bg-white mt-5">
+        <thead>
+            <tr>
+                <th scope="col">Course Number</th>
+                <th scope="col">Course Title</th>
+                <th scope="col">Instructor</th>
+                <th scope="col">Days</th>
+                <th scope="col">Start Time</th>
+                <th scope="col">End Time</th>
+                <th scope="col">Location</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < courses.CourseList.Count; i++)
+            {
+            <tr>
+                <th scope="row">@courses.CourseList[i].ClassNumber</th>
+                <td>@courses.CourseList[i].ClassTitle</td>
+                <td>
+                    @if (courses.CourseInstructors.Any(x => x.UserId == courses.CourseList[i].InstructorID))
+                    {
+                        <span>@courses.CourseInstructors.Find(x => x.UserId == courses.CourseList[i].InstructorID).FirstName</span>
+                        <span>@courses.CourseInstructors.Find(x => x.UserId == courses.CourseList[i].InstructorID).LastName</span>
+                    }
+                </td>
+                <td>@courses.ParseDays(i)</td>
+                <td>@courses.CourseList[i].StartTime.ToString()</td>
+                <td>@courses.CourseList[i].EndTime.ToString()</td>
+                <td>@courses.CourseList[i].Location</td>
+                <td>
+                    @if (studentCourses.CourseList.Count != 0)
+                    {
+                        @if (studentCourses.CourseList.Any(x => x.CourseID == courses.CourseList[i].CourseID))
+                        {
+                            <form>
+                                <div style="display:none">
+                                    <input type="number" name="studentID" value=@user.UserId />
+                                    <input type="number" name="courseID" value=@courses.CourseList[i].CourseID />
+                                </div>
+                                <button type="submit" class=" btn-danger mx-2">Drop</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-action="Register" method="post">
+                                <div style="display:none">
+                                    <input type="number" name="studentID" value=@user.UserId />
+                                    <input type="number" name="courseID" value=@courses.CourseList[i].CourseID />
+                                    <p>This is from the inner form.</p>
+                                </div>
+                                <button type="submit" class=" btn-success mx-2">Register</button>
+                            </form>
+                        }
+                    }
+                    else if (studentCourses.CourseList.Count == 0)
+                    {
+                        <form asp-action="Register" method="post">
+                            <div style="display:none">
+                                <input type="number" name="studentID" value=@user.UserId />
+                                <input type="number" name="courseID" value=@courses.CourseList[i].CourseID />
+                                <p>This is from the outer form.</p>
+                            </div>
+                            <button type="submit" class=" btn-success mx-2">Register</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
 <!--End View Registration Section-->

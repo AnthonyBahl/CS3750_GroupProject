@@ -32,6 +32,6 @@ namespace cs3750LMS.Models.entites
         
         public TimeSpan EndTime { get; set; }
 
-        public String color { get; set; }
+        public String Color { get; set; }
     }
 }
