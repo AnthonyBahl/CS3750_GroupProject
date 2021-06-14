@@ -1,5 +1,7 @@
 ﻿using cs3750LMS.DataAccess;
 using cs3750LMS.Models;
+using cs3750LMS.Models.entites;
+using cs3750LMS.Models.general;
 using cs3750LMS.Models.validation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +38,60 @@ namespace cs3750LMS.Controllers
                     Birthday = userFound.Birthday,
                     AccountType = userFound.AccountType
                 };
+
+//-----Added Code-----
+                // Get Courses from Database
+                Courses courses = new Courses
+                {
+                    CourseList = _context.Courses.ToList()
+                };
+
+                Courses userCourses = new Courses
+                {
+                    CourseList = new List<Course>()
+                };
+
+                // If the user is a student
+                if (session.AccountType == 0)
+                {
+
+                    //set enrollment object for next pass
+                    Enrollments enrollment = new Enrollments
+                    {
+                        EnrollmentList = _context.Enrollments.Where(x => x.studentID == userFound.UserId).ToList()
+                    };
+
+                    // Populating the user course list
+                    for (int i = 0; i < courses.CourseList.Count; i++)
+                    {
+                        for (int j = 0; j < enrollment.EnrollmentList.Count; j++)
+                        {
+                            if (courses.CourseList[i].CourseID == enrollment.EnrollmentList[j].courseID)
+                            {
+                                userCourses.CourseList.Add(courses.CourseList[i]);
+                            }
+                        }
+                    }
+
+                }
+                // If the user is an instructor
+                else if (session.AccountType == 1)
+                {
+                    // Populating the user course list
+                    for (int i = 0; i < courses.CourseList.Count; i++)
+                    {
+                        if (courses.CourseList[i].InstructorID == session.UserId)  //If the course is taught by the instructor
+                        {
+                            userCourses.CourseList.Add(courses.CourseList[i]);  //add it to the list. 
+                        }
+                    }
+                }
+
+
+
+                ViewData["UserCourses"] = userCourses;
+ //-----ADDED CODE END
+
                 ViewData["Message"] = session;
                 return View();
             }

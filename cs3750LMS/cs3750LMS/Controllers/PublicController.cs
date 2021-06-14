@@ -135,6 +135,9 @@ namespace cs3750LMS.Controllers
             return View("~/Views/Home/Login.cshtml");
         }
 
+
+
+
         //updates user profile to database from the profile page
         [HttpPost]
         [ValidateAntiForgeryToken]
