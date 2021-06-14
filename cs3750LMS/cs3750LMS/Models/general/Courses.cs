@@ -49,5 +49,27 @@ namespace cs3750LMS.Models
 
             return days;
         }
+
+        public string ParseDaysShort(int index)
+        {
+            string days = "";
+            Course selected = CourseList[index];
+            if (selected.MeetDays[0] == 'y')
+                days += "Su";
+            if (selected.MeetDays[1] == 'y')
+                days += "M";
+            if (selected.MeetDays[2] == 'y')
+                days += "Tu";
+            if (selected.MeetDays[3] == 'y')
+                days += "W";
+            if (selected.MeetDays[4] == 'y')
+                days += "Th";
+            if (selected.MeetDays[5] == 'y')
+                days += "F";
+            if (selected.MeetDays[6] == 'y')
+                days += "Sa";
+
+            return days;
+        }
     }
 }
