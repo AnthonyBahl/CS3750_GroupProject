@@ -4,29 +4,6 @@
     UserSession user = (UserSession)ViewData["Message"];
     Courses userCourses = (Courses)ViewData["userCourses"];
     ViewBag.userCourses = Newtonsoft.Json.JsonConvert.SerializeObject(userCourses);
-    //List<String> CourseIDList = new List<String>();
-    //List<String> ClassTitleList = new List<String>();
-    //List<String> DaysOfWeekList = new List<String>();
-    //List<String> startTimeList = new List<String>();
-    //List<String> colorList = new List<String>();
-    //int courseCount = userCourses.CourseList.Count;
-    //for (int i = 0; i < courseCount; i++)
-    //{
-    //    CourseIDList.Add(userCourses.CourseList[i].CourseID.ToString());
-    //    ClassTitleList.Add(userCourses.CourseList[i].ClassTitle);
-    //    DaysOfWeekList.Add(userCourses.CourseList[i].MeetDays);
-    //    startTimeList.Add(userCourses.CourseList[i].StartTime.ToString());
-    //    startTimeList.Add(userCourses.CourseList[i].EndTime.ToString());
-    //    startTimeList.Add(userCourses.CourseList[i].color);
-    //}
-
-    //ViewBag.CourseIDList = Newtonsoft.Json.JsonConvert.SerializeObject(CourseIDList);
-    //ViewBag.ClassTitleList = Newtonsoft.Json.JsonConvert.SerializeObject(ClassTitleList);
-    //ViewBag.DaysOfWeekList = Newtonsoft.Json.JsonConvert.SerializeObject(DaysOfWeekList);
-    //ViewBag.startTimeList = Newtonsoft.Json.JsonConvert.SerializeObject(startTimeList);
-    //ViewBag.colorList = Newtonsoft.Json.JsonConvert.SerializeObject(colorList);
-
-
 }
 @*
     Things to do:

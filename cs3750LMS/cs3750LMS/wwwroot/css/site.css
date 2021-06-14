@@ -5,7 +5,9 @@ for details on configuring this project to bundle and minify static web assets. 
     --dark-blue: #023F4D;
     --light-blue: #07B2D9;
     --indigo: #6610f2;
-    --purple: #6f42c1;
+    --purple: #4D00CB;
+    --dark-purple: #380091;
+    --light-purple #6200FF;
     --pink: #e83e8c;
     --red: #BF3C30;
     --dark-red: #802820;
@@ -13,8 +15,12 @@ for details on configuring this project to bundle and minify static web assets. 
     --orange: #D94B2B;
     --dark-orange: #99351F;
     --light-orange: #F7612A;
-    --yellow: #ffc107;
-    --green: #28a745;
+    --yellow: #F5CF47;
+    --dark-yellow: #E3B22B;
+    --light-yellow: #FFE074;
+    --green: #30BF70;
+    --dark-green: #20804B;
+    --light-green: #39E687;
     --teal: #03998F;
     --dark-teal: #024D48;
     --light-teal: #04C4B8;
@@ -42,6 +48,10 @@ for details on configuring this project to bundle and minify static web assets. 
 
 .bg-light {
     background-color: var(--light);
+}
+
+.bg-white {
+    background-color: var(--white);
 }
 
 .bg-dark {
