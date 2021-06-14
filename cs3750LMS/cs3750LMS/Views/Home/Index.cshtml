@@ -2,35 +2,19 @@
     ViewData["Title"] = "Home Page";
     UserSession show = (UserSession)ViewData["Message"];
  
-    Courses userCourses = (Courses)ViewData["userCourses"];
-  //  ViewBag.userCourses = Newtonsoft.Json.JsonConvert.SerializeObject(userCourses);
+    Courses userCourses = (Courses)ViewData["UserCourses"];
 
 }
-
-
-
 
 <div class="text-center">
     <h1 class="display-4">Welcome @show.FirstName @show.LastName</h1>
 </div>
 
-
-@if (show.AccountType == 0)
-{
-
-    //Student Dashboard Here
-
-
-}
-
-@if (show.AccountType == 1)
-{
-    //Instructor Dashboard Here.
-
     <div class="container">
         <div class="row">
 
-
+            @if (userCourses.CourseList != null)
+            {
             @for (int i = 0; i < userCourses.CourseList.Count; i++)
             {
                 <div class="col-4">
@@ -46,10 +30,7 @@
                 </div>
 
             }
+            }
 
         </div>
-
-
     </div>
-
-}

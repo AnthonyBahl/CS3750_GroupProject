@@ -39,58 +39,24 @@ namespace cs3750LMS.Controllers
                     AccountType = userFound.AccountType
                 };
 
-//-----Added Code-----
-                // Get Courses from Database
-                Courses courses = new Courses
-                {
-                    CourseList = _context.Courses.ToList()
-                };
+                //-----Added Code-----
+                Courses userCourses = new Courses();
 
-                Courses userCourses = new Courses
-                {
-                    CourseList = new List<Course>()
-                };
-
-                // If the user is a student
+                //Student
                 if (session.AccountType == 0)
                 {
-
-                    //set enrollment object for next pass
-                    Enrollments enrollment = new Enrollments
-                    {
-                        EnrollmentList = _context.Enrollments.Where(x => x.studentID == userFound.UserId).ToList()
-                    };
-
-                    // Populating the user course list
-                    for (int i = 0; i < courses.CourseList.Count; i++)
-                    {
-                        for (int j = 0; j < enrollment.EnrollmentList.Count; j++)
-                        {
-                            if (courses.CourseList[i].CourseID == enrollment.EnrollmentList[j].courseID)
-                            {
-                                userCourses.CourseList.Add(courses.CourseList[i]);
-                            }
-                        }
-                    }
-
+                    List<int> enrolled = _context.Enrollments.Where(y => y.studentID == userFound.UserId).Select(z=> z.courseID).ToList();
+                    userCourses.CourseList = _context.Courses.Where(x => enrolled.Contains(x.CourseID)).ToList();
                 }
-                // If the user is an instructor
-                else if (session.AccountType == 1)
+                //Instructor
+                if (session.AccountType == 1)
                 {
-                    // Populating the user course list
-                    for (int i = 0; i < courses.CourseList.Count; i++)
-                    {
-                        if (courses.CourseList[i].InstructorID == session.UserId)  //If the course is taught by the instructor
-                        {
-                            userCourses.CourseList.Add(courses.CourseList[i]);  //add it to the list. 
-                        }
-                    }
+                    userCourses.CourseList = _context.Courses.Where(x => x.InstructorID == userFound.UserId).ToList();
                 }
-
-
 
                 ViewData["UserCourses"] = userCourses;
- //-----ADDED CODE END
+
+                //-----End Added Code----
 
                 ViewData["Message"] = session;
                 return View();
@@ -147,6 +113,26 @@ namespace cs3750LMS.Controllers
 
                     ViewData["Message"] = session;
 
+                    //-----Added Code-----
+                    Courses userCourses = new Courses();
+
+                    int userIdent = _context.Users.Where(l => l.Email == testUser.Email).Select(r=>r.UserId).Single();
+
+                    //Student
+                    if (session.AccountType == 0)
+                    {
+                        List<int> enrolled = _context.Enrollments.Where(y => y.studentID == userIdent).Select(z => z.courseID).ToList();
+                        userCourses.CourseList = _context.Courses.Where(x => enrolled.Contains(x.CourseID)).ToList();
+                    }
+                    //Instructor
+                    if (session.AccountType == 1)
+                    {
+                        userCourses.CourseList = _context.Courses.Where(x => x.InstructorID == userIdent).ToList();
+                    }
+
+                    ViewData["UserCourses"] = userCourses;
+
+                    //-----End Added Code----
                     return View("~/Views/Home/Index.cshtml");
                 }
             }
@@ -187,6 +173,24 @@ namespace cs3750LMS.Controllers
                         AccountType = userFound.AccountType
                     };
                     ViewData["Message"] = session;
+                    //-----Added Code-----
+                    Courses userCourses = new Courses();
+
+                    //Student
+                    if (session.AccountType == 0)
+                    {
+                        List<int> enrolled = _context.Enrollments.Where(y => y.studentID == userFound.UserId).Select(z => z.courseID).ToList();
+                        userCourses.CourseList = _context.Courses.Where(x => enrolled.Contains(x.CourseID)).ToList();
+                    }
+                    //Instructor
+                    if (session.AccountType == 1)
+                    {
+                        userCourses.CourseList = _context.Courses.Where(x => x.InstructorID == userFound.UserId).ToList();
+                    }
+
+                    ViewData["UserCourses"] = userCourses;
+
+                    //-----End Added Code----
                     return View("~/Views/Home/Index.cshtml");
                 }
             }
