@@ -1,11 +1,11 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    Courses studentCourses = (Courses)ViewData["StudentCourses"];
 }
 <script src="https://js.stripe.com/v3/"></script>
-<form id="payment-form" asp-action="Payment" asp-controller="Student">
-    <div id="card-element"><!--Stripe.js injects the Card Element--></div>
+<!--<form id="payment-form" asp-action="Payment" asp-controller="Student">
+    <div id="card-element">-->
+<!--Stripe.js injects the Card Element-->
+<!--</div>
     <button id="submit">
         <div class="spinner hidden" id="spinner"></div>
         <span id="button-text">Pay now</span>
@@ -15,35 +15,77 @@
         Payment succeeded, see the result in your
         <a href="" target="_blank">Stripe dashboard.</a> Refresh the page to pay again.
     </p>
-</form>
+</form>-->
 
 <div class="container">
-    <form>
-        <h4>Payment</h4>
-        <div class="row">
-            <div class="col-md-6">
-                <label for="cc-name">Name on card</label>
-                <input type="text" class="form-control" id="cc-name" placeholder="" required>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="well col-md-12 col-xs-offset-1 col-sm-offset-1 col-md-offset-3">
+                    <div class="row">
+                        <div class="text-center">
+                            <h1>Receipt</h1>
+                        </div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Courses</th>
+                                    <th class="text-center">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    @if (studentCourses.CourseList != null)
+                                    {
+                                        @for (int i = 0; i < studentCourses.CourseList.Count; i++)
+                                        {
+                                            <tr>
+                                                <td class="col-md-9"><em>@studentCourses.CourseList[i].ClassTitle | @studentCourses.CourseList[i].ClassNumber</em></td>
+                                                <td class="col-md-1 text-center">$100</td>
+                                            </tr>
+                                        }
+                                    }
+                                <tr>
+                                    <td class="text-right"><h4><strong>Total: </strong></h4></td>
+                                    <td class="text-center text-danger"><h4><strong>$@(studentCourses.CourseList.Count * 100)</strong></h4></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <form>
+                <h4 class="text-center">Payment</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="cc-name">Name on card</label>
+                        <input type="text" class="form-control" id="cc-name" placeholder="" required>
+                        <br />
+                        <small class="text-muted">Full name as displayed on card</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="cc-number">Credit card number</label>
+                        <input type="text" class="form-control" id="cc-number" placeholder="" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="cc-expiration">Expiration</label>
+                        <input type="text" class="form-control" id="cc-expiration" placeholder="MM/YY" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="cc-cvv">CVV</label>
+                        <input type="text" class="form-control" id="cc-cvv" placeholder="122" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="cc-amount">Amount</label>
+                        <input type="text" class="form-control" id="cc-amount" placeholder="$" required>
+                    </div>
+                </div>
                 <br />
-                <small class="text-muted">Full name as displayed on card</small>
-            </div>
-            <div class="col-md-6">
-                <label for="cc-number">Credit card number</label>
-                <input type="text" class="form-control" id="cc-number" placeholder="" required>
-            </div>
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </form>
         </div>
-        <div class="row">
-            <div class="col-md-3">
-                <label for="cc-expiration">Expiration</label>
-                <input type="text" class="form-control" id="cc-expiration" placeholder="MM/YY" required>
-            </div>
-            <div class="col-md-3">
-                <label for="cc-cvv">CVV</label>
-                <input type="text" class="form-control" id="cc-cvv" placeholder="122" required>
-            </div>
-        </div>
-        <button class="btn btn-primary" type="submit">Submit</button>
-    </form>
+    </div>
 </div>
 
 <script src="~/js/stripeClient.js"></script>
