@@ -39,7 +39,7 @@ namespace cs3750LMS.Controllers
                     AccountType = userFound.AccountType
                 };
 
-                //-----Added Code-----
+                
                 Courses userCourses = new Courses();
 
                 //Student
@@ -56,7 +56,7 @@ namespace cs3750LMS.Controllers
 
                 ViewData["UserCourses"] = userCourses;
 
-                //-----End Added Code----
+              
 
                 ViewData["Message"] = session;
                 return View();
@@ -113,7 +113,7 @@ namespace cs3750LMS.Controllers
 
                     ViewData["Message"] = session;
 
-                    //-----Added Code-----
+                   
                     Courses userCourses = new Courses();
 
                     int userIdent = _context.Users.Where(l => l.Email == testUser.Email).Select(r=>r.UserId).Single();
@@ -132,7 +132,7 @@ namespace cs3750LMS.Controllers
 
                     ViewData["UserCourses"] = userCourses;
 
-                    //-----End Added Code----
+                    
                     return View("~/Views/Home/Index.cshtml");
                 }
             }
@@ -173,7 +173,7 @@ namespace cs3750LMS.Controllers
                         AccountType = userFound.AccountType
                     };
                     ViewData["Message"] = session;
-                    //-----Added Code-----
+                    
                     Courses userCourses = new Courses();
 
                     //Student
@@ -190,7 +190,7 @@ namespace cs3750LMS.Controllers
 
                     ViewData["UserCourses"] = userCourses;
 
-                    //-----End Added Code----
+                    
                     return View("~/Views/Home/Index.cshtml");
                 }
             }
