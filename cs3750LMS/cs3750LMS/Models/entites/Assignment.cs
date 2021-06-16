@@ -19,7 +19,7 @@ namespace cs3750LMS.Models.entites
    
         public int MaxPoints { get; set; }
     
-        public TimeSpan DueDate { get; set; }
+        public DateTime DueDate { get; set; }
 
         public int SubmissionType { get; set; }
     }

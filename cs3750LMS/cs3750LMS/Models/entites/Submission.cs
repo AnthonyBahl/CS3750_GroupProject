@@ -15,7 +15,7 @@ namespace cs3750LMS.Models.entites
 
         public int StudentID { get; set; }
 
-        public TimeSpan SubmissionDate { get; set; }
+        public DateTime SubmissionDate { get; set; }
 
         public int SubmissionType { get; set; }
    
