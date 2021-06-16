@@ -34,19 +34,21 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                    @if (studentCourses.CourseList != null)
+                                @{ int grandTotal = 0; }
+                                @if (studentCourses.CourseList != null)
+                                {
+                                    @for (int i = 0; i < studentCourses.CourseList.Count; i++)
                                     {
-                                        @for (int i = 0; i < studentCourses.CourseList.Count; i++)
-                                        {
-                                            <tr>
-                                                <td class="col-md-9"><em>@studentCourses.CourseList[i].ClassTitle | @studentCourses.CourseList[i].ClassNumber</em></td>
-                                                <td class="col-md-1 text-center">$100</td>
-                                            </tr>
-                                        }
+                                        <tr>
+                                            <td class="col-md-9"><em>@studentCourses.CourseList[i].ClassTitle | @studentCourses.CourseList[i].ClassNumber</em></td>
+                                            <td class="col-md-1 text-center">$@(studentCourses.CourseList[i].Credits * 100)</td>
+                                            @{ grandTotal += studentCourses.CourseList[i].Credits * 100; }
+                                        </tr>
+                                            }
                                     }
                                 <tr>
                                     <td class="text-right"><h4><strong>Total: </strong></h4></td>
-                                    <td class="text-center text-danger"><h4><strong>$@(studentCourses.CourseList.Count * 100)</strong></h4></td>
+                                    <td class="text-center text-danger"><h4><strong>$@grandTotal</strong></h4></td>
                                 </tr>
                             </tbody>
                         </table>
