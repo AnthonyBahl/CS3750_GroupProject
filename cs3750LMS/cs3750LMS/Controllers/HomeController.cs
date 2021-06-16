@@ -1,5 +1,7 @@
 ﻿using cs3750LMS.DataAccess;
 using cs3750LMS.Models;
+using cs3750LMS.Models.entites;
+using cs3750LMS.Models.general;
 using cs3750LMS.Models.validation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +38,26 @@ namespace cs3750LMS.Controllers
                     Birthday = userFound.Birthday,
                     AccountType = userFound.AccountType
                 };
+
+                
+                Courses userCourses = new Courses();
+
+                //Student
+                if (session.AccountType == 0)
+                {
+                    List<int> enrolled = _context.Enrollments.Where(y => y.studentID == userFound.UserId).Select(z=> z.courseID).ToList();
+                    userCourses.CourseList = _context.Courses.Where(x => enrolled.Contains(x.CourseID)).ToList();
+                }
+                //Instructor
+                if (session.AccountType == 1)
+                {
+                    userCourses.CourseList = _context.Courses.Where(x => x.InstructorID == userFound.UserId).ToList();
+                }
+
+                ViewData["UserCourses"] = userCourses;
+
+              
+
                 ViewData["Message"] = session;
                 return View();
             }
@@ -91,6 +113,26 @@ namespace cs3750LMS.Controllers
 
                     ViewData["Message"] = session;
 
+                   
+                    Courses userCourses = new Courses();
+
+                    int userIdent = _context.Users.Where(l => l.Email == testUser.Email).Select(r=>r.UserId).Single();
+
+                    //Student
+                    if (session.AccountType == 0)
+                    {
+                        List<int> enrolled = _context.Enrollments.Where(y => y.studentID == userIdent).Select(z => z.courseID).ToList();
+                        userCourses.CourseList = _context.Courses.Where(x => enrolled.Contains(x.CourseID)).ToList();
+                    }
+                    //Instructor
+                    if (session.AccountType == 1)
+                    {
+                        userCourses.CourseList = _context.Courses.Where(x => x.InstructorID == userIdent).ToList();
+                    }
+
+                    ViewData["UserCourses"] = userCourses;
+
+                    
                     return View("~/Views/Home/Index.cshtml");
                 }
             }
@@ -131,6 +173,24 @@ namespace cs3750LMS.Controllers
                         AccountType = userFound.AccountType
                     };
                     ViewData["Message"] = session;
+                    
+                    Courses userCourses = new Courses();
+
+                    //Student
+                    if (session.AccountType == 0)
+                    {
+                        List<int> enrolled = _context.Enrollments.Where(y => y.studentID == userFound.UserId).Select(z => z.courseID).ToList();
+                        userCourses.CourseList = _context.Courses.Where(x => enrolled.Contains(x.CourseID)).ToList();
+                    }
+                    //Instructor
+                    if (session.AccountType == 1)
+                    {
+                        userCourses.CourseList = _context.Courses.Where(x => x.InstructorID == userFound.UserId).ToList();
+                    }
+
+                    ViewData["UserCourses"] = userCourses;
+
+                    
                     return View("~/Views/Home/Index.cshtml");
                 }
             }
