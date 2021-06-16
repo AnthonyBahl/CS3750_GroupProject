@@ -22,7 +22,7 @@
 
 <!--View Classes Section-->
 <div id="ClassView" style="display:@viewState">
-    <h1 class="display-2 text-center mt-3">@ViewData["Title"]</h1>
+    <h1 class="display-4 text-center mt-3">@ViewData["Title"]</h1>
     <table class="table table-hover bg-white mt-5">
         <thead>
             <tr>
@@ -58,13 +58,13 @@
     </table>
     <br />
     <div class="text-center mt-3">
-        <button type="button" class=" btn-primary mx-2" onclick="ToggleView(1,1)">Add Class</button>
+        <button type="button" class="btn btn-primary mx-2" onclick="ToggleView(1,1)">Add Class</button>
     </div>
 </div>
 <!--End View Classes Section-->
 <!--Add Class Section-->
 <div id="AddClassView" style="display: @createState">
-    <h1 class="display-2 text-center">Create New Class</h1>
+    <h1 class="display-4 text-center">Create New Class</h1>
     <form asp-action="AddClass" method="post" class="w-75 mx-auto mt-5">
         <div asp-validation-summary="ModelOnly"></div>
         <div>
@@ -72,92 +72,109 @@
         </div>
 
         <div class="form-group row">
-            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
-                <label asp-for="Department" class="control-label mb-0"><b>Department</b></label>
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Department" class="control-label mb-0 text-sm-center text-lg-end">Department</label>
             </div>
-            <div class="col-sm-10">
+            <div class="col-sm-12 col-lg-10">
                 <select id="inDepartment" asp-for="Department" name="Department" class="form-control" value="0" required>
                     @for (int i = 0; i < depts.DeptsList.Count; i++)
                     {
                         <option value=@depts.DeptsList[i].DeptID>@depts.DeptsList[i].DeptName</option>
                     }
                 </select>
+            </div>
+            <div class="col-sm-12 col-lg-10">
                 <span class="text-danger" asp-validation-for="Department"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
-                <label asp-for="ClassNumber" class="control-label mb-0">Class Number</label>
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="ClassNumber" class="control-label mb-0 text-sm-center text-lg-end">Class Number</label>
             </div>
-            <div class="col-sm-10">
+            <div class="col-sm-12 col-lg-10">
                 <input id="inClassNumber" type="text" asp-for="ClassNumber" name="ClassNumber" class="form-control" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
                 <span class="text-danger" asp-validation-for="ClassNumber"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
-                <label asp-for="ClassTitle" class="control-label mb-0">Title</label>
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="ClassTitle" class="control-label mb-0 text-sm-center text-lg-end">Title</label>
             </div>
-            <div class="col-sm-10">
+            <div class="col-sm-12 col-lg-10">
                 <input id="inClassTitle" type="text" asp-for="ClassTitle" name="ClassTitle" class="form-control" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
                 <span class="text-danger" asp-validation-for="ClassTitle"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
-                <label asp-for="Description" class="control-label mb-0">Description</label>
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Description" class="control-label mb-0 text-sm-center text-lg-end">Description</label>
             </div>
-            <div class="col-sm-10">
+            <div class="col-sm-12 col-lg-10">
                 <textarea id="inDescription" asp-for="Description" name="Description" class="form-control" required rows="3" cols="50">
                 </textarea>
+            </div>
+            <div class="col-sm-12 col-lg-10">
                 <span class="text-danger" asp-validation-for="Description"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
-                <label asp-for="Location" class="control-label mb-0">Location</label>
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Location" class="control-label mb-0 text-sm-center text-lg-end">Location</label>
             </div>
-            <div class="col-sm-10">
+            <div class="col-sm-12 col-lg-10">
                 <input id="inLocation" type="text" asp-for="Location" name="Location" class="form-control" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
                 <span class="text-danger" asp-validation-for="Location"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
-                <label asp-for="Credits" class="control-label mb-0">Credits</label>
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Credits" class="control-label mb-0 text-sm-center text-lg-end">Credits</label>
             </div>
-            <div class="col-sm-10">
+            <div class="col-sm-12 col-lg-10">
                 <input id="inCredits" type="text" asp-for="Credits" name="Credits" class="form-control" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
                 <span class="text-danger" asp-validation-for="Credits"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
-                <label asp-for="Capacity" class="control-label mb-0">Capacity</label>
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Capacity" class="control-label mb-0 text-sm-center text-lg-end">Capacity</label>
             </div>
-            <div class="col-sm-10">
+            <div class="col-sm-12 col-lg-10">
                 <input id="inCapacity" type="text" asp-for="Capacity" name="Capacity" class="form-control" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
                 <span class="text-danger" asp-validation-for="Capacity"></span>
             </div>
         </div>
 
         <div id="daySelect" class="form-group row">
-            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
-                <label asp-for="MeetDays" class="control-label mb-0">Meeting Days</label>
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="MeetDays" class="control-label mb-0 text-sm-center text-lg-end">Meeting Days</label>
             </div>
-            <div class="col-sm-8 d-flex align-items-center justify-content-center p-0">
-
-                <button id="Sunday" type="button" onclick="ToggleDay(0)">Sunday</button> <button id="Monday" type="button" onclick="ToggleDay(1)">Monday</button> <button id="Tuesday" type="button" onclick="ToggleDay(2)">Tuesday</button> <button id="Wednesday" type="button" onclick="ToggleDay(3)">Wednesday</button> <button id="Thursday" type="button" onclick="ToggleDay(4)">Thursday</button> <button id="Friday" type="button" onclick="ToggleDay(5)">Friday</button> <button id="Saturday" type="button" onclick="ToggleDay(6)">Saturday</button>
-
-
+            <div class="col-sm-12 col-lg-10 d-flex align-items-center justify-content-center p-0 text-white">
+                <button id="Sunday" type="button" class="btn btn-sm mx-2 text-white" onclick="ToggleDay(0)">Sunday</button>
+                <button id="Monday" type="button" class="btn btn-sm mx-2 text-white" onclick="ToggleDay(1)">Monday</button>
+                <button id="Tuesday" type="button" class="btn btn-sm mx-2 text-white" onclick="ToggleDay(2)">Tuesday</button>
+                <button id="Wednesday" type="button" class="btn btn-sm mx-2 text-white" onclick="ToggleDay(3)">Wednesday</button>
+                <button id="Thursday" type="button" class="btn btn-sm mx-2 text-white" onclick="ToggleDay(4)">Thursday</button>
+                <button id="Friday" type="button" class="btn btn-sm mx-2 text-white" onclick="ToggleDay(5)">Friday</button>
+                <button id="Saturday" type="button" class="btn btn-sm mx-2 text-white" onclick="ToggleDay(6)">Saturday</button>
             </div>
-            <div class="col-2">
+            <div class="col-sm-12 col-lg-10">
                 <span class="text-danger text-right" asp-validation-for="MeetDays"></span>
             </div>
         </div>
@@ -165,21 +182,25 @@
 
 
         <div class="form-group row">
-            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
-                <label asp-for="StartTime" class="control-label mb-0">Start Time</label>
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="StartTime" class="control-label mb-0 text-sm-center text-lg-end">Start Time</label>
             </div>
-            <div class="col-sm-10">
+            <div class="col-sm-12 col-lg-10">
                 <input id="inStartTime" type="time" asp-for="StartTime" name="StartTime" class="form-control" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
                 <span class="text-danger" asp-validation-for="StartTime"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
-                <label asp-for="EndTime" class="control-label mb-0">End Time</label>
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="EndTime" class="control-label mb-0 text-sm-center text-lg-end">End Time</label>
             </div>
-            <div class="col-sm-10">
+            <div class="col-sm-12 col-lg-10">
                 <input id="inEndTime" type="time" asp-for="EndTime" name="EndTime" class="form-control" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
                 <span class="text-danger" asp-validation-for="EndTime"></span>
             </div>
         </div>
@@ -189,7 +210,7 @@
             <button onClick="ToggleView(0,0)" type="button" class="btn btn-warning">Cancel</button>
         </div>
 
-    </form>
+</form>
 </div>
 <!--End Add Class Section-->
 <!--Delete Confirmation-->
@@ -199,8 +220,8 @@
 
 <script>
     //Declare static variables
-    var ButtonOff = "background-color:aliceblue;";
-    var ButtonOn = "background-color:lightcoral;";
+    var ButtonOff = "background-color:#F7612A;";
+    var ButtonOn = "background-color:#39E687;";
 
     var input = document.getElementById("InputMeetDays");
 

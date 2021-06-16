@@ -15,67 +15,67 @@
         <div asp-validation-summary="ModelOnly"></div> <!--ModelOnly mode allows errors to be show per input box-->
 
         <div class="form-group row">
-            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
-                <label asp-for="Email" class="control-label mb-0">Email</label>
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Email" class="control-label mb-0 text-sm-center text-lg-end">Email</label>
             </div>
-            <div class="col-sm-10">
+            <div class="col-sm-12 col-lg-10">
                 <input type="email" asp-for="Email" name="Email" class="form-control" required />
                 <span class="text-danger" asp-validation-for="Email"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
-                <label asp-for="FirstName" class="control-label mb-0">First Name</label>
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="FirstName" class="control-label mb-0 text-sm-center text-lg-end">First Name</label>
             </div>
-            <div class="col-sm-10">
+            <div class="col-sm-12 col-lg-10">
                 <input type="text" asp-for="FirstName" name="FirstName" class="form-control" required />
                 <span class="text-danger" asp-validation-for="FirstName"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
-                <label asp-for="LastName" class="control-label mb-0">Last Name</label>
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="LastName" class="control-label mb-0 text-sm-center text-lg-end">Last Name</label>
             </div>
-            <div class="col-sm-10">
+            <div class="col-sm-12 col-lg-10">
                 <input type="text" asp-for="LastName" name="LastName" class="form-control" required />
                 <span class="text-danger" asp-validation-for="LastName"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
-                <label asp-for="Birthday" class="control-label mb-0">Birthday</label>
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Birthday" class="control-label mb-0 text-sm-center text-lg-end">Birthday</label>
             </div>
-            <div class="col-sm-10">
+            <div class="col-sm-12 col-lg-10">
                 <input type="date" asp-for="Birthday" name="Birthday" class="form-control" required />
                 <span class="text-danger" asp-validation-for="Birthday"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
-                <label asp-for="Password" class="control-labe mb-0l">Password</label>
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Password" class="control-label mb-0 text-sm-center text-lg-end">Password</label>
             </div>
-            <div class="col-sm-10">
+            <div class="col-sm-12 col-lg-10">
                 <input type="password" asp-for="Password" name="Password" class="form-control" required />
                 <span class="text-danger" asp-validation-for="Password"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
-                <label asp-for="ConfirmPassword" class="control-label mb-0">Confirm Password</label>
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="ConfirmPassword" class="control-label mb-0 text-sm-center text-lg-end">Confirm Password</label>
             </div>
-            <div class="col-sm-10">
+            <div class="col-sm-12 col-lg-10">
                 <input type="password" asp-for="ConfirmPassword" name="ConfirmPassword" class="form-control" required />
                 <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <div class="col-sm-10 offset-sm-2">
+            <div class="col-sm-12 col-lg-10 offset-sm-2">
                 <input type="radio" asp-for="AccountType" id="AccountType1" value="0" checked />
                 <label for="AccountType1" class="mr-3">Student</label>
                 <input type="radio" asp-for="AccountType" id="AccountType2" value="1" />
