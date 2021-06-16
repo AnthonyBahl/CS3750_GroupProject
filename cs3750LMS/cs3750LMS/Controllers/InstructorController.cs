@@ -53,7 +53,7 @@ namespace cs3750LMS.Controllers
         }
         [HttpPost]
         [AutoValidateAntiforgeryToken ]
-        public IActionResult AddClass([Bind("Instructor,Department,ClassNumber,ClassTitle,Description,Location,Credits,Capacity,MeetDays,StartTime,EndTime")] ClassValidationAdd newClass)
+        public IActionResult AddClass([Bind("Instructor,Department,ClassNumber,ClassTitle,Description,Location,Credits,Capacity,MeetDays,StartTime,EndTime,Color")] ClassValidationAdd newClass)
         {
             //get the session object for next pass
             User userFound = _context.Users.Where(u => u.Email == HttpContext.Session.Get<string>("user")).Single();
@@ -83,7 +83,7 @@ namespace cs3750LMS.Controllers
                     MeetDays = newClass.MeetDays,
                     StartTime = newClass.StartTime,
                     EndTime = newClass.EndTime,
-                    Color = "#4D00CB"
+                    Color = newClass.Color
                 };
 
                 _context.Courses.Add(newCourse);
