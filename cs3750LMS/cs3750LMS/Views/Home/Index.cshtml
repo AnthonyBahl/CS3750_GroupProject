@@ -1,61 +1,36 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
     UserSession show = (UserSession)ViewData["Message"];
+ 
+    Courses userCourses = (Courses)ViewData["UserCourses"];
+
 }
-
-
 
 <div class="text-center">
     <h1 class="display-4">Welcome @show.FirstName @show.LastName</h1>
 </div>
-<div class="container">
-    <div class="row">
-        <div class="col-4">
-            <a href="#" class="stretched-link">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">CS 1234</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">Monday-Friday 10am-12pm</h6>
-                        <p class="card-text">Location: Virtual</p>
-                    </div>
+
+    <div class="container">
+        <div class="row">
+
+            @if (userCourses.CourseList != null)
+            {
+            @for (int i = 0; i < userCourses.CourseList.Count; i++)
+            {
+                <div class="col-4">
+                    <a href="#" class="stretched-link">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">@userCourses.CourseList[i].ClassTitle | @userCourses.CourseList[i].ClassNumber</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">@userCourses.ParseDays(i) @userCourses.CourseList[i].StartTime.ToString()-@userCourses.CourseList[i].EndTime.ToString()</h6>
+                                <p class="card-text">Location: @userCourses.CourseList[i].Location</p>
+                            </div>
+                        </div>
+                    </a>
                 </div>
-            </a>
-        </div>
-        <div class="col-4">
-            <a href="#" class="stretched-link">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">CS 4321</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">Monday-Wednesday-Friday 1pm-2pm</h6>
-                        <p class="card-text">Location: Computer Science building</p>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-4">
-            <a href="#" class="stretched-link">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">CS 3750</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">Tuesday-Thrusday 9am-11am</h6>
-                        <p class="card-text">Location: Union Ground Building</p>
-                    </div>
-                </div>
-            </a>
+
+            }
+            }
+
         </div>
     </div>
-    <br />
-    <div class="row">
-        <div class="col-4">
-            <a href="#" class="stretched-link">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">CS 9999</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">Self Pace</h6>
-                        <p class="card-text">Location: Online</p>
-                    </div>
-                </div>
-            </a>
-        </div>
-    </div>
-</div>
