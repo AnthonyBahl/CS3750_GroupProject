@@ -205,12 +205,32 @@
             </div>
         </div>
 
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Color" class="control-label mb-0 text-sm-center text-lg-end">Color</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <select id="inColor" asp-for="Color" name="Color" class="form-control" required>
+                    <option value="#04738C">Blue</option>
+                    <option value="#4D00CB">Purple</option>
+                    <option value="#BF3C30">Red</option>
+                    <option value="#D94B2B">Orange</option>
+                    <option value="#F5CF47">Yellow</option>
+                    <option value="#30BF70">Green</option>
+                    <option value="#03998F">Teal</option>
+                </select>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="Color"></span>
+            </div>
+        </div>
+
         <div class="form-group text-center">
             <input type="submit" value="Add Class" class="btn btn-primary mx-2" />
             <button onClick="ToggleView(0,0)" type="button" class="btn btn-warning">Cancel</button>
         </div>
 
-</form>
+    </form>
 </div>
 <!--End Add Class Section-->
 <!--Delete Confirmation-->

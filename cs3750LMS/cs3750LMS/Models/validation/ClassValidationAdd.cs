@@ -38,5 +38,7 @@ namespace cs3750LMS.Models
         public TimeSpan StartTime { get; set; }
         [Required]
         public TimeSpan EndTime { get; set; }
+        [Required]
+        public string Color { get; set; }
     }
 }
