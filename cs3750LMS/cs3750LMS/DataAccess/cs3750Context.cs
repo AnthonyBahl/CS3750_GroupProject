@@ -183,6 +183,7 @@ namespace cs3750LMS.Models
 
                 entity.Property(e => e.StartTime).HasColumnName("StartTime");
                 entity.Property(e => e.EndTime).HasColumnName("EndTime");
+                entity.Property(e => e.EndTime).HasColumnName("Color");
             });
 
             modelBuilder.Entity<Department>(entity => {
@@ -205,6 +206,42 @@ namespace cs3750LMS.Models
                 entity.Property(e => e.studentID).HasColumnName("studentID");
 
                 entity.Property(e => e.courseID).HasColumnName("courseID");
+            });
+
+            modelBuilder.Entity<Assignment>(entity =>
+            {
+                entity.Property(e => e.AssignmentID).HasColumnName("AssignmentID");
+
+                entity.Property(e => e.CourseID).HasColumnName("CourseID");
+
+                entity.Property(e => e.Title)
+                .HasMaxLength(100)
+                .HasColumnName("Title");
+
+                entity.Property(e => e.Description)
+                .HasMaxLength(256)
+                .HasColumnName("Description");
+
+                entity.Property(e => e.MaxPoints).HasColumnName("MaxPoints");
+
+                entity.Property(e => e.DueDate).HasColumnName("DueDate");
+
+                entity.Property(e => e.SubmissionType).HasColumnName("SubmissionType");
+            });
+
+            modelBuilder.Entity<Submission>(entity =>
+            {
+                entity.Property(e => e.SubmissionID).HasColumnName("SubmissionID");
+
+                entity.Property(e => e.AssignmentID).HasColumnName("AssignmentID");
+
+                entity.Property(e => e.StudentID).HasColumnName("StudentID");
+
+                entity.Property(e => e.SubmissionDate).HasColumnName("SubmissionDate");
+
+                entity.Property(e => e.SubmissionType).HasColumnName("SubmissionType");
+
+                entity.Property(e => e.Grade).HasColumnName("Grade");
             });
 
 
