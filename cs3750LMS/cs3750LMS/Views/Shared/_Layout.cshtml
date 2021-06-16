@@ -40,13 +40,13 @@
                                 <a class="nav-link" asp-area="" asp-controller="Public" asp-action="Profile">Profile</a>
                             </li>
                         }
-                        @if (show != null && show.AccountType == 1)
+                        @if (show != null && show.AccountType == 1) //Instructor
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Instructor" asp-action="AddClass">Add Class</a>
                             </li>
                         }
-                        @if (show != null && show.AccountType == 0)
+                        @if (show != null && show.AccountType == 0)  //Student
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Student" asp-action="Register">Register</a>
