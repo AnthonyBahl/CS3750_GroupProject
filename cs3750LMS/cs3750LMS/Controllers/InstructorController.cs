@@ -82,7 +82,8 @@ namespace cs3750LMS.Controllers
                     Capacity = newClass.Capacity,
                     MeetDays = newClass.MeetDays,
                     StartTime = newClass.StartTime,
-                    EndTime = newClass.EndTime
+                    EndTime = newClass.EndTime,
+                    Color = "#4D00CB"
                 };
 
                 _context.Courses.Add(newCourse);
