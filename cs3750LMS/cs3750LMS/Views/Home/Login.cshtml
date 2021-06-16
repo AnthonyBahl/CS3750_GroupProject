@@ -28,27 +28,31 @@
         <div asp-validation-summary="ModelOnly"></div> <!--ModelOnly mode allows errors to be show per input box-->
 
         <div class="form-group row">
-            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
-                <label asp-for="Email" class="control-label mb-0">Email</label>
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Email" class="control-label mb-0 text-sm-center text-lg-end">Email</label>
             </div>
-            <div class="col-sm-10">
+            <div class="col-sm-12 col-lg-10">
                 <input type="email" asp-for="Email" class="form-control" required />
+            </div>
+            <div class="col-sm-12">
                 <span class="text-danger" asp-validation-for="Email"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <div class="col-sm-2 text-left d-flex align-items-center justify-content-end p-0">
-                <label asp-for="Password" class="control-labe mb-0l">Password</label>
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Password" class="control-label mb-0 text-sm-center text-lg-end">Password</label>
             </div>
-            <div class="col-sm-10">
+            <div class="col-sm-12 col-lg-10">
                 <input type="password" asp-for="Password" name="Password" class="form-control" required />
+            </div>
+            <div class="col-sm-12">
                 <span class="text-danger" asp-validation-for="Password"></span>
             </div>
         </div>
 
 
-        <div class="form-group text-center">
+        <div class="form-group text-center mt-sm-3 mt-lg-1">
             <input type="submit" value="Login" class="btn btn-primary mx-2" />
             <a asp-action="SignUp" class="btn btn-warning">Sign Up</a>
         </div>
