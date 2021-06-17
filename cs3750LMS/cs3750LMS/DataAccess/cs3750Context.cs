@@ -183,7 +183,7 @@ namespace cs3750LMS.Models
 
                 entity.Property(e => e.StartTime).HasColumnName("StartTime");
                 entity.Property(e => e.EndTime).HasColumnName("EndTime");
-                entity.Property(e => e.EndTime).HasColumnName("Color");
+                entity.Property(e => e.Color).HasColumnName("Color");
             });
 
             modelBuilder.Entity<Department>(entity => {
