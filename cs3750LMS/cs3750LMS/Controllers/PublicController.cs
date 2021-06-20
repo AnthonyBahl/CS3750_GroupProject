@@ -25,10 +25,6 @@ namespace cs3750LMS.Controllers
             Environment = _enrionment;
         }
 
-        //-------------------------------Course logic Begin--------------
-
-
-        //-------------------------------Course Logic End----------------
 
         //sends user to calendar page if logged in and passes needed session data to view
         public IActionResult Calendar()

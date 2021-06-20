@@ -17,6 +17,52 @@ namespace cs3750LMS.Controllers
             _context = context;
         }
 
+
+        //-------------------------------Course Edit logic Begin--------------
+        [HttpGet]
+        public IActionResult CourseEdit(int id)
+        {
+            User userFound = _context.Users.Where(u => u.Email == HttpContext.Session.Get<string>("user")).Single();
+            UserSession session = new UserSession
+            {
+                Email = userFound.Email,
+                FirstName = userFound.FirstName,
+                LastName = userFound.LastName,
+                Birthday = userFound.Birthday,
+                AccountType = userFound.AccountType
+            };
+
+            SpecificCourse course = new SpecificCourse();
+            course.Selection = _context.Courses.Where(x => x.CourseID == id).Single();
+            course.AssignmentList = _context.Assignments.Where(y => y.CourseID == id).ToList();
+            course.ModeSetting = 1;
+            ViewData["ClickedCourse"] = course;
+            ViewData["Message"] = session;
+            return View("~/Views/Instructor/CourseEdit.cshtml");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddAssignment([Bind("CourseID,Title,Description,MaxPoints,DueDate,DueTime,SubmitType")] AssignmentValidationAdd assignment){
+            if (ModelState.IsValid)
+            {
+                Assignment newA = new Assignment
+                {
+                    CourseID = assignment.CourseID,
+                    Title = assignment.Title,
+                    Description = assignment.Description,
+                    MaxPoints = assignment.MaxPoints,
+                    DueDate = assignment.DueDate +assignment.DueTime,
+                    SubmissionType = assignment.SubmitType
+                };
+                _context.Assignments.Add(newA);
+                _context.SaveChanges();
+            }
+            return CourseEdit(assignment.CourseID);
+        }
+        //-------------------------------Course Edit Logic End----------------
+
+        //-----------------------------Add class Locig Begin-----------------
         public IActionResult AddClass()
         {
             if (HttpContext.Session.Get<string>("user") != null)
@@ -52,7 +98,7 @@ namespace cs3750LMS.Controllers
             return View("~/Views/Home/Login.cshtml");
         }
         [HttpPost]
-        [AutoValidateAntiforgeryToken ]
+        [ValidateAntiForgeryToken]
         public IActionResult AddClass([Bind("Instructor,Department,ClassNumber,ClassTitle,Description,Location,Credits,Capacity,MeetDays,StartTime,EndTime,Color")] ClassValidationAdd newClass)
         {
             //get the session object for next pass
@@ -90,6 +136,7 @@ namespace cs3750LMS.Controllers
                 _context.SaveChanges();
                 success = true;
             }
+            //----------------------------Add class logic end---------------------------
 
             //set courses object, and success for next pass
             if (success)

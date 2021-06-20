@@ -16,10 +16,13 @@
             <div class="row">
                 @if (userCourses.CourseList != null)
                 {
+                    if (show.AccountType == 0)
+                    {
                     @for (int i = 0; i < userCourses.CourseList.Count; i++)
                     {
                         <div class="col-6">
                             <a href="#" class="stretched-link">
+
                                 <div class="card">
                                     <div class="card-body">
                                         <h5 class="card-title">@userCourses.CourseList[i].ClassTitle | @userCourses.CourseList[i].ClassNumber</h5>
@@ -30,6 +33,25 @@
                             </a>
                         </div>
 
+                    }}
+
+                    if (show.AccountType == 1)
+                    {
+                    @for (int i = 0; i < userCourses.CourseList.Count; i++)
+                    {
+                        <div class="col-6">
+                            <a asp-controller="Instructor" asp-action="CourseEdit" asp-route-id="@userCourses.CourseList[i].CourseID" class="stretched-link">
+
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">@userCourses.CourseList[i].ClassTitle | @userCourses.CourseList[i].ClassNumber</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted">@userCourses.ParseDays(i) @userCourses.CourseList[i].StartTime.ToString()-@userCourses.CourseList[i].EndTime.ToString()</h6>
+                                        <p class="card-text">Location: @userCourses.CourseList[i].Location</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    }
                     }
                 }
             </div>
