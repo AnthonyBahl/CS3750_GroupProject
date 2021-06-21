@@ -3,7 +3,7 @@
 
 //Notification Bell In Navbar
 //-------------------------------------------
-let bellIcon = document.getElementById("bellIcon");
+const bellIcon = document.getElementById("bellIcon");
 
 let ItemsCount = 3; // we need to get the amount of items passed into the notifications list and store it here. 
 
