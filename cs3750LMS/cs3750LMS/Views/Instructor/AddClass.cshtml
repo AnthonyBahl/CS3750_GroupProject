@@ -39,20 +39,24 @@
         <tbody>
             @for (int i = 0; i < courses.CourseList.Count; i++)
             {
-            <tr>
-                <th scope="row">@courses.CourseList[i].ClassNumber</th>
-                <td>@courses.CourseList[i].ClassTitle</td>
-                <td>@courses.ParseDays(i)</td>
-                <td>@courses.CourseList[i].StartTime.ToString()</td>
-                <td>@courses.CourseList[i].EndTime.ToString()</td>
-                <td>@courses.CourseList[i].Location</td>
-                <td>
-                    <button type="button" class="btn btn-success">Edit</button>
-                </td>
-                <td>
-                    <button type="button" class="btn btn-danger">Delete</button>
-                </td>
-            </tr>
+                
+                <tr>
+
+                    <th scope="row"><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].ClassNumber</a></th>
+                    <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].ClassTitle</a></td>
+                    <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.ParseDays(i)</a></td>
+                    <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].StartTime.ToString()</a></td>
+                    <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].EndTime.ToString()</a></td>
+                    <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].Location</a></td>
+
+                    <td>
+                        <button type="button" class="btn btn-success">Edit</button>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger">Delete</button>
+                    </td>
+                </tr>
+                
             }
         </tbody>
     </table>
@@ -399,7 +403,6 @@
             ToggleColor(stSat, Saturday);
             UpdateDays(6);
         }
- 
 
     }
 </script>

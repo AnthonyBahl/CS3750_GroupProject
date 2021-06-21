@@ -25,6 +25,7 @@ namespace cs3750LMS.Controllers
             Environment = _enrionment;
         }
 
+
         //sends user to calendar page if logged in and passes needed session data to view
         public IActionResult Calendar()
         {

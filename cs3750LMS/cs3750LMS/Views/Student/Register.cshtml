@@ -45,7 +45,7 @@
                     {
                         @if (studentCourses.CourseList.Any(x => x.CourseID == courses.CourseList[i].CourseID))
                         {
-                            <form>
+                            <form asp-action="Drop" method="post">
                                 <div style="display:none">
                                     <input type="number" name="studentID" value=@user.UserId />
                                     <input type="number" name="courseID" value=@courses.CourseList[i].CourseID />
@@ -59,7 +59,6 @@
                                 <div style="display:none">
                                     <input type="number" name="studentID" value=@user.UserId />
                                     <input type="number" name="courseID" value=@courses.CourseList[i].CourseID />
-                                    <p>This is from the inner form.</p>
                                 </div>
                                 <button type="submit" class=" btn-success mx-2">Register</button>
                             </form>

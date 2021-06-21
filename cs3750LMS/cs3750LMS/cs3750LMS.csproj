@@ -32,16 +32,11 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
     <PackageReference Include="React.AspNet" Version="5.2.11" />
     <PackageReference Include="React.Core" Version="5.2.11" />
-    <PackageReference Include="Stripe.net" Version="39.53.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="UnitTests\" />
     <Folder Include="wwwroot\Images\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\js\stripeClient.js" />
   </ItemGroup>
 
 </Project>
