@@ -250,7 +250,7 @@ body {
 .ringAnimation{
   animation-name:ring;
   animation-duration:1s;
-  animation-iteration-count:infinite;
+  animation-iteration-count:1;
 }
 
 @keyframes ring{
