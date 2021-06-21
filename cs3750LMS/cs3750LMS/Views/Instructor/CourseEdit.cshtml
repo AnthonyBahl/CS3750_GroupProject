@@ -14,7 +14,7 @@
 <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
 }
-<h1>@course.Selection.ClassTitle</h1>
+<h1>@course.Selection.ClassNumber - @course.Selection.ClassTitle</h1>
 <div id="AssignmentView" style="display: @viewState">
     <h1 class="display-4 text-center mt-3">Assignments</h1>
     <table class="table table-hover bg-white mt-5">
@@ -67,7 +67,7 @@
                 <label asp-for="Title" class="control-label mb-0 text-sm-center text-lg-end">Title</label>
             </div>
             <div class="col-sm-12 col-lg-10">
-                <input id="TitleAdd" type="text" asp-for="Title" name="Title" class="form-control" required />
+                <input id="TitleAdd" type="text" asp-for="Title" name="Title" class="form-control AddField" required />
             </div>
             <div class="col-sm-12 col-lg-10">
                 <span class="text-danger" asp-validation-for="Title"></span>
@@ -80,7 +80,7 @@
                 <label asp-for="Description" class="control-label mb-0 text-sm-center text-lg-end">Description</label>
             </div>
             <div class="col-sm-12 col-lg-10">
-                <textarea id="DescriptionAdd" asp-for="Description" name="Description" class="form-control" required rows="3" cols="50">
+                <textarea id="DescriptionAdd" asp-for="Description" name="Description" class="form-control AddField" required rows="3" cols="50">
                 </textarea>
             </div>
             <div class="col-sm-12 col-lg-10">
@@ -93,7 +93,7 @@
                 <label asp-for="MaxPoints" class="control-label mb-0 text-sm-center text-lg-end">MaxPoints</label>
             </div>
             <div class="col-sm-12 col-lg-10">
-                <input id="MaxPoints" type="text" asp-for="MaxPoints" name="MaxPoints" class="form-control" required />
+                <input id="MaxPoints" type="text" asp-for="MaxPoints" name="MaxPoints" class="form-control AddField" required />
             </div>
             <div class="col-sm-12 col-lg-10">
                 <span class="text-danger" asp-validation-for="MaxPoints"></span>
@@ -105,7 +105,7 @@
                 <label asp-for="DueDate" class="control-label mb-0 text-sm-center text-lg-end">Due Date</label>
             </div>
             <div class="col-sm-12 col-lg-10">
-                <input id="DueDateAdd" type="date" asp-for="DueDate" name="DueDate" class="form-control" required />
+                <input id="DueDateAdd" type="date" asp-for="DueDate" name="DueDate" class="form-control AddField" required />
             </div>
             <div class="col-sm-12 col-lg-10">
                 <span class="text-danger" asp-validation-for="DueDate"></span>
@@ -118,7 +118,7 @@
                 <label asp-for="DueTime" class="control-label mb-0 text-sm-center text-lg-end">Due Time</label>
             </div>
             <div class="col-sm-12 col-lg-10">
-                <input id="DueTime" type="time" asp-for="DueTime" name="DueTime" class="form-control" required />
+                <input id="DueTime" type="time" asp-for="DueTime" name="DueTime" class="form-control AddField" required />
             </div>
             <div class="col-sm-12 col-lg-10">
                 <span class="text-danger" asp-validation-for="DueTime"></span>
@@ -131,10 +131,10 @@
             </div>
             <div class="col-sm-12 col-lg-10">
                 <label for="SubmitFileAdd">File</label>
-                <input id="SubmitFileAdd" type="radio" asp-for="SubmitType" name="SubmitType" class="form-control" value="0" />
+                <input id="SubmitFileAdd" type="radio" asp-for="SubmitType" name="SubmitType" class="form-control AddField" value="0" checked/>
 
                 <label for="SubmitTextAdd">Text Entry</label>
-                <input id="SubmitTextAdd" type="radio" asp-for="SubmitType" name="SubmitType" class="form-control" value="1" />
+                <input id="SubmitTextAdd" type="radio" asp-for="SubmitType" name="SubmitType" class="form-control AddField" value="1" />
 
             </div>
             <div class="col-sm-12 col-lg-10">
@@ -176,6 +176,17 @@
             case 3:
                 break;
         }
+    }
+
+    //clear creation form
+    function ClearCreateFields() {
+        document.getElementById("TitleAdd").value = null;
+        document.getElementById("DescriptionAdd").value = null;
+        document.getElementById("MaxPoints").value = null;
+        document.getElementById("DueDateAdd").value = null;
+        document.getElementById("DueTime").value = null;
+        document.getElementById("SubmitFileAdd").checked = true;
+        document.getElementById("SubmitTextAdd").checked = false;
     }
 </script>
 
