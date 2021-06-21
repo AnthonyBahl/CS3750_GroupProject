@@ -1,0 +1,192 @@
+﻿@model AssignmentValidationAdd;
+
+@{
+    UserSession user = (UserSession)ViewData["Message"];
+    SpecificCourse course = (SpecificCourse)ViewData["ClickedCourse"];
+    ViewData["Title"] = "Courses";
+    string viewState = "block;";
+    string createState = "none;";
+    string deleteState = "none;";
+    string editState = "none;";
+    string submissionState = "none;";
+}
+@section Scripts{
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+}
+<h1>@course.Selection.ClassNumber - @course.Selection.ClassTitle</h1>
+<div id="AssignmentView" style="display: @viewState">
+    <h1 class="display-4 text-center mt-3">Assignments</h1>
+    <table class="table table-hover bg-white mt-5">
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Due Date</th>
+                <th scope="col">Due Time</th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < course.AssignmentList.Count; i++)
+            {
+            <tr>
+                <th scope="row">@course.AssignmentList[i].Title</th>
+                <td scope="row">@course.AssignmentList[i].DueDate.ToString("MM/dd/yy")</td>
+                <td scope="row">@course.AssignmentList[i].DueDate.ToString("hh:mm tt")</td>
+                <td>
+                    <button type="button" class="btn btn-success">Edit</button>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger">Delete</button>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-success">Submissions</button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    <div class="text-center mt-3">
+        <button type="button" class="btn btn-primary mx-2" onclick="ToggleView(1,1)">Add Assignment</button>
+    </div>
+</div>
+
+<div id="AssignmentAdd" style="display:@createState">
+    <h1 class="display-4 text-center">Create New Assignment</h1>
+    <form asp-action="AddAssignment" method="post" class="w-75 mx-auto mt-5">
+        <div asp-validation-summary="ModelOnly"></div>
+        <div>
+            <input type="text" asp-for="CourseID" name="CourseID" class="form-control" hidden value="@course.Selection.CourseID" />
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Title" class="control-label mb-0 text-sm-center text-lg-end">Title</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <input id="TitleAdd" type="text" asp-for="Title" name="Title" class="form-control AddField" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="Title"></span>
+            </div>
+        </div>
+
+
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Description" class="control-label mb-0 text-sm-center text-lg-end">Description</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <textarea id="DescriptionAdd" asp-for="Description" name="Description" class="form-control AddField" required rows="3" cols="50">
+                </textarea>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="Description"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="MaxPoints" class="control-label mb-0 text-sm-center text-lg-end">MaxPoints</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <input id="MaxPoints" type="text" asp-for="MaxPoints" name="MaxPoints" class="form-control AddField" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="MaxPoints"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="DueDate" class="control-label mb-0 text-sm-center text-lg-end">Due Date</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <input id="DueDateAdd" type="date" asp-for="DueDate" name="DueDate" class="form-control AddField" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="DueDate"></span>
+            </div>
+        </div>
+
+
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="DueTime" class="control-label mb-0 text-sm-center text-lg-end">Due Time</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <input id="DueTime" type="time" asp-for="DueTime" name="DueTime" class="form-control AddField" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="DueTime"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="SubmitType" class="control-label mb-0 text-sm-center text-lg-end">Submission Type</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <label for="SubmitFileAdd">File</label>
+                <input id="SubmitFileAdd" type="radio" asp-for="SubmitType" name="SubmitType" class="form-control AddField" value="0" checked/>
+
+                <label for="SubmitTextAdd">Text Entry</label>
+                <input id="SubmitTextAdd" type="radio" asp-for="SubmitType" name="SubmitType" class="form-control AddField" value="1" />
+
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="SubmitType"></span>
+            </div>
+        </div>
+
+        <div class="form-group text-center">
+            <input type="submit" value="Add Assignment" class="btn btn-primary mx-2" />
+            <button onClick="ToggleView(0,0)" type="button" class="btn btn-warning">Cancel</button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    //grab elements
+    var view =document.getElementById("AssignmentView");
+    var create =document.getElementById("AssignmentAdd");
+    //View toggles
+    function ToggleView(val, option) {
+        switch (val) {
+            case 0:
+                ClearCreateFields();
+                view.style.setProperty("display", "block");
+                create.style.setProperty("display", "none");
+
+                break;
+
+            case 1:
+                create.style.setProperty("display", "block");
+                view.style.setProperty("display", "none");
+                break;
+
+            case 2:
+
+                break;
+
+            case 3:
+                break;
+        }
+    }
+
+    //clear creation form
+    function ClearCreateFields() {
+        document.getElementById("TitleAdd").value = null;
+        document.getElementById("DescriptionAdd").value = null;
+        document.getElementById("MaxPoints").value = null;
+        document.getElementById("DueDateAdd").value = null;
+        document.getElementById("DueTime").value = null;
+        document.getElementById("SubmitFileAdd").checked = true;
+        document.getElementById("SubmitTextAdd").checked = false;
+    }
+</script>
+
