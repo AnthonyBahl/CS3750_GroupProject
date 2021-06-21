@@ -10,6 +10,10 @@
     <title>@ViewData["Title"] - cs3750LMS</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+
+    <!--Added Code Here-->
+    <script src="https://kit.fontawesome.com/96bd72d7d0.js" crossorigin="anonymous"></script>
+
 </head>
 <body>
     <header>
@@ -40,13 +44,13 @@
                                 <a class="nav-link" asp-area="" asp-controller="Public" asp-action="Profile">Profile</a>
                             </li>
                         }
-                        @if (show != null && show.AccountType == 1)
+                        @if (show != null && show.AccountType == 1) //Instructor
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Instructor" asp-action="AddClass">Add Class</a>
                             </li>
                         }
-                        @if (show != null && show.AccountType == 0)
+                        @if (show != null && show.AccountType == 0)  //Student
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Student" asp-action="Register">Register</a>
@@ -61,8 +65,26 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Public" asp-action="Calendar">Calendar</a>
                             </li>
+
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Home" asp-action="LogOut">Log Out</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <div class="dropright">
+                                    @*TODO: When you use a for loop to create each of the items in the dropdown-menu. Make sure to pass the amount to the Itemscount variable in the javascript. 
+                                        *@
+                                    <a class="nav-link" data-toggle="dropdown"> <i id="bellIcon" class="far fa-bell fa-lg"></i></a>
+
+                                    <ul class="dropdown-menu">
+                                        <li class="dropdown-item"><a href="#">Link 1</a><i class="far fa-window-close fa-sm float-right"></i></li>
+                                        <li class="dropdown-item"><a href="#">Link 2</a><i class="far fa-window-close fa-sm float-right"></i></li>
+                                        <li class="dropdown-item"><a href="#" id="test1">Link 3</a><i class="far fa-window-close fa-sm float-right" onclick="removeNotificationItem()"></i></li>
+                                        <li class="dropdown-item"><a href="#" id="test1">Link 4</a><i class="far fa-window-close fa-sm float-right" onclick="removeNotificationItem()"></i></li>
+                                        <li class="dropdown-item"><a href="#" id="test1">Link 5</a><i class="far fa-window-close fa-sm float-right" onclick="removeNotificationItem()"></i></li>
+                                    </ul>
+                                                             
+                                </div>
                             </li>
                         }
                     </ul>
