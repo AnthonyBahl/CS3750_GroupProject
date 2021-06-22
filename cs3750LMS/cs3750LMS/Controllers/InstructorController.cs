@@ -1,10 +1,12 @@
 ﻿using cs3750LMS.DataAccess;
 using cs3750LMS.Models;
 using cs3750LMS.Models.entites;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace cs3750LMS.Controllers
@@ -22,20 +24,30 @@ namespace cs3750LMS.Controllers
         [HttpGet]
         public IActionResult CourseEdit(int id)
         {
-            User userFound = _context.Users.Where(u => u.Email == HttpContext.Session.Get<string>("user")).Single();
-            UserSession session = new UserSession
-            {
-                Email = userFound.Email,
-                FirstName = userFound.FirstName,
-                LastName = userFound.LastName,
-                Birthday = userFound.Birthday,
-                AccountType = userFound.AccountType
-            };
+            string courseKey = "course" + id;
+            string serialUser = HttpContext.Session.GetString("userInfo");
+            UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
 
+
+
+            string serialSelected = HttpContext.Session.GetString(courseKey);
             SpecificCourse course = new SpecificCourse();
-            course.Selection = _context.Courses.Where(x => x.CourseID == id).Single();
-            course.AssignmentList = _context.Assignments.Where(y => y.CourseID == id).ToList();
+            if (serialSelected != null)
+            {
+                course = JsonSerializer.Deserialize<SpecificCourse>(serialSelected);
+            }
+            else
+            {
+                string serialCourse = HttpContext.Session.GetString("userCourses");
+                Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+                course.Selection = userCourses.CourseList.Where(x => x.CourseID == id).Single();
+                course.AssignmentList = _context.Assignments.Where(y => y.CourseID == id).ToList();
+
+                HttpContext.Session.SetString(courseKey,JsonSerializer.Serialize(course));
+            }
+
             course.ModeSetting = 1;
+
             ViewData["ClickedCourse"] = course;
             ViewData["Message"] = session;
             return View("~/Views/Instructor/CourseEdit.cshtml");
@@ -52,11 +64,17 @@ namespace cs3750LMS.Controllers
                     Title = assignment.Title,
                     Description = assignment.Description,
                     MaxPoints = assignment.MaxPoints,
-                    DueDate = assignment.DueDate +assignment.DueTime,
+                    DueDate = assignment.DueDate + assignment.DueTime,
                     SubmissionType = assignment.SubmitType
                 };
                 _context.Assignments.Add(newA);
                 _context.SaveChanges();
+
+                string courseKey = "course" + assignment.CourseID;
+                string serialSelected = HttpContext.Session.GetString(courseKey);
+                SpecificCourse course = JsonSerializer.Deserialize<SpecificCourse>(serialSelected);
+                course.AssignmentList.Add(newA);
+                HttpContext.Session.SetString(courseKey, JsonSerializer.Serialize(course));
             }
             return CourseEdit(assignment.CourseID);
         }
@@ -68,30 +86,34 @@ namespace cs3750LMS.Controllers
             if (HttpContext.Session.Get<string>("user") != null)
             {
                 //get the session object for next pass
-                User userFound = _context.Users.Where(u => u.Email == HttpContext.Session.Get<string>("user")).Single();
-                UserSession session = new UserSession
-                {
-                    Email = userFound.Email,
-                    FirstName = userFound.FirstName,
-                    LastName = userFound.LastName,
-                    Birthday = userFound.Birthday,
-                    AccountType = userFound.AccountType
-                };
-                if (userFound.AccountType == 1)
+                string serialUser = HttpContext.Session.GetString("userInfo");
+                UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
+
+                if (session.AccountType == 1)
                 {
                     //set courses object for next pass
-                    Courses courses = new Courses
-                    {
-                        CourseList = _context.Courses.Where(x => x.InstructorID == userFound.UserId).ToList()
-                    };
+                    string serialCourse = HttpContext.Session.GetString("userCourses");
+                    Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
 
-                    Departments depts = new Departments
+                    //if departments were grabbed before are saved in session else put in session
+                    string serialDepts = HttpContext.Session.GetString("Departments");
+                    Departments depts;
+                    if(serialDepts != null)
                     {
-                        DeptsList = _context.Departments.ToList()
-                    };
+                        depts = JsonSerializer.Deserialize<Departments>(serialDepts);
+                    }
+                    else
+                    {
+                        depts = new Departments
+                        {
+                            DeptsList = _context.Departments.ToList()
+                        };
+                    }
+                  
+                    //pass data to view
                     ViewData["DepartmentData"] = depts;
                     ViewData["Message"] = session;
-                    ViewData["Courses"] = courses;
+                    ViewData["Courses"] = userCourses;
                     return View();
                 }
             }
@@ -102,15 +124,12 @@ namespace cs3750LMS.Controllers
         public IActionResult AddClass([Bind("Instructor,Department,ClassNumber,ClassTitle,Description,Location,Credits,Capacity,MeetDays,StartTime,EndTime,Color")] ClassValidationAdd newClass)
         {
             //get the session object for next pass
-            User userFound = _context.Users.Where(u => u.Email == HttpContext.Session.Get<string>("user")).Single();
-            UserSession session = new UserSession
-            {
-                Email = userFound.Email,
-                FirstName = userFound.FirstName,
-                LastName = userFound.LastName,
-                Birthday = userFound.Birthday,
-                AccountType = userFound.AccountType
-            };
+            string serialUser = HttpContext.Session.GetString("userInfo");
+            UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
+
+            //set courses object for next pass
+            string serialCourse = HttpContext.Session.GetString("userCourses");
+            Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
 
             //if model valid add new course
             bool success = false;
@@ -118,7 +137,7 @@ namespace cs3750LMS.Controllers
             {
                 Course newCourse = new Course
                 {
-                    InstructorID = userFound.UserId,
+                    InstructorID = session.UserId,
                     Department = newClass.Department,
                     ClassNumber = newClass.ClassNumber,
                     ClassTitle = newClass.ClassTitle,
@@ -132,8 +151,12 @@ namespace cs3750LMS.Controllers
                     Color = newClass.Color
                 };
 
+                //update database
                 _context.Courses.Add(newCourse);
                 _context.SaveChanges();
+                //update session saved courses
+                userCourses.CourseList.Add(newCourse);
+                HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(userCourses));
                 success = true;
             }
             //----------------------------Add class logic end---------------------------
@@ -147,17 +170,26 @@ namespace cs3750LMS.Controllers
             {
                 session.ClassState = 1;
             }
-            Courses courses = new Courses
+
+            //if departments were grabbed before are saved in session else put in session
+            string serialDepts = HttpContext.Session.GetString("Departments");
+            Departments depts;
+            if (serialDepts != null)
             {
-                CourseList = _context.Courses.Where(x => x.InstructorID == userFound.UserId).ToList()
-            };
-            Departments depts = new Departments
+                depts = JsonSerializer.Deserialize<Departments>(serialDepts);
+            }
+            else
             {
-                DeptsList = _context.Departments.ToList()
-            };
+                depts = new Departments
+                {
+                    DeptsList = _context.Departments.ToList()
+                };
+            }
+
+            //pass data to view
             ViewData["DepartmentData"] = depts;
             ViewData["Message"] = session;
-            ViewData["Courses"] = courses;
+            ViewData["Courses"] = userCourses;
             return View();
         }
     }
