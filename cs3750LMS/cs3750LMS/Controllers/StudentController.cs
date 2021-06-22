@@ -71,15 +71,11 @@ namespace cs3750LMS.Controllers
                             instructors.InstructorList.Add(newInstructor);
                         }
 
-                        //grab all courses
-                        allCourses = new Courses
-                        {
-                            CourseList = _context.Courses.ToList(),
-                            CourseInstructors = instructors.InstructorList
-                        };
-                        //save times allCourses
-                        List<TimeStamp> timesAll = new TimeStamp().ParseTimes(allCourses);
-                        HttpContext.Session.SetString("allCourseTimes", JsonSerializer.Serialize(timesAll));
+                    Courses courses = new Courses
+                    {
+                        CourseList = _context.Courses.ToList(),
+                        CourseInstructors = instructors.InstructorList
+                    };
 
 
                         //save to session
