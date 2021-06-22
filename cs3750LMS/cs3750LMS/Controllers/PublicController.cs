@@ -4,6 +4,7 @@ using cs3750LMS.Models.entites;
 using cs3750LMS.Models.general;
 using cs3750LMS.Models.validation;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace cs3750LMS.Controllers
@@ -31,63 +33,11 @@ namespace cs3750LMS.Controllers
         {
             if (HttpContext.Session.Get<string>("user") != null)
             {
-                User userFound = _context.Users.Where(u => u.Email == HttpContext.Session.Get<string>("user")).Single();
-                UserSession session = new UserSession
-                {
-                    UserId = userFound.UserId,
-                    Email = userFound.Email,
-                    FirstName = userFound.FirstName,
-                    LastName = userFound.LastName,
-                    Birthday = userFound.Birthday,
-                    AccountType = userFound.AccountType
-                };
+                string serialUser = HttpContext.Session.GetString("userInfo");
+                UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
 
-                // Get Courses from Database
-                Courses courses = new Courses
-                {
-                    CourseList = _context.Courses.ToList()
-                };
-
-                Courses userCourses = new Courses
-                {
-                    CourseList = new List<Course>()
-                };
-
-                // If the user is a student
-                if (session.AccountType == 0)
-                {
-
-                    //set enrollment object for next pass
-                    Enrollments enrollment = new Enrollments
-                    {
-                        EnrollmentList = _context.Enrollments.Where(x => x.studentID == userFound.UserId).ToList()
-                    };
-
-                    // Populating the user course list
-                    for (int i = 0; i < courses.CourseList.Count; i++)
-                    {
-                        for (int j = 0; j < enrollment.EnrollmentList.Count; j++)
-                        {
-                            if (courses.CourseList[i].CourseID == enrollment.EnrollmentList[j].courseID)
-                            {
-                                userCourses.CourseList.Add(courses.CourseList[i]);
-                            }
-                        }
-                    }
-
-                }
-                // If the user is an instructor
-                else if (session.AccountType == 1)
-                {
-                    // Populating the user course list
-                    for (int i = 0; i < courses.CourseList.Count; i++)
-                    {
-                        if (courses.CourseList[i].InstructorID == session.UserId)
-                        {
-                            userCourses.CourseList.Add(courses.CourseList[i]);
-                        }
-                    }
-                }
+                string serialCourse = HttpContext.Session.GetString("userCourses");
+                Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
 
                 ViewData["UserCourses"] = userCourses;
                 ViewData["Message"] = session;
@@ -101,34 +51,21 @@ namespace cs3750LMS.Controllers
         {
             if (HttpContext.Session.Get<string>("user") != null)
             {
-                User userFound = _context.Users.Where(u => u.Email == HttpContext.Session.Get<string>("user")).Single();
-                UserSession session = new UserSession
-                {
-                    Email = userFound.Email,
-                    FirstName = userFound.FirstName,
-                    LastName = userFound.LastName,
-                    Birthday = userFound.Birthday,
-                    AccountType = userFound.AccountType,
-                    ProfileImage = userFound.ProfileImage,
-                    Address1 = userFound.Address1,
-                    Address2 = userFound.Address2,
-                    City = userFound.City,
-                    State = userFound.State,
-                    Zip = userFound.Zip,
-                    Phone = userFound.Phone,
-                    LinkedIn = userFound.LinkedIn,
-                    Github = userFound.Github,
-                    Twitter = userFound.Twitter,
-                    Bio = userFound.Bio
-
-                };
-                int userLinkCount = _context.Links.Count(z => z.UserID == userFound.UserId);
-                if ( userLinkCount > 0)
-                {
-                    session.UserLinks = _context.Links.Where(z=>z.UserID == userFound.UserId).ToList();
-                }
+                string serialStates = HttpContext.Session.GetString("States");
                 States states = new States();
-                states.StatesList = _context.States.ToList();
+                if (serialStates != null)
+                {
+                    states = JsonSerializer.Deserialize<States>(serialStates);
+                }
+                else
+                {
+                    states.StatesList = _context.States.ToList();
+                    HttpContext.Session.SetString("States", JsonSerializer.Serialize(states));
+                }
+
+                string serialUser = HttpContext.Session.GetString("userInfo");
+                UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
+
                 ViewData["States"] = states;
                 ViewData["Message"] = session;
                 return View();
@@ -137,21 +74,19 @@ namespace cs3750LMS.Controllers
         }
 
 
-
-
         //updates user profile to database from the profile page
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateProfile([Bind("ProfileImage,Email,FirstName,LastName,Birthday,ProfileImage,Address1,Address2,City,State,Zip,Phone,gitHubLink,TwitterLink,LinkedInLink,Bio")] UserValidationUpdate testUser)
         {
+            User users = new User();
             bool updateSuccess = false;
             if (ModelState.IsValid)
             {
                 if (_context.Users.Count(e => e.Email == testUser.Email) == 1)
                 {
 
-                    User users = _context.Users.Where(x => x.Email == testUser.Email).Single();
-
+                    users = _context.Users.Where(x => x.Email == testUser.Email).Single();
                     users.Email = testUser.Email;
                     users.FirstName = testUser.FirstName;
                     users.LastName = testUser.LastName;
@@ -203,35 +138,53 @@ namespace cs3750LMS.Controllers
                     updateSuccess = true;
                 }
             }
-            User userFound = _context.Users.Where(u => u.Email == HttpContext.Session.Get<string>("user")).Single();
-            UserSession session = new UserSession
+            UserSession session;
+            if (updateSuccess)
             {
-                Email = userFound.Email,
-                FirstName = userFound.FirstName,
-                LastName = userFound.LastName,
-                Birthday = userFound.Birthday,
-                AccountType = userFound.AccountType,
-                ProfileImage = userFound.ProfileImage,
-                Address1 = userFound.Address1,
-                Address2 = userFound.Address2,
-                City = userFound.City,
-                State = userFound.State,
-                Zip = userFound.Zip,
-                Phone = userFound.Phone,
-                IsUpdate = updateSuccess,
-                LinkedIn = userFound.LinkedIn,
-                Github = userFound.Github,
-                Twitter = userFound.Twitter,
-                Bio = userFound.Bio
-            };
-
-            int userLinkCount = _context.Links.Count(z => z.UserID == userFound.UserId);
-            if (userLinkCount > 0)
-            {
-                session.UserLinks = _context.Links.Where(z => z.UserID == userFound.UserId).ToList();
+                session = new UserSession
+                {
+                    UserId = users.UserId,
+                    Email = users.Email,
+                    FirstName = users.FirstName,
+                    LastName = users.LastName,
+                    Birthday = users.Birthday,
+                    AccountType = users.AccountType,
+                    ProfileImage = users.ProfileImage,
+                    Address1 = users.Address1,
+                    Address2 = users.Address2,
+                    City = users.City,
+                    State = users.State,
+                    Zip = users.Zip,
+                    Phone = users.Phone,
+                    LinkedIn = users.LinkedIn,
+                    Github =users.Github,
+                    Twitter = users.Twitter,
+                    Bio = users.Bio
+                };
+                HttpContext.Session.SetString("userInfo", JsonSerializer.Serialize(session));
             }
+            else
+            {
+                string serialUser = HttpContext.Session.GetString("userInfo");
+                session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
+            }
+
+            session.IsUpdate = updateSuccess;
+
+            string serialStates = HttpContext.Session.GetString("States");
             States states = new States();
-            states.StatesList = _context.States.ToList();
+            if (serialStates != null)
+            {
+                states = JsonSerializer.Deserialize<States>(serialStates);
+            }
+            else
+            {
+                states.StatesList = _context.States.ToList();
+                HttpContext.Session.SetString("States", JsonSerializer.Serialize(states));
+            }
+
+
+
             ViewData["States"] = states;
             ViewData["Message"] = session;
             return View("Profile");
