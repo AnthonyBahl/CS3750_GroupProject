@@ -128,6 +128,10 @@ namespace cs3750LMS.Controllers
             enrollment.EnrollmentList = _context.Enrollments.Where(x => x.studentID == session.UserId).ToList();
             HttpContext.Session.SetString("userEnrollment", JsonSerializer.Serialize(enrollment));
 
+            List<int> enrolled = _context.Enrollments.Where(y => y.studentID == session.UserId).Select(z => z.courseID).ToList();
+            studentCourses.CourseList = _context.Courses.Where(x => enrolled.Contains(x.CourseID)).ToList();
+            HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(studentCourses));
+
 
             //set courses object, and success for next pass
             if (success)
@@ -175,6 +179,10 @@ namespace cs3750LMS.Controllers
 
             enrollment.EnrollmentList = _context.Enrollments.Where(x => x.studentID == session.UserId).ToList();
             HttpContext.Session.SetString("userEnrollment", JsonSerializer.Serialize(enrollment));
+
+            List<int> enrolled = _context.Enrollments.Where(y => y.studentID == session.UserId).Select(z => z.courseID).ToList();
+            studentCourses.CourseList = _context.Courses.Where(x => enrolled.Contains(x.CourseID)).ToList();
+            HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(studentCourses));
 
             //set courses object, and success for next pass
             if (success)
