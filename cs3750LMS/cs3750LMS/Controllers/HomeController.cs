@@ -34,7 +34,10 @@ namespace cs3750LMS.Controllers
                 UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
 
                 string serialCourse = HttpContext.Session.GetString("userCourses");
-                Courses userCourses = serialCourse==null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+                Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+
+                string serialAssignment = HttpContext.Session.GetString("userAssignments");
+                Assignments userAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
 
                 //reload timespans
                 string serialTimes = HttpContext.Session.GetString("courseTimes");
@@ -43,6 +46,7 @@ namespace cs3750LMS.Controllers
 
                 ViewData["UserCourses"] = userCourses;
                 ViewData["Message"] = session;
+                ViewData["userAssignments"] = userAssignments;
                 return View();
             }
             return View("~/Views/Home/Login.cshtml");
@@ -118,6 +122,12 @@ namespace cs3750LMS.Controllers
                     HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(userCourses));
                     ViewData["UserCourses"] = userCourses;
 
+                    // set an empty set of user assignments and pass into the view data
+                    Assignments userAssignments = new Assignments();
+                    userAssignments.AssignmentList = new List<Assignment>();
+                    HttpContext.Session.SetString("userAssignments", JsonSerializer.Serialize(userAssignments));
+                    ViewData["userAssignments"] = userAssignments;
+
                     //save times
                     List<TimeStamp> times = new TimeStamp().ParseTimes(userCourses);
                     HttpContext.Session.SetString("courseTimes", JsonSerializer.Serialize(times));
@@ -185,12 +195,15 @@ namespace cs3750LMS.Controllers
                     
                     //grab user courses from database
                     Courses userCourses = new Courses();
+                    Assignments userAssignments = new Assignments();
 
                     //Student course list
                     if (session.AccountType == 0)
                     {
                         List<int> enrolled = _context.Enrollments.Where(y => y.studentID == userFound.UserId).Select(z => z.courseID).ToList();
                         userCourses.CourseList = _context.Courses.Where(x => enrolled.Contains(x.CourseID)).ToList();
+
+                        userAssignments.AssignmentList = _context.Assignments.Where(x => enrolled.Contains(x.CourseID)).ToList();
                     }
                     //Instructor course list
                     if (session.AccountType == 1)
@@ -201,6 +214,10 @@ namespace cs3750LMS.Controllers
                     //save the user courses in the session and pass to view
                     HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(userCourses));
                     ViewData["UserCourses"] = userCourses;
+
+                    // save the user assignments in the sessioin and pass to the view
+                    HttpContext.Session.SetString("userAssignments", JsonSerializer.Serialize(userAssignments));
+                    ViewData["userAssignments"] = userAssignments;
 
                     //save times
                     List<TimeStamp> times = new TimeStamp().ParseTimes(userCourses);
