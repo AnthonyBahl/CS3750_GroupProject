@@ -1,6 +1,7 @@
 ﻿using cs3750LMS.DataAccess;
 using cs3750LMS.Models;
 using cs3750LMS.Models.entites;
+using cs3750LMS.Models.general;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -20,7 +21,7 @@ namespace cs3750LMS.Controllers
         }
 
 
-        //-------------------------------Course Edit logic Begin--------------
+        //-------------------------------Specific Course Edit logic Begin--------------
         [HttpGet]
         public IActionResult CourseEdit(int id)
         {
@@ -94,6 +95,10 @@ namespace cs3750LMS.Controllers
                     //set courses object for next pass
                     string serialCourse = HttpContext.Session.GetString("userCourses");
                     Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+                    //reload timespans
+                    string serialTimes = HttpContext.Session.GetString("courseTimes");
+                    List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
+                    userCourses.RefactorTimeSpans(times);
 
                     //if departments were grabbed before are saved in session else put in session
                     string serialDepts = HttpContext.Session.GetString("Departments");
@@ -130,6 +135,10 @@ namespace cs3750LMS.Controllers
             //set courses object for next pass
             string serialCourse = HttpContext.Session.GetString("userCourses");
             Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+            //reload timespans
+            string serialTimes = HttpContext.Session.GetString("courseTimes");
+            List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
+            userCourses.RefactorTimeSpans(times);
 
             //if model valid add new course
             bool success = false;
@@ -158,6 +167,9 @@ namespace cs3750LMS.Controllers
                 userCourses.CourseList.Add(newCourse);
                 HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(userCourses));
                 success = true;
+                //save times
+                List<TimeStamp> timesSave = new TimeStamp().ParseTimes(userCourses);
+                HttpContext.Session.SetString("courseTimes", JsonSerializer.Serialize(timesSave));
             }
             //----------------------------Add class logic end---------------------------
 

@@ -36,6 +36,11 @@ namespace cs3750LMS.Controllers
                 string serialCourse = HttpContext.Session.GetString("userCourses");
                 Courses userCourses = serialCourse==null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
 
+                //reload timespans
+                string serialTimes = HttpContext.Session.GetString("courseTimes");
+                List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
+                userCourses.RefactorTimeSpans(times);
+
                 ViewData["UserCourses"] = userCourses;
                 ViewData["Message"] = session;
                 return View();
@@ -111,6 +116,10 @@ namespace cs3750LMS.Controllers
                     Courses userCourses = new Courses();
                     HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(userCourses));
                     ViewData["UserCourses"] = userCourses;
+
+                    //save times
+                    List<TimeStamp> times = new TimeStamp().ParseTimes(userCourses);
+                    HttpContext.Session.SetString("courseTimes", JsonSerializer.Serialize(times));
 
                     //on success is now logged in, route to dashboard
                     return View("~/Views/Home/Index.cshtml");
@@ -191,6 +200,10 @@ namespace cs3750LMS.Controllers
                     //save the user courses in the session and pass to view
                     HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(userCourses));
                     ViewData["UserCourses"] = userCourses;
+
+                    //save times
+                    List<TimeStamp> times = new TimeStamp().ParseTimes(userCourses);
+                    HttpContext.Session.SetString("courseTimes", JsonSerializer.Serialize(times));
 
                     //on success is logged in route to dashboard
                     return View("~/Views/Home/Index.cshtml");

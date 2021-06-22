@@ -12,6 +12,8 @@
 <!--View Registration Section-->
 <div id="RegistrationView">
     <h1 class="display-4 text-center mt-3">@ViewData["Title"]</h1>
+    @if (courses.CourseList != null && studentCourses.CourseList != null)
+    {
     <table class="table table-hover bg-white mt-5">
         <thead>
             <tr>
@@ -80,5 +82,6 @@
             }
         </tbody>
     </table>
+    }
 </div>
 <!--End View Registration Section-->

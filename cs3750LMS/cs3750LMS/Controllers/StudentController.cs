@@ -33,14 +33,19 @@ namespace cs3750LMS.Controllers
                     //grab session vars for registration
                     string serialEnrollment = HttpContext.Session.GetString("userEnrollment");
                     string serialAllCourses = HttpContext.Session.GetString("AllCourses");
+                    string serialTimesAll = HttpContext.Session.GetString("allCourseTimes");
 
                     Courses allCourses;
                     Enrollments enrollment;
 
-                    if (serialEnrollment != null && serialAllCourses != null)
+                    if (serialEnrollment != null && serialAllCourses != null && serialTimesAll != null)
                     {
                         allCourses = JsonSerializer.Deserialize<Courses>(serialAllCourses);
                         enrollment = JsonSerializer.Deserialize<Enrollments>(serialEnrollment);
+                        //reload timespans
+                        
+                        List<TimeStamp> timesAll = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimesAll);
+                        allCourses.RefactorTimeSpans(timesAll);
                     }
                     else
                     {
@@ -72,6 +77,10 @@ namespace cs3750LMS.Controllers
                             CourseList = _context.Courses.ToList(),
                             CourseInstructors = instructors.InstructorList
                         };
+                        //save times allCourses
+                        List<TimeStamp> timesAll = new TimeStamp().ParseTimes(allCourses);
+                        HttpContext.Session.SetString("allCourseTimes", JsonSerializer.Serialize(timesAll));
+
 
                         //save to session
                         HttpContext.Session.SetString("userEnrollment", JsonSerializer.Serialize(enrollment));
@@ -82,6 +91,10 @@ namespace cs3750LMS.Controllers
                     //get student courses from session
                     string serialCourse = HttpContext.Session.GetString("userCourses");
                     Courses studentCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+                    //reload timespans
+                    string serialTimes = HttpContext.Session.GetString("courseTimes");
+                    List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
+                    studentCourses.RefactorTimeSpans(times);
 
                     //pass data to view
                     ViewData["Message"] = session;
@@ -106,10 +119,17 @@ namespace cs3750LMS.Controllers
 
             Courses allCourses = JsonSerializer.Deserialize<Courses>(serialAllCourses);
             Enrollments enrollment = JsonSerializer.Deserialize<Enrollments>(serialEnrollment);
+            string serialTimesAll = HttpContext.Session.GetString("allCourseTimes");
+            List<TimeStamp> timesAll = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimesAll);
+            allCourses.RefactorTimeSpans(timesAll);
 
             //get student courses from session
             string serialCourse = HttpContext.Session.GetString("userCourses");
             Courses studentCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+            //reload timespans
+            string serialTimes = HttpContext.Session.GetString("courseTimes");
+            List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
+            studentCourses.RefactorTimeSpans(times);
 
             //if model valid add new course
             bool success = false;
@@ -131,6 +151,9 @@ namespace cs3750LMS.Controllers
             List<int> enrolled = _context.Enrollments.Where(y => y.studentID == session.UserId).Select(z => z.courseID).ToList();
             studentCourses.CourseList = _context.Courses.Where(x => enrolled.Contains(x.CourseID)).ToList();
             HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(studentCourses));
+            //save times
+            List<TimeStamp> timesSave = new TimeStamp().ParseTimes(studentCourses);
+            HttpContext.Session.SetString("courseTimes", JsonSerializer.Serialize(timesSave));
 
 
             //set courses object, and success for next pass
@@ -142,7 +165,6 @@ namespace cs3750LMS.Controllers
             {
                 session.ClassState = 1;
             }
-
             //pass data to view
             ViewData["Message"] = session;
             ViewData["Courses"] = allCourses;
@@ -164,10 +186,17 @@ namespace cs3750LMS.Controllers
 
             Courses allCourses = JsonSerializer.Deserialize<Courses>(serialAllCourses);
             Enrollments enrollment = JsonSerializer.Deserialize<Enrollments>(serialEnrollment);
+            string serialTimesAll = HttpContext.Session.GetString("allCourseTimes");
+            List<TimeStamp> timesAll = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimesAll);
+            allCourses.RefactorTimeSpans(timesAll);
 
             //get student courses from session
             string serialCourse = HttpContext.Session.GetString("userCourses");
             Courses studentCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+            //reload timespans
+            string serialTimes = HttpContext.Session.GetString("courseTimes");
+            List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
+            studentCourses.RefactorTimeSpans(times);
 
             //if model valid add new course
             bool success = false;
@@ -183,6 +212,9 @@ namespace cs3750LMS.Controllers
             List<int> enrolled = _context.Enrollments.Where(y => y.studentID == session.UserId).Select(z => z.courseID).ToList();
             studentCourses.CourseList = _context.Courses.Where(x => enrolled.Contains(x.CourseID)).ToList();
             HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(studentCourses));
+            //save times
+            List<TimeStamp> timesSave = new TimeStamp().ParseTimes(studentCourses);
+            HttpContext.Session.SetString("courseTimes", JsonSerializer.Serialize(timesSave));
 
             //set courses object, and success for next pass
             if (success)
