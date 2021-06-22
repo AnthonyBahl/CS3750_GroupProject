@@ -3,6 +3,7 @@
     ViewData["Title"] = "Registration";
     Courses courses = (Courses)ViewData["Courses"];
     Courses studentCourses = (Courses)ViewData["StudentCourses"];
+    Departments depts = (Departments)ViewData["Departments"];
 }
 @section Scripts{
     <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
@@ -12,6 +13,34 @@
 <!--View Registration Section-->
 <div id="RegistrationView">
     <h1 class="display-4 text-center mt-3">@ViewData["Title"]</h1>
+    <form asp-action="SearchCourses" method="post">
+        <div class="form-row align-items-center justify-content-center">
+            <div class="row col-sm-12 col-lg-4 my-1 align-items-center justify-content-center mr-3">
+                <div class="col-sm-12 col-lg-4">
+                    <label class="text-right" for="Department">Department:</label>
+                </div>
+                <div class="col-sm-12 col-lg-8">
+                    <select id="Department" name="Department" class="form-control" value="-1">
+                        <option value="-1">Select Department</option>
+                        @for (int i = 0; i < depts.DeptsList.Count; i++)
+                        {
+                            <option value=@depts.DeptsList[i].DeptID>@depts.DeptsList[i].DeptName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="row col-sm-12 col-lg-4 my-1 align-items-center justify-content-center">
+                <div class="col-sm-12 col-lg-4">
+                    <label class="text-right" for="Title">Course Title:</label>
+                </div>
+                <div class="col-sm-12 col-lg-8">
+                    <input type="text" id="Title" name="Title" class="form-control" value="" />
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success mx-2">Search</button>
+            <button type="submit" class="btn btn-warning mx-2" asp-action="Register">Clear</button>
+        </div>
+    </form>
     <table class="table table-hover bg-white mt-5">
         <thead>
             <tr>
