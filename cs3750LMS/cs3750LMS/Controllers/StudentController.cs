@@ -43,7 +43,7 @@ namespace cs3750LMS.Controllers
                         allCourses = JsonSerializer.Deserialize<Courses>(serialAllCourses);
                         enrollment = JsonSerializer.Deserialize<Enrollments>(serialEnrollment);
                         //reload timespans
-                        
+
                         List<TimeStamp> timesAll = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimesAll);
                         allCourses.RefactorTimeSpans(timesAll);
                     }
@@ -71,17 +71,20 @@ namespace cs3750LMS.Controllers
                             instructors.InstructorList.Add(newInstructor);
                         }
 
-                    Courses courses = new Courses
-                    {
-                        CourseList = _context.Courses.ToList(),
-                        CourseInstructors = instructors.InstructorList
-                    };
-
+                        allCourses = new Courses
+                        {
+                            CourseList = _context.Courses.ToList(),
+                            CourseInstructors = instructors.InstructorList
+                        };
+                        //save times
+                        List<TimeStamp> timesSaveA = new TimeStamp().ParseTimes(allCourses);
+                        HttpContext.Session.SetString("allCourseTimes", JsonSerializer.Serialize(timesSaveA));
 
                         //save to session
                         HttpContext.Session.SetString("userEnrollment", JsonSerializer.Serialize(enrollment));
-                        HttpContext.Session.SetString("AllCourses",JsonSerializer.Serialize(allCourses));
+                        HttpContext.Session.SetString("AllCourses", JsonSerializer.Serialize(allCourses));
                     }
+                
 
 
                     //get student courses from session

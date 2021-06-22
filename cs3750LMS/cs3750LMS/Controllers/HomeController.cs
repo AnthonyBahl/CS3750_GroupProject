@@ -114,6 +114,7 @@ namespace cs3750LMS.Controllers
 
                     //save user courses(empty) to session and pass into view data
                     Courses userCourses = new Courses();
+                    userCourses.CourseList = new List<Course>();
                     HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(userCourses));
                     ViewData["UserCourses"] = userCourses;
 

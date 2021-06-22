@@ -13,7 +13,7 @@
 <!--View Registration Section-->
 <div id="RegistrationView">
     <h1 class="display-4 text-center mt-3">@ViewData["Title"]</h1>
-    @if (courses.CourseList != null && studentCourses.CourseList != null)
+    @if (courses.CourseList != null)
     {
     <table class="table table-hover bg-white mt-5">
         <thead>
@@ -44,7 +44,7 @@
                 <td>@courses.CourseList[i].StartTime.ToString() - @courses.CourseList[i].EndTime.ToString()</td>
                 <td>@courses.CourseList[i].Location</td>
                 <td>
-                    @if (studentCourses.CourseList.Count != 0)
+                    @if (studentCourses.CourseList != null && studentCourses.CourseList.Count != 0)
                     {
                         @if (studentCourses.CourseList.Any(x => x.CourseID == courses.CourseList[i].CourseID))
                         {
@@ -67,7 +67,7 @@
                             </form>
                         }
                     }
-                    else if (studentCourses.CourseList.Count == 0)
+                    else if (studentCourses.CourseList == null || studentCourses.CourseList.Count == 0)
                     {
                         <form asp-action="Register" method="post">
                             <div style="display:none">
