@@ -28,6 +28,18 @@ namespace cs3750LMS.Models
             }
         }
 
+        public void RefactorTimeSpans(List<TimeStamp> times)
+        {
+            if (times != null && CourseList != null)
+            {
+                for (int i = 0; i < CourseList.Count; i++)
+                {
+                    CourseList[i].StartTime = times[i].startTime.TimeOfDay;
+                    CourseList[i].EndTime = times[i].endTime.TimeOfDay;
+                }
+            }
+        }
+
         public string ParseDays(int index)
         {
             string days = "";

@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace cs3750LMS.Controllers
@@ -29,35 +30,18 @@ namespace cs3750LMS.Controllers
         {
             if (HttpContext.Session.Get<string>("user") != null)
             {
-                User userFound = _context.Users.Where(u => u.Email == HttpContext.Session.Get<string>("user")).Single();
-                UserSession session = new UserSession
-                {
-                    Email = userFound.Email,
-                    FirstName = userFound.FirstName,
-                    LastName = userFound.LastName,
-                    Birthday = userFound.Birthday,
-                    AccountType = userFound.AccountType
-                };
+                string serialUser = HttpContext.Session.GetString("userInfo");
+                UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
 
-                
-                Courses userCourses = new Courses();
+                string serialCourse = HttpContext.Session.GetString("userCourses");
+                Courses userCourses = serialCourse==null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
 
-                //Student
-                if (session.AccountType == 0)
-                {
-                    List<int> enrolled = _context.Enrollments.Where(y => y.studentID == userFound.UserId).Select(z=> z.courseID).ToList();
-                    userCourses.CourseList = _context.Courses.Where(x => enrolled.Contains(x.CourseID)).ToList();
-                }
-                //Instructor
-                if (session.AccountType == 1)
-                {
-                    userCourses.CourseList = _context.Courses.Where(x => x.InstructorID == userFound.UserId).ToList();
-                }
+                //reload timespans
+                string serialTimes = HttpContext.Session.GetString("courseTimes");
+                List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
+                userCourses.RefactorTimeSpans(times);
 
                 ViewData["UserCourses"] = userCourses;
-
-              
-
                 ViewData["Message"] = session;
                 return View();
             }
@@ -85,9 +69,10 @@ namespace cs3750LMS.Controllers
         public async Task<IActionResult> SignUp([Bind("Email,FirstName,LastName,Birthday,Password,ConfirmPassword,AccountType")] UserValidationSignUp testUser)
         {
             if (ModelState.IsValid) { 
+                //See if email already exists, if not create user
                 if(_context.Users.Count(e => e.Email == testUser.Email) == 0)
                 {
-
+                    //create the new user
                     User users = new Models.User
                     {
                         Email = testUser.Email,
@@ -98,45 +83,51 @@ namespace cs3750LMS.Controllers
                         AccountType = testUser.AccountType
                     };
 
+                    //add the new user to the database and save changes
                     _context.Add(users);
                     await _context.SaveChangesAsync();
 
+                    //set user email in session, and various info as a session object in session
                     HttpContext.Session.Set<string>("user", users.Email);
                     UserSession session = new UserSession
                     {
-                        Email = testUser.Email,
-                        FirstName = testUser.FirstName,
-                        LastName = testUser.LastName,
-                        Birthday = testUser.Birthday,
-                        AccountType = testUser.AccountType
+                        UserId = _context.Users.Where(x=>x.Email == users.Email).Select(y=>y.UserId).Single(),
+                        Email =users.Email,
+                        FirstName =users.FirstName,
+                        LastName =users.LastName,
+                        Birthday = users.Birthday,
+                        AccountType = users.AccountType,
+                        ProfileImage = users.ProfileImage,
+                        Address1 = users.Address1,
+                        Address2 = users.Address2,
+                        City = users.City,
+                        State = users.State,
+                        Zip = users.Zip,
+                        Phone = users.Phone,
+                        LinkedIn = users.LinkedIn,
+                        Github = users.Github,
+                        Twitter = users.Twitter,
+                        Bio = users.Bio
                     };
-
+                    HttpContext.Session.SetString("userInfo", JsonSerializer.Serialize(session));
                     ViewData["Message"] = session;
 
-                   
+                    //save user courses(empty) to session and pass into view data
                     Courses userCourses = new Courses();
-
-                    int userIdent = _context.Users.Where(l => l.Email == testUser.Email).Select(r=>r.UserId).Single();
-
-                    //Student
-                    if (session.AccountType == 0)
-                    {
-                        List<int> enrolled = _context.Enrollments.Where(y => y.studentID == userIdent).Select(z => z.courseID).ToList();
-                        userCourses.CourseList = _context.Courses.Where(x => enrolled.Contains(x.CourseID)).ToList();
-                    }
-                    //Instructor
-                    if (session.AccountType == 1)
-                    {
-                        userCourses.CourseList = _context.Courses.Where(x => x.InstructorID == userIdent).ToList();
-                    }
-
+                    userCourses.CourseList = new List<Course>();
+                    HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(userCourses));
                     ViewData["UserCourses"] = userCourses;
 
-                    
+                    //save times
+                    List<TimeStamp> times = new TimeStamp().ParseTimes(userCourses);
+                    HttpContext.Session.SetString("courseTimes", JsonSerializer.Serialize(times));
+
+                    //on success is now logged in, route to dashboard
                     return View("~/Views/Home/Index.cshtml");
                 }
             }
            
+            //on failure route to sign-up
             return View();
         }
 
@@ -146,6 +137,7 @@ namespace cs3750LMS.Controllers
         {
             if (ModelState.IsValid)
             {
+                //grab the user from the database
                 User userFound;
                 if (_context.Users.Count(y => y.Email == testLogin.Email) == 1)
                 {
@@ -153,47 +145,73 @@ namespace cs3750LMS.Controllers
                 }
                 else
                 {
+                    // user not found send failure
                     Errors failLogin = new Errors
                     {
                         LoginError = "Invalid Email/Password"
                     };
+                    
                     ViewData["LogErr"] = failLogin;
                     return View();
                 }
+
+                //check password to entered password
                 if (userFound.Password == Sha256(testLogin.Password))
                 {
-
+                    //store user email and info in session
                     HttpContext.Session.Set<string>("user", userFound.Email);
                     UserSession session = new UserSession
                     {
+                        UserId = userFound.UserId,
                         Email = userFound.Email,
                         FirstName = userFound.FirstName,
                         LastName = userFound.LastName,
                         Birthday = userFound.Birthday,
-                        AccountType = userFound.AccountType
+                        AccountType = userFound.AccountType,
+                        ProfileImage = userFound.ProfileImage,
+                        Address1 = userFound.Address1,
+                        Address2 = userFound.Address2,
+                        City = userFound.City,
+                        State = userFound.State,
+                        Zip = userFound.Zip,
+                        Phone = userFound.Phone,
+                        LinkedIn = userFound.LinkedIn,
+                        Github = userFound.Github,
+                        Twitter = userFound.Twitter,
+                        Bio = userFound.Bio
                     };
+                    HttpContext.Session.SetString("userInfo", JsonSerializer.Serialize(session));
                     ViewData["Message"] = session;
                     
+                    //grab user courses from database
                     Courses userCourses = new Courses();
 
-                    //Student
+                    //Student course list
                     if (session.AccountType == 0)
                     {
                         List<int> enrolled = _context.Enrollments.Where(y => y.studentID == userFound.UserId).Select(z => z.courseID).ToList();
                         userCourses.CourseList = _context.Courses.Where(x => enrolled.Contains(x.CourseID)).ToList();
                     }
-                    //Instructor
+                    //Instructor course list
                     if (session.AccountType == 1)
                     {
                         userCourses.CourseList = _context.Courses.Where(x => x.InstructorID == userFound.UserId).ToList();
                     }
 
+                    //save the user courses in the session and pass to view
+                    HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(userCourses));
                     ViewData["UserCourses"] = userCourses;
 
-                    
+                    //save times
+                    List<TimeStamp> times = new TimeStamp().ParseTimes(userCourses);
+                    HttpContext.Session.SetString("courseTimes", JsonSerializer.Serialize(times));
+
+                    //on success is logged in route to dashboard
                     return View("~/Views/Home/Index.cshtml");
                 }
             }
+
+            //on failure route to login and pass error message
             Errors fail = new Errors
             {
                 LoginError = "Invalid Email/Password"

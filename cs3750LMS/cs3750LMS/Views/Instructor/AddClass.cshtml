@@ -23,48 +23,51 @@
 <!--View Classes Section-->
 <div id="ClassView" style="display:@viewState">
     <h1 class="display-4 text-center mt-3">@ViewData["Title"]</h1>
-    <table class="table table-hover bg-white mt-5">
-        <thead>
-            <tr>
-                <th scope="col">Course Number</th>
-                <th scope="col">Course Title</th>
-                <th scope="col">Meeting Days</th>
-                <th scope="col">Start Time</th>
-                <th scope="col">End Time</th>
-                <th scope="col">Location</th>
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 0; i < courses.CourseList.Count; i++)
-            {
-                
+    @if (courses.CourseList != null)
+    {
+        <table class="table table-hover bg-white mt-5">
+            <thead>
                 <tr>
-
-                    <th scope="row"><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].ClassNumber</a></th>
-                    <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].ClassTitle</a></td>
-                    <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.ParseDays(i)</a></td>
-                    <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].StartTime.ToString()</a></td>
-                    <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].EndTime.ToString()</a></td>
-                    <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].Location</a></td>
-
-                    <td>
-                        <button type="button" class="btn btn-success">Edit</button>
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-danger">Delete</button>
-                    </td>
+                    <th scope="col">Course Number</th>
+                    <th scope="col">Course Title</th>
+                    <th scope="col">Meeting Days</th>
+                    <th scope="col">Start Time</th>
+                    <th scope="col">End Time</th>
+                    <th scope="col">Location</th>
+                    <th></th>
+                    <th></th>
                 </tr>
-                
-            }
-        </tbody>
-    </table>
-    <br />
-    <div class="text-center mt-3">
-        <button type="button" class="btn btn-primary mx-2" onclick="ToggleView(1,1)">Add Class</button>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < courses.CourseList.Count; i++)
+                {
+
+                    <tr>
+
+                        <th scope="row"><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].ClassNumber</a></th>
+                        <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].ClassTitle</a></td>
+                        <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.ParseDays(i)</a></td>
+                        <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].StartTime.ToString()</a></td>
+                        <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].EndTime.ToString()</a></td>
+                        <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].Location</a></td>
+
+                        <td>
+                            <button type="button" class="btn btn-success">Edit</button>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger">Delete</button>
+                        </td>
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+    }
+        <br />
+        <div class="text-center mt-3">
+            <button type="button" class="btn btn-primary mx-2" onclick="ToggleView(1,1)">Add Class</button>
+        </div>
     </div>
-</div>
 <!--End View Classes Section-->
 <!--Add Class Section-->
 <div id="AddClassView" style="display: @createState">
