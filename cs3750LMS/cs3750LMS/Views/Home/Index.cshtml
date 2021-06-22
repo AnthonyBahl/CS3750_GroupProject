@@ -3,7 +3,7 @@
     UserSession show = (UserSession)ViewData["Message"];
 
     Courses userCourses = (Courses)ViewData["UserCourses"];
-
+    Assignments assignments = (Assignments)ViewData["userAssignments"];
 }
 
 <div class="text-center">
@@ -40,41 +40,19 @@
             <div class="col-4">
                 <div class="list-group">
                     <li class="list-group-item text-center fs-3 font-weight-bold">To Dos</li>
-                    <a href="#" class="list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">Assignment 2</h5>
-                            <small>7-27-21 11:59pm</small>
-                        </div>
-                        <small>Math 1010</small>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">Database Planning</h5>
-                            <small>7-29-21 11:59pm</small>
-                        </div>
-                        <small>CS 3250</small>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">Assignment 3</h5>
-                            <small>7-31-21 11:59pm</small>
-                        </div>
-                        <small>Math 1010</small>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">Market Place</h5>
-                            <small>8-7-21 11:59pm</small>
-                        </div>
-                        <small>CS 3400</small>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">Assignment 4</h5>
-                            <small>8-12-21 11:59pm</small>
-                        </div>
-                        <small>Math 1010</small>
-                    </a>
+                    @if (assignments.AssignmentList != null)
+                    {
+                        @for (int i = 0; i < assignments.AssignmentList.Count; i++)
+                        {
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">@assignments.AssignmentList[i].Title</h5>
+                                    <small>@assignments.AssignmentList[i].DueDate</small>
+                                </div>
+                                <small>@userCourses.CourseList.Where(y => y.CourseID == assignments.AssignmentList[i].CourseID).Select(z => z.ClassNumber).FirstOrDefault()</small>
+                            </a>
+                        }
+                    }
                 </div>
             </div>
         </div>
