@@ -2,6 +2,7 @@
 using cs3750LMS.Models;
 using cs3750LMS.Models.entites;
 using cs3750LMS.Models.general;
+using cs3750LMS.Models.validation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -19,7 +20,128 @@ namespace cs3750LMS.Controllers
         {
             _context = context;
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult SearchCourses([Bind("Department,Title")] SearchValidation pars)
+        {
+            //get user info from session
+            string serialUser = HttpContext.Session.GetString("userInfo");
+            UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
+            //grab session vars for registration
+            string serialEnrollment = HttpContext.Session.GetString("userEnrollment");
+            string serialAllCourses = HttpContext.Session.GetString("AllCourses");
+            string serialTimesAll = HttpContext.Session.GetString("allCourseTimes");
 
+            Courses allCourses;
+            Enrollments enrollment;
+
+            if (serialEnrollment != null && serialAllCourses != null && serialTimesAll != null)
+            {
+                allCourses = JsonSerializer.Deserialize<Courses>(serialAllCourses);
+                enrollment = JsonSerializer.Deserialize<Enrollments>(serialEnrollment);
+                //reload timespans
+
+                List<TimeStamp> timesAll = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimesAll);
+                allCourses.RefactorTimeSpans(timesAll);
+            }
+            else
+            {
+                //grab enrollment
+                enrollment = new Enrollments
+                {
+                    EnrollmentList = _context.Enrollments.Where(x => x.studentID == session.UserId).ToList()
+                };
+
+                //grab instructors
+                Instructors instructors = new Instructors
+                {
+                    InstructorUsers = _context.Users.Where(x => x.AccountType == 1).ToList(),
+                    InstructorList = new List<Instructor>()
+                };
+
+                for (int i = 0; i < instructors.InstructorUsers.Count; i++)
+                {
+                    Instructor newInstructor = new Instructor();
+                    newInstructor.UserId = instructors.InstructorUsers[i].UserId;
+                    newInstructor.FirstName = instructors.InstructorUsers[i].FirstName;
+                    newInstructor.LastName = instructors.InstructorUsers[i].LastName;
+                    instructors.InstructorList.Add(newInstructor);
+                }
+
+                allCourses = new Courses
+                {
+                    CourseList = _context.Courses.ToList(),
+                    CourseInstructors = instructors.InstructorList
+                };
+                //save times
+                List<TimeStamp> timesSaveA = new TimeStamp().ParseTimes(allCourses);
+                HttpContext.Session.SetString("allCourseTimes", JsonSerializer.Serialize(timesSaveA));
+
+                //save to session
+                HttpContext.Session.SetString("userEnrollment", JsonSerializer.Serialize(enrollment));
+                HttpContext.Session.SetString("AllCourses", JsonSerializer.Serialize(allCourses));
+            }
+
+
+
+            //get student courses from session
+            string serialCourse = HttpContext.Session.GetString("userCourses");
+            Courses studentCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+            //reload timespans
+            string serialTimes = HttpContext.Session.GetString("courseTimes");
+            List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
+            studentCourses.RefactorTimeSpans(times);
+
+            List<Course> removeList = new List<Course>();
+            //filter data
+            if(pars.Department != -1)
+            {
+                for(int i = 0; i < allCourses.CourseList.Count; i++)
+                {
+                    if(allCourses.CourseList[i].Department != pars.Department)
+                    {
+                        removeList.Add(allCourses.CourseList[i]);
+                    }
+                }
+            }
+            if(pars.Title != null && pars.Title != string.Empty)
+            {
+                for(int i = 0; i < allCourses.CourseList.Count; i++)
+                {
+                    if (!allCourses.CourseList[i].ClassTitle.Contains(pars.Title))
+                    {
+                        removeList.Add(allCourses.CourseList[i]);
+                    }
+                }
+            }
+
+            foreach(Course c in removeList)
+            {
+                allCourses.CourseList.Remove(c);
+            }
+
+            //if departments were grabbed before are saved in session else put in session
+            string serialDepts = HttpContext.Session.GetString("Departments");
+            Departments depts;
+            if (serialDepts != null)
+            {
+                depts = JsonSerializer.Deserialize<Departments>(serialDepts);
+            }
+            else
+            {
+                depts = new Departments
+                {
+                    DeptsList = _context.Departments.ToList()
+                };
+            }
+            ViewData["Departments"] = depts;
+            //pass data to view
+            ViewData["Message"] = session;
+            ViewData["Courses"] = allCourses;
+            ViewData["StudentCourses"] = studentCourses;
+            
+            return View("~/Views/Student/Register.cshtml");
+        }
         public IActionResult Register()
         {
             if (HttpContext.Session.Get<string>("user") != null)
@@ -94,7 +216,21 @@ namespace cs3750LMS.Controllers
                     string serialTimes = HttpContext.Session.GetString("courseTimes");
                     List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
                     studentCourses.RefactorTimeSpans(times);
-
+                    //if departments were grabbed before are saved in session else put in session
+                    string serialDepts = HttpContext.Session.GetString("Departments");
+                    Departments depts;
+                    if (serialDepts != null)
+                    {
+                        depts = JsonSerializer.Deserialize<Departments>(serialDepts);
+                    }
+                    else
+                    {
+                        depts = new Departments
+                        {
+                            DeptsList = _context.Departments.ToList()
+                        };
+                    }
+                    ViewData["Departments"] = depts;
                     //pass data to view
                     ViewData["Message"] = session;
                     ViewData["Courses"] = allCourses;
@@ -105,7 +241,7 @@ namespace cs3750LMS.Controllers
             return View("~/Views/Home/Login.cshtml");
         }
         [HttpPost]
-        [AutoValidateAntiforgeryToken]
+        [ValidateAntiForgeryToken]
         public IActionResult Register([Bind("studentID,courseID")] Enrollment passedEnrollment)
         {
             //get user info from session
@@ -164,6 +300,21 @@ namespace cs3750LMS.Controllers
             {
                 session.ClassState = 1;
             }
+            //if departments were grabbed before are saved in session else put in session
+            string serialDepts = HttpContext.Session.GetString("Departments");
+            Departments depts;
+            if (serialDepts != null)
+            {
+                depts = JsonSerializer.Deserialize<Departments>(serialDepts);
+            }
+            else
+            {
+                depts = new Departments
+                {
+                    DeptsList = _context.Departments.ToList()
+                };
+            }
+            ViewData["Departments"] = depts;
             //pass data to view
             ViewData["Message"] = session;
             ViewData["Courses"] = allCourses;
@@ -172,7 +323,7 @@ namespace cs3750LMS.Controllers
         }
 
         [HttpPost]
-        [AutoValidateAntiforgeryToken]
+        [ValidateAntiForgeryToken]
         public IActionResult Drop([Bind("studentID,courseID")] Enrollment passedEnrollment)
         {
             //get user info from session
@@ -224,7 +375,21 @@ namespace cs3750LMS.Controllers
             {
                 session.ClassState = 1;
             }
-
+            //if departments were grabbed before are saved in session else put in session
+            string serialDepts = HttpContext.Session.GetString("Departments");
+            Departments depts;
+            if (serialDepts != null)
+            {
+                depts = JsonSerializer.Deserialize<Departments>(serialDepts);
+            }
+            else
+            {
+                depts = new Departments
+                {
+                    DeptsList = _context.Departments.ToList()
+                };
+            }
+            ViewData["Departments"] = depts;
             ViewData["Message"] = session;
             ViewData["Courses"] = allCourses;
             ViewData["StudentCourses"] = studentCourses;
