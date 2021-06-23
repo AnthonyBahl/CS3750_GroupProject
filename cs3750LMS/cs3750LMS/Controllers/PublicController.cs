@@ -36,14 +36,21 @@ namespace cs3750LMS.Controllers
                 string serialUser = HttpContext.Session.GetString("userInfo");
                 UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
 
+                // Courses
                 string serialCourse = HttpContext.Session.GetString("userCourses");
                 Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+
+                // Assignments
+                string serialAssignment = HttpContext.Session.GetString("userAssignments");
+                Assignments userAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
+
                 //reload timespans
                 string serialTimes = HttpContext.Session.GetString("courseTimes");
                 List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
                 userCourses.RefactorTimeSpans(times);
 
                 ViewData["UserCourses"] = userCourses;
+                ViewData["UserAssignments"] = userAssignments;
                 ViewData["Message"] = session;
                 return View();
             }
