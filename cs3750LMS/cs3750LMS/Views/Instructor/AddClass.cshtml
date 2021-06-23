@@ -13,7 +13,7 @@
         viewState = "none;";
         createState = "block;";
     }
-
+    ViewBag.userCourses = Newtonsoft.Json.JsonConvert.SerializeObject(courses);
 }
 @section Scripts{
     <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
@@ -25,49 +25,41 @@
     <h1 class="display-4 text-center mt-3">@ViewData["Title"]</h1>
     @if (courses.CourseList != null)
     {
-        <table class="table table-hover bg-white mt-5">
-            <thead>
-                <tr>
-                    <th scope="col">Course Number</th>
-                    <th scope="col">Course Title</th>
-                    <th scope="col">Meeting Days</th>
-                    <th scope="col">Start Time</th>
-                    <th scope="col">End Time</th>
-                    <th scope="col">Location</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (int i = 0; i < courses.CourseList.Count; i++)
-                {
+<table class="table table-hover bg-white mt-5">
+    <thead>
+        <tr>
+            <th scope="col">Course Number</th>
+            <th scope="col">Course Title</th>
+            <th scope="col">Meeting Days</th>
+            <th scope="col">Start Time</th>
+            <th scope="col">End Time</th>
+            <th scope="col">Location</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < courses.CourseList.Count; i++)
+        {
 
-                    <tr>
+<tr>
 
-                        <th scope="row"><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].ClassNumber</a></th>
-                        <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].ClassTitle</a></td>
-                        <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.ParseDays(i)</a></td>
-                        <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].StartTime.ToString()</a></td>
-                        <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].EndTime.ToString()</a></td>
-                        <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].Location</a></td>
-
-                        <td>
-                            <button type="button" class="btn btn-success">Edit</button>
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-danger">Delete</button>
-                        </td>
-                    </tr>
-
-                }
-            </tbody>
-        </table>
-    }
-        <br />
-        <div class="text-center mt-3">
-            <button type="button" class="btn btn-primary mx-2" onclick="ToggleView(1,1)">Add Class</button>
-        </div>
+    <th scope="row"><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].ClassNumber</a></th>
+    <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].ClassTitle</a></td>
+    <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.ParseDays(i)</a></td>
+    <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].StartTime.ToString()</a></td>
+    <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].EndTime.ToString()</a></td>
+    <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].Location</a></td>
+    <td><button type="button" class="btn btn-success" onclick="ToggleView(2,@courses.CourseList[i].CourseID)">Edit</button></td>
+    <td><button type="button" class="btn btn-danger">Delete</button></td>
+</tr>                }
+    </tbody>
+</table>}
+    <br />
+    <div class="text-center mt-3">
+        <button type="button" class="btn btn-primary mx-2" onclick="ToggleView(1,1)">Add Class</button>
     </div>
+</div>
 <!--End View Classes Section-->
 <!--Add Class Section-->
 <div id="AddClassView" style="display: @createState">
@@ -86,8 +78,7 @@
                 <select id="inDepartment" asp-for="Department" name="Department" class="form-control" value="0" required>
                     @for (int i = 0; i < depts.DeptsList.Count; i++)
                     {
-                        <option value=@depts.DeptsList[i].DeptID>@depts.DeptsList[i].DeptName</option>
-                    }
+        <option value=@depts.DeptsList[i].DeptID>@depts.DeptsList[i].DeptName</option>}
                 </select>
             </div>
             <div class="col-sm-12 col-lg-10">
@@ -243,6 +234,188 @@
 <!--Delete Confirmation-->
 <!--End Delete Confirmation-->
 <!--Update Section-->
+
+<div id="updateClassView" style="display: @editState">
+    <h1 class="display-4 text-center" id="edit_page_title"></h1>
+    <form asp-action="EditClass" method="post" class="w-75 mx-auto mt-5">
+        <div asp-validation-summary="ModelOnly"></div>
+        <div>
+            <input type="text" asp-for="Instructor" name="Instructor" class="form-control" hidden value="@user.FirstName @user.LastName" />
+        </div>
+
+        @*Department Drop down box*@
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Department" class="control-label mb-0 text-sm-center text-lg-end">Department</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <select id="editDepartment" asp-for="Department" name="Department" class="form-control" value="0" required>
+                    @for (int i = 0; i < depts.DeptsList.Count; i++)
+                    {
+        <option value=@depts.DeptsList[i].DeptID>@depts.DeptsList[i].DeptName</option>
+}
+                </select>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="Department"></span>
+            </div>
+        </div>
+
+        @*Class Number*@
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="ClassNumber" class="control-label mb-0 text-sm-center text-lg-end">Class Number</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <input id="editClassNumber" type="text" asp-for="ClassNumber" name="ClassNumber" class="form-control" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="ClassNumber"></span>
+            </div>
+        </div>
+
+        @*Class Title*@
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="ClassTitle" class="control-label mb-0 text-sm-center text-lg-end">Title</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <input id="editClassTitle" type="text" asp-for="ClassTitle" name="ClassTitle" class="form-control" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="ClassTitle"></span>
+            </div>
+        </div>
+
+        @* Description *@
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Description" class="control-label mb-0 text-sm-center text-lg-end">Description</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <textarea id="editDescription" asp-for="Description" name="Description" class="form-control" required rows="3" cols="50">
+                </textarea>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="Description"></span>
+            </div>
+        </div>
+
+        @* Location *@
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Location" class="control-label mb-0 text-sm-center text-lg-end">Location</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <input id="editLocation" type="text" asp-for="Location" name="Location" class="form-control" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="Location"></span>
+            </div>
+        </div>
+
+        @* Credits *@
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Credits" class="control-label mb-0 text-sm-center text-lg-end">Credits</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <input id="editCredits" type="text" asp-for="Credits" name="Credits" class="form-control" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="Credits"></span>
+            </div>
+        </div>
+
+        @* Capacity *@
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Capacity" class="control-label mb-0 text-sm-center text-lg-end">Capacity</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <input id="editCapacity" type="text" asp-for="Capacity" name="Capacity" class="form-control" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="Capacity"></span>
+            </div>
+        </div>
+
+        @* Meet Days *@
+        <div id="editDaySelect" class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="MeetDays" class="control-label mb-0 text-sm-center text-lg-end">Meeting Days</label>
+            </div>
+            <div class="col-sm-12 col-lg-10 d-flex align-items-center justify-content-center p-0 text-white">
+                <button id="editSunday" type="button" class="btn btn-sm mx-2 text-white" onclick="ToggleDay(7)">Sunday</button>
+                <button id="editMonday" type="button" class="btn btn-sm mx-2 text-white" onclick="ToggleDay(8)">Monday</button>
+                <button id="editTuesday" type="button" class="btn btn-sm mx-2 text-white" onclick="ToggleDay(9)">Tuesday</button>
+                <button id="editWednesday" type="button" class="btn btn-sm mx-2 text-white" onclick="ToggleDay(10)">Wednesday</button>
+                <button id="editThursday" type="button" class="btn btn-sm mx-2 text-white" onclick="ToggleDay(11)">Thursday</button>
+                <button id="editFriday" type="button" class="btn btn-sm mx-2 text-white" onclick="ToggleDay(12)">Friday</button>
+                <button id="editSaturday" type="button" class="btn btn-sm mx-2 text-white" onclick="ToggleDay(13)">Saturday</button>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger text-right" asp-validation-for="MeetDays"></span>
+            </div>
+        </div>
+        <input id="editMeetDays" type="text" asp-for="MeetDays" name="MeetDays" class="form-control" value="xxxxxxx" hidden required />
+
+        @* Start Time *@
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="StartTime" class="control-label mb-0 text-sm-center text-lg-end">Start Time</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <input id="editStartTime" type="time" asp-for="StartTime" name="StartTime" class="form-control" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="StartTime"></span>
+            </div>
+        </div>
+
+        @* End Time *@
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="EndTime" class="control-label mb-0 text-sm-center text-lg-end">End Time</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <input id="editEndTime" type="time" asp-for="EndTime" name="EndTime" class="form-control" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="EndTime"></span>
+            </div>
+        </div>
+
+        @* Color *@
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Color" class="control-label mb-0 text-sm-center text-lg-end">Color</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <select id="editColor" asp-for="Color" name="Color" class="form-control" required>
+                    <option value="#04738C">Blue</option>
+                    <option value="#4D00CB">Purple</option>
+                    <option value="#BF3C30">Red</option>
+                    <option value="#D94B2B">Orange</option>
+                    <option value="#F5CF47">Yellow</option>
+                    <option value="#30BF70">Green</option>
+                    <option value="#03998F">Teal</option>
+                </select>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="Color"></span>
+            </div>
+        </div>
+
+        <input id="editCourseID" type="text" asp-for="CourseID" name="CourseID" class="form-control" value="" hidden required />
+
+        <div class="form-group text-center">
+            <input type="submit" value="Save" class="btn btn-primary mx-2" />
+            <button onClick="ToggleView(0,0)" type="button" class="btn btn-warning">Cancel</button>
+        </div>
+
+    </form>
+</div>
 <!--End Update Section-->
 
 <script>
@@ -251,6 +424,7 @@
     var ButtonOn = "background-color:#39E687;";
 
     var input = document.getElementById("InputMeetDays");
+    var editInput = document.getElementById("editMeetDays");
 
     var Monday = document.getElementById("Monday");
     var Tuesday = document.getElementById("Tuesday");
@@ -260,10 +434,19 @@
     var Saturday = document.getElementById("Saturday");
     var Sunday = document.getElementById("Sunday");
 
+    var editMonday = document.getElementById("editMonday");
+    var editTuesday = document.getElementById("editTuesday");
+    var editWednesday = document.getElementById("editWednesday");
+    var editThursday = document.getElementById("editThursday");
+    var editFriday = document.getElementById("editFriday");
+    var editSaturday = document.getElementById("editSaturday");
+    var editSunday = document.getElementById("editSunday");
+
     var viewClass = document.getElementById("ClassView");
     var createClass = document.getElementById("AddClassView");
     var deleteClass = "";
-    var updateClass = "";
+    var updateClass = document.getElementById("updateClassView");
+    var _userCourses = @Html.Raw(ViewBag.userCourses);
 
     //declare button states
     var stMon = { on: false };
@@ -273,6 +456,13 @@
     var stFri = { on: false };
     var stSat = { on: false };
     var stSun = { on: false };
+    var editMon = { on: false };
+    var editTue = { on: false };
+    var editWed = { on: false };
+    var editThu = { on: false };
+    var editFri = { on: false };
+    var editSat = { on: false };
+    var editSun = { on: false };
 
     //set default button states
     window.onload = function () {
@@ -283,12 +473,20 @@
         Friday.style = ButtonOff;
         Saturday.style = ButtonOff;
         Sunday.style = ButtonOff;
+        editMonday.style = ButtonOff;
+        editTuesday.style = ButtonOff;
+        editWednesday.style = ButtonOff;
+        editThursday.style = ButtonOff;
+        editFriday.style = ButtonOff;
+        editSaturday.style = ButtonOff;
+        editSunday.style = ButtonOff;
         ClearCreateFields();
     };
 
     //toggle input string and visual states
     function ToggleDay(val) {
         switch (val) {
+            // Add Page
             case 0:
                 ToggleColor(stSun, Sunday);
                 break;
@@ -310,6 +508,28 @@
             case 6:
                 ToggleColor(stSat, Saturday);
                 break;
+            // Edit Page
+            case 7:
+                ToggleColor(editSun, editSunday);
+                break;
+            case 8:
+                ToggleColor(editMon, editMonday);
+                break;
+            case 9:
+                ToggleColor(editTue, editTuesday);
+                break;
+            case 10:
+                ToggleColor(editWed, editWednesday);
+                break;
+            case 11:
+                ToggleColor(editThu, editThursday);
+                break;
+            case 12:
+                ToggleColor(editFri, editFriday);
+                break;
+            case 13:
+                ToggleColor(editSat, editSaturday);
+                break;
         }
         UpdateDays(val);
     }
@@ -328,14 +548,29 @@
 
     //update input meeting string
     function UpdateDays(val) {
-        var Meetings = input.value;
-        if (Meetings.charAt(val) == 'x') {
-            Meetings = Meetings.replaceAt(val, "y");
+        // Add Page
+        if (val < 7) {
+            var Meetings = input.value;
+            if (Meetings.charAt(val) == 'x') {
+                Meetings = Meetings.replaceAt(val, "y");
+            }
+            else {
+                Meetings = Meetings.replaceAt(val, "x");
+            }
+            input.value = Meetings;
         }
+        // Edit Page
         else {
-            Meetings = Meetings.replaceAt(val, "x");
+            var Meetings = editInput.value;
+            var val = val - 7;
+            if (Meetings.charAt(val) == 'x') {
+                Meetings = Meetings.replaceAt(val, "y");
+            }
+            else {
+                Meetings = Meetings.replaceAt(val, "x");
+            }
+            editInput.value = Meetings;
         }
-        input.value = Meetings;
     }
 
     //update string index position
@@ -347,25 +582,68 @@
     //View toggles
     function ToggleView(val, option) {
         switch (val) {
+            // View Classes
             case 0:
                 ClearCreateFields();
                 viewClass.style.setProperty("display", "block");
                 createClass.style.setProperty("display", "none");
-                
-                break;
 
+                break;
+            // Add new Class
             case 1:
                 createClass.style.setProperty("display", "block");
                 viewClass.style.setProperty("display", "none");
                 break;
-
+            // Edit existing class
             case 2:
-
+                updateClass.style.setProperty("display", "block");
+                viewClass.style.setProperty("display", "none");
+                createClass.style.setProperty("display", "none");
+                console.log(_userCourses);
+                for (var i = 0; i < _userCourses.CourseList.length; i++) {
+                    if (_userCourses.CourseList[i].CourseID == option) {
+                        // Set field values to their current values
+                        $("#edit_page_title").text(_userCourses.CourseList[i].ClassTitle);
+                        document.getElementById("editClassNumber").value = _userCourses.CourseList[i].ClassNumber;
+                        document.getElementById("editClassTitle").value = _userCourses.CourseList[i].ClassTitle;
+                        document.getElementById("editDescription").value = _userCourses.CourseList[i].Description;
+                        document.getElementById("editLocation").value = _userCourses.CourseList[i].Location;
+                        document.getElementById("editCredits").value = _userCourses.CourseList[i].Credits;
+                        document.getElementById("editCapacity").value = _userCourses.CourseList[i].Capacity;
+                        document.getElementById("editStartTime").value = _userCourses.CourseList[i].StartTime;
+                        document.getElementById("editEndTime").value = _userCourses.CourseList[i].EndTime;
+                        document.getElementById("editColor").selectedIndex = getColorIndex(_userCourses.CourseList[i].Color);
+                        //document.getElementById("editMeetDays").value = _userCourses.CourseList[i].MeetDays;
+                        SetEditDayButtons(_userCourses.CourseList[i].MeetDays);
+                        document.getElementById("editCourseID").value = _userCourses.CourseList[i].CourseID;
+                        break;
+                    }
+                }
                 break;
 
             case 3:
                 break;
         }
+    }
+
+    // Decodes the Meet Days string and set the buttons accordingly
+    function SetEditDayButtons(meetDays) {
+        for (var i = 0; i < meetDays.length; i++) {
+            if (meetDays.charAt(i) == 'y') {
+                ToggleDay(i + 7);
+            }
+        }
+    }
+
+    // Takes an input color and finds the index for the color dropdown.
+    function getColorIndex(color) {
+        var _dropDownMenu = document.getElementById("editColor");
+        for (var i = 0; i < _dropDownMenu.length; i++) {
+            if (_dropDownMenu[i].value == color) {
+                return i;
+            }
+        }
+        return null;
     }
 
     function ClearCreateFields() {

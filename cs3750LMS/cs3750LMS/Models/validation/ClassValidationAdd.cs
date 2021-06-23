@@ -40,5 +40,8 @@ namespace cs3750LMS.Models
         public TimeSpan EndTime { get; set; }
         [Required]
         public string Color { get; set; }
+
+        [RegularExpression("^[0-9]*$")]
+        public int CourseID { get; set; }
     }
 }
