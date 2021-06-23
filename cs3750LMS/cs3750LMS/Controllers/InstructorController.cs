@@ -213,7 +213,17 @@ namespace cs3750LMS.Controllers
             string serialUser = HttpContext.Session.GetString("userInfo");
             UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
 
+            //set courses object for next pass
+            string serialCourse = HttpContext.Session.GetString("userCourses");
+            Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+
+            //reload timespans
+            string serialTimes = HttpContext.Session.GetString("courseTimes");
+            List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
+            userCourses.RefactorTimeSpans(times);
+
             Course _course = new Course();
+            Course session_course = new Course();
             bool success = false;
             if (ModelState.IsValid)
             {
@@ -231,9 +241,27 @@ namespace cs3750LMS.Controllers
                 _course.StartTime = updatedClass.StartTime;
                 _course.EndTime = updatedClass.EndTime;
                 _course.Color = updatedClass.Color;
-
                 // Update Database
                 await _context.SaveChangesAsync();
+
+                // Update Session
+                session_course = userCourses.CourseList.Where(x => x.CourseID == updatedClass.CourseID).Single();
+                session_course.InstructorID = session.UserId;
+                session_course.Department = updatedClass.Department;
+                session_course.ClassNumber = updatedClass.ClassNumber;
+                session_course.ClassTitle = updatedClass.ClassTitle;
+                session_course.Description = updatedClass.Description;
+                session_course.Location = updatedClass.Location;
+                session_course.Credits = updatedClass.Credits;
+                session_course.Capacity = updatedClass.Capacity;
+                session_course.MeetDays = updatedClass.MeetDays;
+                session_course.StartTime = updatedClass.StartTime;
+                session_course.EndTime = updatedClass.EndTime;
+                session_course.Color = updatedClass.Color;
+
+                //update session saved courses
+                HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(userCourses));
+
                 success = true;
             }
             //----------------------------Add class logic end---------------------------
@@ -247,14 +275,6 @@ namespace cs3750LMS.Controllers
             {
                 session.ClassState = 1;
             }
-
-            //set courses object for next pass
-            string serialCourse = HttpContext.Session.GetString("userCourses");
-            Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
-            //reload timespans
-            string serialTimes = HttpContext.Session.GetString("courseTimes");
-            List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
-            userCourses.RefactorTimeSpans(times);
 
             //if departments were grabbed before are saved in session else put in session
             string serialDepts = HttpContext.Session.GetString("Departments");
