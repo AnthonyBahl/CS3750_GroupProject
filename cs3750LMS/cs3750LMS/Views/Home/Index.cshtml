@@ -10,20 +10,19 @@
     <h1 class="display-4">Welcome @show.FirstName @show.LastName</h1>
 </div>
 
-<div class="container">
+<div class="container mt-5">
     @if (show.AccountType == 0)
     {
         <div class="row">
             <div class="col-8">
-                <div class="row">
+                <div class="row align-items-stretch">
                     @if (userCourses.CourseList != null)
                     {
                         @for (int i = 0; i < userCourses.CourseList.Count; i++)
                         {
-                            <div class="col-6">
-                                <a href="#" class="stretched-link">
-
-                                    <div class="card">
+                            <div class="col-6 mb-3 align-self-stretch">
+                                <a href="#" class="stretched-link" style="min-height: 100%">
+                                    <div class="card" style="min-height: 100%">
                                         <div class="card-body">
                                             <h5 class="card-title">@userCourses.CourseList[i].ClassTitle | @userCourses.CourseList[i].ClassNumber</h5>
                                             <h6 class="card-subtitle mb-2 text-muted">@userCourses.ParseDays(i) @userCourses.CourseList[i].StartTime.ToString()-@userCourses.CourseList[i].EndTime.ToString()</h6>
@@ -32,14 +31,13 @@
                                     </div>
                                 </a>
                             </div>
-
                         }
                     }
                 </div>
             </div>
             <div class="col-4">
                 <div class="list-group">
-                    <li class="list-group-item text-center fs-3 font-weight-bold">To Dos</li>
+                    <li class="list-group-item text-center fs-3 font-weight-bold"><i class="bi bi-list-check"></i> To Dos</li>
                     @if (assignments.AssignmentList != null)
                     {
                         @for (int i = 0; i < assignments.AssignmentList.Count; i++)
@@ -59,17 +57,17 @@
     }
     @if (show.AccountType == 1)
     {
-        <div class="row">
+        <div class="row align-items-stretch">
 
             @if (userCourses.CourseList != null)
             {
 
                 @for (int i = 0; i < userCourses.CourseList.Count; i++)
                 {
-                    <div class="col-4">
-                        <a asp-controller="Instructor" asp-action="CourseEdit" asp-route-id="@userCourses.CourseList[i].CourseID" class="stretched-link">
+                    <div class="col-4 mb-3 align-self-stretch">
+                        <a asp-controller="Instructor" asp-action="CourseEdit" asp-route-id="@userCourses.CourseList[i].CourseID" class="stretched-link" style="min-height: 100%">
 
-                            <div class="card">
+                            <div class="card" style="min-height: 100%">
                                 <div class="card-body">
                                     <h5 class="card-title">@userCourses.CourseList[i].ClassTitle | @userCourses.CourseList[i].ClassNumber</h5>
                                     <h6 class="card-subtitle mb-2 text-muted">@userCourses.ParseDays(i) @userCourses.CourseList[i].StartTime.ToString()-@userCourses.CourseList[i].EndTime.ToString()</h6>
