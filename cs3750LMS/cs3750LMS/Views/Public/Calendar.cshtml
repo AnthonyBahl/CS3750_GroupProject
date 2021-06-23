@@ -52,14 +52,16 @@
             }
 
             // Add Assignments to the calendar
-            for (var i = 0; i < _userAssignments.AssignmentList.length; i++) {
-                eventsArray.push(
-                    {
-                        groupId: _userAssignments.AssignmentList[i].AssignmentID.toString() + "_" + _userAssignments.AssignmentList[i].CourseID.toString(),
-                        title: _userAssignments.AssignmentList[i].Title,
-                        start: new Date(Date.parse(_userAssignments.AssignmentList[i].DueDate))
-                    }
-                );
+            if (_userAssignments.AssignmentList != null) {
+                for (var i = 0; i < _userAssignments.AssignmentList.length; i++) {
+                    eventsArray.push(
+                        {
+                            groupId: _userAssignments.AssignmentList[i].AssignmentID.toString() + "_" + _userAssignments.AssignmentList[i].CourseID.toString(),
+                            title: _userAssignments.AssignmentList[i].Title,
+                            start: new Date(Date.parse(_userAssignments.AssignmentList[i].DueDate))
+                        }
+                    );
+                }
             }
 
             var calendarEl = document.getElementById('calendar');
