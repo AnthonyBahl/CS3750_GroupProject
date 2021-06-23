@@ -283,9 +283,14 @@ namespace cs3750LMS.Controllers
             enrollment.EnrollmentList = _context.Enrollments.Where(x => x.studentID == session.UserId).ToList();
             HttpContext.Session.SetString("userEnrollment", JsonSerializer.Serialize(enrollment));
 
+            //reload courses
             List<int> enrolled = _context.Enrollments.Where(y => y.studentID == session.UserId).Select(z => z.courseID).ToList();
             studentCourses.CourseList = _context.Courses.Where(x => enrolled.Contains(x.CourseID)).ToList();
             HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(studentCourses));
+            //reload assignments
+            Assignments userAssignments = JsonSerializer.Deserialize<Assignments>(HttpContext.Session.GetString("userAssignments"));
+            userAssignments.AssignmentList= _context.Assignments.Where(x => enrolled.Contains(x.CourseID)).ToList();
+            HttpContext.Session.SetString("userAssignments", JsonSerializer.Serialize(userAssignments));
             //save times
             List<TimeStamp> timesSave = new TimeStamp().ParseTimes(studentCourses);
             HttpContext.Session.SetString("courseTimes", JsonSerializer.Serialize(timesSave));
@@ -359,9 +364,14 @@ namespace cs3750LMS.Controllers
             enrollment.EnrollmentList = _context.Enrollments.Where(x => x.studentID == session.UserId).ToList();
             HttpContext.Session.SetString("userEnrollment", JsonSerializer.Serialize(enrollment));
 
+            //reload courses
             List<int> enrolled = _context.Enrollments.Where(y => y.studentID == session.UserId).Select(z => z.courseID).ToList();
             studentCourses.CourseList = _context.Courses.Where(x => enrolled.Contains(x.CourseID)).ToList();
             HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(studentCourses));
+            //reload assignments
+            Assignments userAssignments = JsonSerializer.Deserialize<Assignments>(HttpContext.Session.GetString("userAssignments"));
+            userAssignments.AssignmentList = _context.Assignments.Where(x => enrolled.Contains(x.CourseID)).ToList();
+            HttpContext.Session.SetString("userAssignments", JsonSerializer.Serialize(userAssignments));
             //save times
             List<TimeStamp> timesSave = new TimeStamp().ParseTimes(studentCourses);
             HttpContext.Session.SetString("courseTimes", JsonSerializer.Serialize(timesSave));
