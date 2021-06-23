@@ -46,6 +46,14 @@ for details on configuring this project to bundle and minify static web assets. 
     --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
+body {
+    min-height: 100vh;
+}
+
+.container-fluid, main {
+    min-height: 100%;
+}
+
 .bg-light {
     background-color: var(--light);
 }
@@ -195,6 +203,16 @@ a:hover {
   color: #fff;
   background-color: #1b6ec2;
   border-color: #1861ac;
+}
+
+.hero {
+    min-height: inherit;
+    background: no-repeat center/100% url("../Images/hero/hero-2000x1080.jpg");
+}
+@media (max-width: 768px) {
+    .hero {
+        background: no-repeat center/80% url("../Images/hero/hero-800x1200.jpg");
+    }
 }
 
 

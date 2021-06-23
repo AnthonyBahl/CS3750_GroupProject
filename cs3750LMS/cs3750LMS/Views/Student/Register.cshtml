@@ -11,8 +11,8 @@
 }
 
 <!--View Registration Section-->
-<div id="RegistrationView">
-    <h1 class="display-4 text-center mt-3">@ViewData["Title"]</h1>
+<div id="RegistrationView" class="container">
+    <h1 class="display-4 text-center mt-3 mb-5">@ViewData["Title"]</h1>
     <form asp-action="SearchCourses" method="post">
         <div class="form-row align-items-center justify-content-center">
             <div class="row col-sm-12 col-lg-4 my-1 align-items-center justify-content-center mr-3">
@@ -37,8 +37,8 @@
                     <input type="text" id="Title" name="Title" class="form-control" value="" />
                 </div>
             </div>
-            <button type="submit" class="btn btn-success mx-2">Search</button>
-            <button type="submit" class="btn btn-warning mx-2" asp-action="Register">Clear</button>
+            <button type="submit" class="btn btn-success mx-2"><i class="bi bi-search"></i> Search</button>
+            <button type="submit" class="btn btn-warning mx-2" asp-action="Register"><i class="bi bi-x-lg"></i> Clear</button>
         </div>
     </form>
     @if (courses.CourseList != null)
@@ -81,7 +81,7 @@
                                             <input type="number" name="studentID" value=@user.UserId />
                                             <input type="number" name="courseID" value=@courses.CourseList[i].CourseID />
                                         </div>
-                                        <button type="submit" class=" btn-danger mx-2">Drop</button>
+                                        <button type="submit" class="btn btn-danger mx-2">Drop</button>
                                     </form>
                                 }
                                 else
@@ -91,7 +91,7 @@
                                             <input type="number" name="studentID" value=@user.UserId />
                                             <input type="number" name="courseID" value=@courses.CourseList[i].CourseID />
                                         </div>
-                                        <button type="submit" class=" btn-success mx-2">Register</button>
+                                        <button type="submit" class="btn btn-success mx-2">Register</button>
                                     </form>
                                 }
                             }
@@ -103,7 +103,7 @@
                                         <input type="number" name="courseID" value=@courses.CourseList[i].CourseID />
                                         <p>This is from the outer form.</p>
                                     </div>
-                                    <button type="submit" class=" btn-success mx-2">Register</button>
+                                    <button type="submit" class="btn btn-success mx-2">Register</button>
                                 </form>
                             }
                         </td>
