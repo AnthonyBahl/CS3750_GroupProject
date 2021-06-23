@@ -4,6 +4,8 @@
     UserSession user = (UserSession)ViewData["Message"];
     Courses userCourses = (Courses)ViewData["userCourses"];
     ViewBag.userCourses = Newtonsoft.Json.JsonConvert.SerializeObject(userCourses);
+    Assignments userAssignments = (Assignments)ViewData["UserAssignments"];
+    ViewBag.userAssignments = Newtonsoft.Json.JsonConvert.SerializeObject(userAssignments);
 }
 @*
     Things to do:
@@ -21,6 +23,8 @@
 
             var _userCourses = @Html.Raw(ViewBag.userCourses);
             console.log(_userCourses);
+            var _userAssignments = @Html.Raw(ViewBag.userAssignments);
+            console.log(_userAssignments);
             let eventsArray = [];
 
             for (var i = 0; i < _userCourses.CourseList.length; i++) {
@@ -47,6 +51,16 @@
                 );
             }
 
+            // Add Assignments to the calendar
+            for (var i = 0; i < _userAssignments.AssignmentList.length; i++) {
+                eventsArray.push(
+                    {
+                        groupId: _userAssignments.AssignmentList[i].AssignmentID.toString() + "_" + _userAssignments.AssignmentList[i].CourseID.toString(),
+                        title: _userAssignments.AssignmentList[i].Title,
+                        start: new Date(Date.parse(_userAssignments.AssignmentList[i].DueDate))
+                    }
+                );
+            }
 
             var calendarEl = document.getElementById('calendar');
 
