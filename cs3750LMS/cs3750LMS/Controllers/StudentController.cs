@@ -469,6 +469,11 @@ namespace cs3750LMS.Controllers
                     string serialCourse = HttpContext.Session.GetString("userCourses");
                     Courses studentCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
 
+                    // Transactions
+                    string serialTransactions = HttpContext.Session.GetString("userTransactions");
+                    Transactions userTransactions = serialTransactions == null ? null : JsonSerializer.Deserialize<Transactions>(serialTransactions);
+
+                    ViewData["UserTransactions"] = userTransactions;
                     ViewData["Message"] = session;
                     ViewData["Courses"] = allCourses;
                     ViewData["StudentCourses"] = studentCourses;
