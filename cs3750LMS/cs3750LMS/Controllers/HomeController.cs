@@ -219,6 +219,19 @@ namespace cs3750LMS.Controllers
                     HttpContext.Session.SetString("userAssignments", JsonSerializer.Serialize(userAssignments));
                     ViewData["userAssignments"] = userAssignments;
 
+                    //grab transactions from database
+                    //check if student account
+                    if (session.AccountType == 0)
+                    {
+                        // Variable to hold transactions
+                        Transactions userTransactions = new Transactions();
+
+                        // Get data from database
+                        userTransactions.TransactionList = _context.Transactions.Where(t => t.userID == userFound.UserId).ToList();
+
+                        HttpContext.Session.SetString("userTransactions", JsonSerializer.Serialize(userTransactions));
+                    }
+
                     //save times
                     List<TimeStamp> times = new TimeStamp().ParseTimes(userCourses);
                     HttpContext.Session.SetString("courseTimes", JsonSerializer.Serialize(times));

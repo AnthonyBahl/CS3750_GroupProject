@@ -1,6 +1,15 @@
 ﻿@{
     Courses studentCourses = (Courses)ViewData["StudentCourses"];
+    Transactions studentTransactions = (Transactions)ViewData["UserTransactions"];
+    ViewBag.studentTransactions = Newtonsoft.Json.JsonConvert.SerializeObject(studentTransactions);
 }
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var _studentTransactions = @Html.Raw(ViewBag.studentTransactions);
+        console.log(_studentTransactions);
+    })
+</script>
 <div class="container">
     <div class="card p-4">
         <div class="card-body">

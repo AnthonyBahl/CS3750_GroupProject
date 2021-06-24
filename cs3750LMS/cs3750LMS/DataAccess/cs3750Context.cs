@@ -27,6 +27,7 @@ namespace cs3750LMS.Models
         public virtual DbSet<Department> Departments { get; set; }
         public virtual DbSet<Enrollment> Enrollments { get; set; }
         public virtual DbSet<Assignment> Assignments { get; set; }
+        public virtual DbSet<Transaction> Transactions { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -245,6 +246,20 @@ namespace cs3750LMS.Models
                 entity.Property(e => e.Grade).HasColumnName("Grade");
             });
 
+            modelBuilder.Entity<Transaction>(entity =>
+            {
+                entity.Property(e => e.transactionID).HasColumnName("transactionID");
+
+                entity.Property(e => e.Date).HasColumnName("Date");
+
+                entity.Property(e => e.userID).HasColumnName("userID");
+
+                entity.Property(e => e.amount).HasColumnName("amount");
+
+                entity.Property(e => e.status)
+                .HasMaxLength(50)
+                .HasColumnName("status");
+            });
 
             OnModelCreatingPartial(modelBuilder);
         }
