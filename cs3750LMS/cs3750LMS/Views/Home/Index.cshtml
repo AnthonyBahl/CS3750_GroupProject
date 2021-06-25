@@ -44,7 +44,7 @@
                         {
                             <a href="#" class="list-group-item list-group-item-action">
                                 <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1">@assignments.AssignmentList[i].Title</h5>
+                                    <h5 class="mb-1" style="color:@userCourses.CourseList.Where(y => y.CourseID == assignments.AssignmentList[i].CourseID).Select(z => z.Color).FirstOrDefault();">@assignments.AssignmentList[i].Title</h5>
                                     <small>@assignments.AssignmentList[i].DueDate</small>
                                 </div>
                                 <small>@userCourses.CourseList.Where(y => y.CourseID == assignments.AssignmentList[i].CourseID).Select(z => z.ClassNumber).FirstOrDefault()</small>
