@@ -301,30 +301,20 @@
                         document.getElementById("editMaxPoints").value = assignment.MaxPoints;
 
                         //It is returning a string in the format of 2021 - 07 - 05T00: 00: 00
-                        let dateString = assignment.DueDate.toString();                        
-                     
-                        dateString = dateString.replace(/ /g, ''); //remove any spaces
+                        let dateString = assignment.DueDate.toString();                                                                   
 
                         let javaDate = new Date(Date.parse(dateString)); //convert it to JavaDate
                        
                         let jmonth = (javaDate.getMonth() + 1);
-
-                        if (jmonth < 10) { //this is needed to allow the value to be put in html date object
+                        if (jmonth < 10) { //this is needed to allow the value to be put in html date object with proper format. 
                             jmonth = '0' + jmonth;                              
                         }
 
-                        let fDateString = javaDate.getFullYear() + "-" + jmonth + "-" + (javaDate.getUTCDate() - 1);  //format it YYYY-MM-DD
-
-                        //alert('fDate: ' + fDateString);
-                        
+                        let fDateString = javaDate.getFullYear() + "-" + jmonth + "-" + (javaDate.getUTCDate() - 1);  //format it YYYY-MM-DD                                                
                         document.getElementById("editDueDate").value = fDateString;
 
-                 
-                        
-                        
-
-                       
-                        //document.getElementById("editDueTime").value = assignment.
+                        let fTime = javaDate.getHours() + ":" + javaDate.getMinutes();  // format needs to be in hh:mm:ss                                                             
+                        document.getElementById("editDueTime").value = fTime;      
                         
 
                         //file = 0 text = 1
