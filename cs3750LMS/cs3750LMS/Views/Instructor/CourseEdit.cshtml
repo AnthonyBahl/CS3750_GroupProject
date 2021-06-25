@@ -301,11 +301,29 @@
                         document.getElementById("editMaxPoints").value = assignment.MaxPoints;
 
                         //It is returning a string in the format of 2021 - 07 - 05T00: 00: 00
+                        let dateString = assignment.DueDate.toString();                        
+                     
+                        dateString = dateString.replace(/ /g, ''); //remove any spaces
 
-                        //probably need to seperate the Date and Time objects change from DateTime to TimeSpan like what was 
-                        // done in the courses entity. Make sure all referecnes to DueDate are updated. 
+                        let javaDate = new Date(Date.parse(dateString)); //convert it to JavaDate
+                       
+                        let jmonth = (javaDate.getMonth() + 1);
 
-                       // document.getElementById("editDueDate").value = assignment.DueDate.toString();
+                        if (jmonth < 10) { //this is needed to allow the value to be put in html date object
+                            jmonth = '0' + jmonth;                              
+                        }
+
+                        let fDateString = javaDate.getFullYear() + "-" + jmonth + "-" + (javaDate.getUTCDate() - 1);  //format it YYYY-MM-DD
+
+                        //alert('fDate: ' + fDateString);
+                        
+                        document.getElementById("editDueDate").value = fDateString;
+
+                 
+                        
+                        
+
+                       
                         //document.getElementById("editDueTime").value = assignment.
                         
 
