@@ -11,7 +11,7 @@
 </div>
 
 <div class="container mt-5">
-    @if (show.AccountType == 0)
+    @if (show.AccountType == 0)  //student
     {
         <div class="row">
             <div class="col-8">
@@ -23,8 +23,8 @@
                             <div class="col-6 mb-3 align-self-stretch">
                                 <a href="#" class="stretched-link" style="min-height: 100%">
                                     <div class="card" style="min-height: 100%">
-                                        <div class="card-body">
-                                            <h5 class="card-title">@userCourses.CourseList[i].ClassTitle | @userCourses.CourseList[i].ClassNumber</h5>
+                                        <div class="card-body" style="box-shadow: 5px 5px 20px grey">
+                                            <h5 class="card-title"  style="color:@userCourses.CourseList[i].Color;">@userCourses.CourseList[i].ClassTitle | @userCourses.CourseList[i].ClassNumber</h5>
                                             <h6 class="card-subtitle mb-2 text-muted">@userCourses.ParseDays(i) @userCourses.CourseList[i].StartTime.ToString()-@userCourses.CourseList[i].EndTime.ToString()</h6>
                                             <p class="card-text">Location: @userCourses.CourseList[i].Location</p>
                                         </div>
@@ -36,7 +36,7 @@
                 </div>
             </div>
             <div class="col-4">
-                <div class="list-group">
+                <div class="list-group" style="box-shadow: 5px 5px 20px grey">
                     <li class="list-group-item text-center fs-3 font-weight-bold"><i class="bi bi-list-check"></i> To Dos</li>
                     @if (assignments.AssignmentList != null)
                     {
@@ -55,7 +55,7 @@
             </div>
         </div>
     }
-    @if (show.AccountType == 1)
+    @if (show.AccountType == 1)  //instructor
     {
         <div class="row align-items-stretch">
 
@@ -67,9 +67,9 @@
                     <div class="col-4 mb-3 align-self-stretch">
                         <a asp-controller="Instructor" asp-action="CourseEdit" asp-route-id="@userCourses.CourseList[i].CourseID" class="stretched-link" style="min-height: 100%">
 
-                            <div class="card" style="min-height: 100%">
-                                <div class="card-body">
-                                    <h5 class="card-title">@userCourses.CourseList[i].ClassTitle | @userCourses.CourseList[i].ClassNumber</h5>
+                            <div class="card" style="min-height: 100%" >
+                                <div class="card-body" style="box-shadow: 5px 5px 20px grey;">
+                                    <h5 class="card-title" style="color:@userCourses.CourseList[i].Color;">@userCourses.CourseList[i].ClassTitle | @userCourses.CourseList[i].ClassNumber</h5>
                                     <h6 class="card-subtitle mb-2 text-muted">@userCourses.ParseDays(i) @userCourses.CourseList[i].StartTime.ToString()-@userCourses.CourseList[i].EndTime.ToString()</h6>
                                     <p class="card-text">Location: @userCourses.CourseList[i].Location</p>
                                 </div>
