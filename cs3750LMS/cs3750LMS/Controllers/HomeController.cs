@@ -1,4 +1,4 @@
-﻿using cs3750LMS.DataAccess;
+using cs3750LMS.DataAccess;
 using cs3750LMS.Models;
 using cs3750LMS.Models.entites;
 using cs3750LMS.Models.general;
@@ -72,9 +72,10 @@ namespace cs3750LMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SignUp([Bind("Email,FirstName,LastName,Birthday,Password,ConfirmPassword,AccountType")] UserValidationSignUp testUser)
         {
-            if (ModelState.IsValid) { 
+            if (ModelState.IsValid)
+            {
                 //See if email already exists, if not create user
-                if(_context.Users.Count(e => e.Email == testUser.Email) == 0)
+                if (_context.Users.Count(e => e.Email == testUser.Email) == 0)
                 {
                     //create the new user
                     User users = new Models.User
@@ -95,10 +96,10 @@ namespace cs3750LMS.Controllers
                     HttpContext.Session.Set<string>("user", users.Email);
                     UserSession session = new UserSession
                     {
-                        UserId = _context.Users.Where(x=>x.Email == users.Email).Select(y=>y.UserId).Single(),
-                        Email =users.Email,
-                        FirstName =users.FirstName,
-                        LastName =users.LastName,
+                        UserId = _context.Users.Where(x => x.Email == users.Email).Select(y => y.UserId).Single(),
+                        Email = users.Email,
+                        FirstName = users.FirstName,
+                        LastName = users.LastName,
                         Birthday = users.Birthday,
                         AccountType = users.AccountType,
                         ProfileImage = users.ProfileImage,
@@ -136,7 +137,7 @@ namespace cs3750LMS.Controllers
                     return View("~/Views/Home/Index.cshtml");
                 }
             }
-           
+
             //on failure route to sign-up
             return View();
         }
@@ -160,7 +161,7 @@ namespace cs3750LMS.Controllers
                     {
                         LoginError = "Invalid Email/Password"
                     };
-                    
+
                     ViewData["LogErr"] = failLogin;
                     return View();
                 }
@@ -192,7 +193,7 @@ namespace cs3750LMS.Controllers
                     };
                     HttpContext.Session.SetString("userInfo", JsonSerializer.Serialize(session));
                     ViewData["Message"] = session;
-                    
+
                     //grab user courses from database
                     Courses userCourses = new Courses();
                     Assignments userAssignments = new Assignments();
@@ -203,7 +204,7 @@ namespace cs3750LMS.Controllers
                         List<int> enrolled = _context.Enrollments.Where(y => y.studentID == userFound.UserId).Select(z => z.courseID).ToList();
                         userCourses.CourseList = _context.Courses.Where(x => enrolled.Contains(x.CourseID)).ToList();
 
-                        userAssignments.AssignmentList = _context.Assignments.Where(x => enrolled.Contains(x.CourseID)).ToList();
+                        userAssignments.AssignmentList = _context.Assignments.Where(x => enrolled.Contains(x.CourseID)).OrderBy(y => y.DueDate).Take(5).ToList();
                     }
                     //Instructor course list
                     if (session.AccountType == 1)
@@ -246,9 +247,9 @@ namespace cs3750LMS.Controllers
             {
                 LoginError = "Invalid Email/Password"
             };
-            ViewData["LogErr"]= fail;
+            ViewData["LogErr"] = fail;
             return View();
-        } 
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
