@@ -9,6 +9,9 @@
     string deleteState = "none;";
     string editState = "none;";
     string submissionState = "none;";
+
+    ViewBag.assignments = Newtonsoft.Json.JsonConvert.SerializeObject(course);
+    
 }
 @section Scripts{
 <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
@@ -36,7 +39,7 @@
                 <td scope="row">@course.AssignmentList[i].DueDate.ToString("MM/dd/yy")</td>
                 <td scope="row">@course.AssignmentList[i].DueDate.ToString("hh:mm tt")</td>
                 <td>
-                    <button type="button" class="btn btn-success">Edit</button>
+                    <button type="button" onclick="ToggleView(2,@course.AssignmentList[i].AssignmentID)" class="btn btn-success">Edit</button>
                 </td>
                 <td>
                     <button type="button" class="btn btn-danger">Delete</button>
@@ -150,26 +153,173 @@
     </form>
 </div>
 
+
+<!--hERE IS HWERE i AM WORKING BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+    BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+
+    WILL PROBABLY NEED TO CHANGE THE LABEL FOR FIELDS?
+    -->
+
+<div id="AssignmentEdit" style="display:@editState">
+    <h1 class="display-4 text-center">Update Assignment</h1>
+    <form asp-action="@*NEED TO CREATE BACKEND*@" method="post" class="w-75 mx-auto mt-5"> <!--NEED TO CHANGE BACKEND ON POST FOR INSTRUCTOR-->
+        <div asp-validation-summary="ModelOnly"></div>
+        <div>
+            <input type="text" asp-for="CourseID" name="CourseID" class="form-control" hidden value="@course.Selection.CourseID" />
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Title" class="control-label mb-0 text-sm-center text-lg-end">Title</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <input id="editTitle" type="text" asp-for="Title" name="Title" class="form-control AddField" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="Title"></span>
+            </div>
+        </div>
+
+
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Description" class="control-label mb-0 text-sm-center text-lg-end">Description</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <textarea id="editDescription" asp-for="Description" name="Description" class="form-control AddField" required rows="3" cols="50">
+                </textarea>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="Description"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="MaxPoints" class="control-label mb-0 text-sm-center text-lg-end">MaxPoints</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <input id="editMaxPoints" type="text" asp-for="MaxPoints" name="MaxPoints" class="form-control AddField" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="MaxPoints"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="DueDate" class="control-label mb-0 text-sm-center text-lg-end">Due Date</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <input id="editDueDate" type="date" asp-for="DueDate" name="DueDate" class="form-control AddField" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="DueDate"></span>
+            </div>
+        </div>
+
+
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="DueTime" class="control-label mb-0 text-sm-center text-lg-end">Due Time</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <input id="editDueTime" type="time" asp-for="DueTime" name="DueTime" class="form-control AddField" required />
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="DueTime"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="SubmitType" class="control-label mb-0 text-sm-center text-lg-end">Submission Type</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <label for="SubmitFileAdd">File</label>
+                <input id="editSubmitFile" type="radio" asp-for="SubmitType" name="SubmitType" class="form-control AddField" value="0" checked />
+
+                <label for="SubmitTextAdd">Text Entry</label>
+                <input id="editSubmitText" type="radio" asp-for="SubmitType" name="SubmitType" class="form-control AddField" value="1" />
+
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="SubmitType"></span>
+            </div>
+        </div>
+
+        <div class="form-group text-center">
+            <input type="submit" value="Save" class="btn btn-primary mx-2" />
+            <button onClick="ToggleView(0,0)" type="button" class="btn btn-warning">Cancel</button>
+        </div>
+
+    </form>
+</div>
+
+
+
+
+
+
 <script>
     //grab elements
     var view =document.getElementById("AssignmentView");
-    var create =document.getElementById("AssignmentAdd");
+    var create = document.getElementById("AssignmentAdd");
+    var edit = document.getElementById("AssignmentEdit");
+    var _assignments = @Html.Raw(ViewBag.assignments);
+
     //View toggles
     function ToggleView(val, option) {
         switch (val) {
-            case 0:
+            case 0:  //cancel
                 ClearCreateFields();
                 view.style.setProperty("display", "block");
                 create.style.setProperty("display", "none");
+                edit.style.setProperty("display", "none");
 
                 break;
 
-            case 1:
+            case 1: //creat new
                 create.style.setProperty("display", "block");
                 view.style.setProperty("display", "none");
+                edit.style.setProperty("display", "none");
                 break;
+        
+            case 2: //edit existing  
+                ClearCreateFields();
+                edit.style.setProperty("display", "block");
+                create.style.setProperty("display", "none");
+                view.style.setProperty("display", "none");
 
-            case 2:
+
+                for (let i = 0; i < _assignments.AssignmentList.length; i++) {
+                    if (_assignments.AssignmentList[i].AssignmentID === option) { 
+                        let assignment = _assignments.AssignmentList[i];
+
+                        document.getElementById("editTitle").value = assignment.Title;
+                        document.getElementById("editDescription").value = assignment.Description;
+                        document.getElementById("editMaxPoints").value = assignment.MaxPoints;
+
+                        //It is returning a string in the format of 2021 - 07 - 05T00: 00: 00
+
+                        //probably need to seperate the Date and Time objects change from DateTime to TimeSpan like what was 
+                        // done in the courses entity. Make sure all referecnes to DueDate are updated. 
+
+                       // document.getElementById("editDueDate").value = assignment.DueDate.toString();
+                        //document.getElementById("editDueTime").value = assignment.
+                        
+
+                        //file = 0 text = 1
+                        if(assignment.SubmissionType === 0){ 
+                            document.getElementById("editSubmitFile").checked;                             
+                        }else{
+                            document.getElementById("editSubmitText").checked;
+                        }
+                        
+                       
+
+                    }
+                }
 
                 break;
 

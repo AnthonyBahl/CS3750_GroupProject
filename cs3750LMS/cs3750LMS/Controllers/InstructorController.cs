@@ -68,6 +68,8 @@ namespace cs3750LMS.Controllers
                     DueDate = assignment.DueDate + assignment.DueTime,
                     SubmissionType = assignment.SubmitType
                 };
+
+                //Add to database
                 _context.Assignments.Add(newA);
                 _context.SaveChanges();
 
