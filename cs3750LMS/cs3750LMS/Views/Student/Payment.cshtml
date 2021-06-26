@@ -48,32 +48,34 @@
                     </div>
                 </div>
             </div>
-            <form>
+            <form enctype="multipart/form-data" asp-action="Payment" method="post">
                 <h4 class="text-center">Payment</h4>
                 <div class="row">
                     <div class="col-md-6">
                         <label for="cc-name">Name on card</label>
-                        <input type="text" class="form-control" id="cc-name" placeholder="" required>
-                        <br />
-                        <small class="text-muted">Full name as displayed on card</small>
+                        <input type="text" class="form-control" id="cc-name" placeholder="Full name as displayed on card" required name="ccname">
                     </div>
                     <div class="col-md-6">
                         <label for="cc-number">Credit card number</label>
-                        <input type="text" class="form-control" id="cc-number" placeholder="" required>
+                        <input type="text" class="form-control" id="cc-number" placeholder="" required name="ccnum">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-3">
-                        <label for="cc-expiration">Expiration</label>
-                        <input type="text" class="form-control" id="cc-expiration" placeholder="MM/YY" required>
+                        <label for="cc-exp-month">Expiration</label>
+                        <input type="text" class="form-control" id="cc-exp-month" placeholder="M" required name="ccmonth">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="cc-exp-year">Expiration</label>
+                        <input type="text" class="form-control" id="cc-exp-year" placeholder="YYYY" required name="ccyear">
                     </div>
                     <div class="col-md-3">
                         <label for="cc-cvv">CVV</label>
-                        <input type="text" class="form-control" id="cc-cvv" placeholder="122" required>
+                        <input type="text" class="form-control" id="cc-cvv" placeholder="123" required name="cccvv">
                     </div>
                     <div class="col-md-3">
                         <label for="cc-amount">Amount</label>
-                        <input type="text" class="form-control" id="cc-amount" placeholder="$" required>
+                        <input type="text" class="form-control" id="cc-amount" placeholder="$" required name="amt">
                     </div>
                 </div>
                 <br />
