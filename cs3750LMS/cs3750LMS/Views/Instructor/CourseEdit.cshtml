@@ -155,9 +155,7 @@
 
 
 <!--hERE IS HWERE i AM WORKING BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-    BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-
-    WILL PROBABLY NEED TO CHANGE THE LABEL FOR FIELDS?
+    BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB   
     -->
 
 <div id="AssignmentEdit" style="display:@editState">
@@ -291,7 +289,6 @@
                 create.style.setProperty("display", "none");
                 view.style.setProperty("display", "none");
 
-
                 for (let i = 0; i < _assignments.AssignmentList.length; i++) {
                     if (_assignments.AssignmentList[i].AssignmentID === option) { 
                         let assignment = _assignments.AssignmentList[i];
@@ -310,22 +307,38 @@
                             jmonth = '0' + jmonth;                              
                         }
 
-                        let fDateString = javaDate.getFullYear() + "-" + jmonth + "-" + (javaDate.getUTCDate() - 1);  //format it YYYY-MM-DD                                                
+
+                        let jDay = javaDate.getDate();                                               
+
+                        if (jDay < 10) {
+                            jDay = '0' + jDay;
+                        }                    
+
+                        let fDateString = javaDate.getFullYear() + "-" + jmonth + "-" + jDay;  //format it YYYY-MM-DD                                                
                         document.getElementById("editDueDate").value = fDateString;
 
-                        let fTime = javaDate.getHours() + ":" + javaDate.getMinutes();  // format needs to be in hh:mm:ss                                                             
+                        let jHours = javaDate.getHours();
+                        if (jHours < 10) {
+                            jHours = '0' + jHours;
+                        }
+
+                        let jMinutes = javaDate.getMinutes();  //this makes sure if minutes gets returned as '1' it turns it into '01' to keep hh:mm format. 
+                        if (jMinutes < 10) {
+                            jMinutes = '0' + jMinutes;
+                        }
+
+                        let fTime = jHours + ":" + jMinutes;  // format needs to be in hh:mm:ss  
+                       
                         document.getElementById("editDueTime").value = fTime;      
-                        
+
+                       
 
                         //file = 0 text = 1
                         if(assignment.SubmissionType === 0){ 
                             document.getElementById("editSubmitFile").checked;                             
                         }else{
                             document.getElementById("editSubmitText").checked;
-                        }
-                        
-                       
-
+                        }                                               
                     }
                 }
 

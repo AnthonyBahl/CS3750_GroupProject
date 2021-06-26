@@ -53,6 +53,7 @@ namespace cs3750LMS.Controllers
             ViewData["Message"] = session;
             return View("~/Views/Instructor/CourseEdit.cshtml");
         }
+        //-------------------------------Course Edit Logic End----------------
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -81,9 +82,47 @@ namespace cs3750LMS.Controllers
             }
             return CourseEdit(assignment.CourseID);
         }
-        //-------------------------------Course Edit Logic End----------------
 
-        //-----------------------------Add class Locig Begin-----------------
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EditAssignment([Bind("CourseID,Title,Description,MaxPoints,DueDate,DueTime,SubmitType, AssignmentID")] AssignmentValidationAdd editAssignment)
+        {
+            Assignment _assignment = new Assignment();
+
+            if (ModelState.IsValid)
+            {
+                _assignment = _context.Assignments.Where(x =>x.AssignmentID == editAssignment.AssignmentID).Single();  
+                                                
+                                        //I need assignment ID to help filter. It can't be CourseID and It can't be Title because that Can change.          
+
+                //update fields
+                _assignment.CourseID = editAssignment.CourseID;
+                _assignment.Title = editAssignment.Title;
+                _assignment.Description = editAssignment.Description;
+                _assignment.MaxPoints = editAssignment.MaxPoints;
+                _assignment.DueDate = editAssignment.DueDate + editAssignment.DueTime;
+                _assignment.SubmissionType = editAssignment.SubmitType;
+        
+        //Update the database
+                 _context.SaveChanges();
+
+                //update the session?? NOT SURE WHATS HAPPENING HERE. 
+                string courseKey = "course" + editAssignment.CourseID;
+                string serialSelected = HttpContext.Session.GetString(courseKey);
+                SpecificCourse course = JsonSerializer.Deserialize<SpecificCourse>(serialSelected);
+
+                //course.AssignmentList.Add(newA);
+                HttpContext.Session.SetString(courseKey, JsonSerializer.Serialize(course));
+            }
+            return CourseEdit(editAssignment.CourseID);
+        }
+
+
+
+
+        //-----------------------------Add class Logic Begin-----------------
         public IActionResult AddClass()
         {
             if (HttpContext.Session.Get<string>("user") != null)
@@ -229,7 +268,7 @@ namespace cs3750LMS.Controllers
             bool success = false;
             if (ModelState.IsValid)
             {
-                // Create connectionto the database
+                // Create connection to the database
                 _course = _context.Courses.Where(x => x.CourseID == updatedClass.CourseID).Single();
                 _course.InstructorID = session.UserId;
                 _course.Department = updatedClass.Department;
