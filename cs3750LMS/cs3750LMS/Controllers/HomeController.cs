@@ -204,7 +204,7 @@ namespace cs3750LMS.Controllers
                         List<int> enrolled = _context.Enrollments.Where(y => y.studentID == userFound.UserId).Select(z => z.courseID).ToList();
                         userCourses.CourseList = _context.Courses.Where(x => enrolled.Contains(x.CourseID)).ToList();
 
-                        userAssignments.AssignmentList = _context.Assignments.Where(x => enrolled.Contains(x.CourseID)).OrderBy(y => y.DueDate).Take(5).ToList();
+                        userAssignments.AssignmentList = _context.Assignments.Where(x => enrolled.Contains(x.CourseID)).OrderBy(y => y.DueDate).ToList();
                     }
                     //Instructor course list
                     if (session.AccountType == 1)
