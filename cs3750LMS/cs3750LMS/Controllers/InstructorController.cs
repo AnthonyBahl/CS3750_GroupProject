@@ -93,9 +93,7 @@ namespace cs3750LMS.Controllers
 
             if (ModelState.IsValid)
             {
-                _assignment = _context.Assignments.Where(x =>x.AssignmentID == editAssignment.AssignmentID).Single();  
-                                                
-                                        //I need assignment ID to help filter. It can't be CourseID and It can't be Title because that Can change.          
+                _assignment = _context.Assignments.Where(x =>x.AssignmentID == editAssignment.AssignmentID).Single();                                                            
 
                 //update fields
                 _assignment.CourseID = editAssignment.CourseID;
@@ -108,7 +106,7 @@ namespace cs3750LMS.Controllers
         //Update the database
                  _context.SaveChanges();
 
-                //update the session?? NOT SURE WHATS HAPPENING HERE. 
+                //update the session?? NOT SURE WHATS HAPPENING HERE.   //TODO: FIX THIS PART SO IT UPDATES WITHOUT HAVING TO RESTART THE SESSION. 
                 string courseKey = "course" + editAssignment.CourseID;
                 string serialSelected = HttpContext.Session.GetString(courseKey);
                 SpecificCourse course = JsonSerializer.Deserialize<SpecificCourse>(serialSelected);

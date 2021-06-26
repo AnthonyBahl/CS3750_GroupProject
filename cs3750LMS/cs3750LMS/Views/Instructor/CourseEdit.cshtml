@@ -134,7 +134,7 @@
             </div>
             <div class="col-sm-12 col-lg-10">
                 <label for="SubmitFileAdd">File</label>
-                <input id="SubmitFileAdd" type="radio" asp-for="SubmitType" name="SubmitType" class="form-control AddField" value="0" checked/>
+                <input id="SubmitFileAdd" type="radio" asp-for="SubmitType" name="SubmitType" class="form-control AddField" value="0" checked />
 
                 <label for="SubmitTextAdd">Text Entry</label>
                 <input id="SubmitTextAdd" type="radio" asp-for="SubmitType" name="SubmitType" class="form-control AddField" value="1" />
@@ -143,7 +143,8 @@
             <div class="col-sm-12 col-lg-10">
                 <span class="text-danger" asp-validation-for="SubmitType"></span>
             </div>
-        </div>
+        </div>     
+
 
         <div class="form-group text-center">
             <input type="submit" value="Add Assignment" class="btn btn-primary mx-2" />
@@ -160,7 +161,8 @@
 
 <div id="AssignmentEdit" style="display:@editState">
     <h1 class="display-4 text-center">Update Assignment</h1>
-    <form asp-action="@*NEED TO CREATE BACKEND*@" method="post" class="w-75 mx-auto mt-5"> <!--NEED TO CHANGE BACKEND ON POST FOR INSTRUCTOR-->
+    <form asp-action="EditAssignment" method="post" class="w-75 mx-auto mt-5">
+        <!--NEED TO CHANGE BACKEND ON POST FOR INSTRUCTOR-->
         <div asp-validation-summary="ModelOnly"></div>
         <div>
             <input type="text" asp-for="CourseID" name="CourseID" class="form-control" hidden value="@course.Selection.CourseID" />
@@ -246,6 +248,8 @@
             </div>
         </div>
 
+        <input id="editAssignmentID" type="text" asp-for="AssignmentID" name="AssignmentID" class="form-control AddField" value="" hidden /> <!--this is to pass in assignment ID-->
+
         <div class="form-group text-center">
             <input type="submit" value="Save" class="btn btn-primary mx-2" />
             <button onClick="ToggleView(0,0)" type="button" class="btn btn-warning">Cancel</button>
@@ -297,6 +301,8 @@
                         document.getElementById("editDescription").value = assignment.Description;
                         document.getElementById("editMaxPoints").value = assignment.MaxPoints;
 
+                        document.getElementById("editAssignmentID").value = assignment.AssignmentID;
+
                         //It is returning a string in the format of 2021 - 07 - 05T00: 00: 00
                         let dateString = assignment.DueDate.toString();                                                                   
 
@@ -335,9 +341,11 @@
 
                         //file = 0 text = 1
                         if(assignment.SubmissionType === 0){ 
-                            document.getElementById("editSubmitFile").checked;                             
+                            document.getElementById("editSubmitFile").checked = true;  
+                            document.getElementById("editSubmitText").checked = false;
                         }else{
-                            document.getElementById("editSubmitText").checked;
+                            document.getElementById("editSubmitText").checked = true;
+                            document.getElementById("editSubmitFile").checked = false; 
                         }                                               
                     }
                 }
