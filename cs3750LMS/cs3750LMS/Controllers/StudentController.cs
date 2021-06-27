@@ -548,7 +548,7 @@ namespace cs3750LMS.Controllers
 
                     // Payment request to stripe
                     HttpClient client = new HttpClient();
-                    string url = "https://api/stripe.com/v1/charges";
+                    string url = "https://api.stripe.com/v1/tokens";
 
                     client.BaseAddress = new Uri(url); 
                     client.DefaultRequestHeaders.Accept.Clear(); // clear preexisting errors
@@ -573,6 +573,7 @@ namespace cs3750LMS.Controllers
                     if (res.IsSuccessStatusCode)
                     {
                         var responseString = await res.Content.ReadAsStringAsync();
+                        Debug.WriteLine(responseString);
                         // grab token
                         // do next request
                     }
