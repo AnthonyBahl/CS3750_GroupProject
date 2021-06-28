@@ -162,7 +162,7 @@
 <div id="AssignmentEdit" style="display:@editState">
     <h1 class="display-4 text-center">Update Assignment</h1>
     <form asp-action="EditAssignment" method="post" class="w-75 mx-auto mt-5">
-        <!--NEED TO CHANGE BACKEND ON POST FOR INSTRUCTOR-->
+       
         <div asp-validation-summary="ModelOnly"></div>
         <div>
             <input type="text" asp-for="CourseID" name="CourseID" class="form-control" hidden value="@course.Selection.CourseID" />

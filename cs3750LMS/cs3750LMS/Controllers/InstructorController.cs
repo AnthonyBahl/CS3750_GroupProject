@@ -106,7 +106,9 @@ namespace cs3750LMS.Controllers
         //Update the database
                  _context.SaveChanges();
 
-                //update the session?? NOT SURE WHATS HAPPENING HERE.   //TODO: FIX THIS PART SO IT UPDATES WITHOUT HAVING TO RESTART THE SESSION. 
+                //update the session?? NOT SURE WHATS HAPPENING HERE.   
+                //TODO: FIX THIS PART SO IT UPDATES the session WITHOUT HAVING TO RESTART the application
+
                 string courseKey = "course" + editAssignment.CourseID;
                 string serialSelected = HttpContext.Session.GetString(courseKey);
                 SpecificCourse course = JsonSerializer.Deserialize<SpecificCourse>(serialSelected);
