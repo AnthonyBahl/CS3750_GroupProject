@@ -555,7 +555,7 @@ namespace cs3750LMS.Controllers
 
                     // set headers
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "sk_test_4eC39HqLyjWDarjtT1zdp7dc");
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "sk_test_51J1K0xA6qDyGoLeeC6aj7Rm39c8lFFfTYZ9k4KyAy6oxH30YYJEKbE73mewvQAAc0jkzATCmsOuzwZ7pZ42bXBSc00t8sYSK1X");
 
                     // defind cc data
                     var bodyData = new Dictionary<string, string>
@@ -592,7 +592,7 @@ namespace cs3750LMS.Controllers
 
                         // set headers
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "sk_test_4eC39HqLyjWDarjtT1zdp7dc");
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "sk_test_51J1K0xA6qDyGoLeeC6aj7Rm39c8lFFfTYZ9k4KyAy6oxH30YYJEKbE73mewvQAAc0jkzATCmsOuzwZ7pZ42bXBSc00t8sYSK1X");
                        
                         int iAmt = Int32.Parse(amt);
 
