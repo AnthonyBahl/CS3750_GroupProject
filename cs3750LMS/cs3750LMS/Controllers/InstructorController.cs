@@ -297,5 +297,64 @@ namespace cs3750LMS.Controllers
             ViewData["Courses"] = userCourses;
             return View("AddClass");
         }
+
+        [HttpGet]
+        public IActionResult Submissions(int id)
+        {
+            string assignmentKey = "assignment" + id;
+            string serialUser = HttpContext.Session.GetString("userInfo");
+            UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
+
+            string serialSelected = HttpContext.Session.GetString(assignmentKey);
+            SpecificAssignment assignment = new SpecificAssignment();
+            if (serialSelected != null)
+            {
+                assignment = JsonSerializer.Deserialize<SpecificAssignment>(serialSelected);
+            }
+            else
+            {
+                string serialAssignment = HttpContext.Session.GetString("userAssignments");
+                Assignments courseAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
+                assignment.Selection = courseAssignments.AssignmentList.Where(x => x.AssignmentID == id).Single();
+                assignment.SubmissionList = _context.Submissions.Where(y => y.AssignmentID == id).ToList();
+
+                HttpContext.Session.SetString(assignmentKey, JsonSerializer.Serialize(assignment));
+            }
+
+            //grab enrollment
+            Enrollments enrollment;
+            enrollment = new Enrollments
+            {
+                EnrollmentList = _context.Enrollments.Where(x => x.courseID == assignment.Selection.CourseID).ToList()
+            };
+
+            //grab students
+            List<User> queryList = _context.Users.Where(x => x.AccountType == 0).ToList();
+            var query = from a in queryList
+                        join b in enrollment.EnrollmentList on a.UserId equals b.studentID
+                        select a;
+
+            Students students = new Students
+            {
+                StudentUsers = query.ToList(),
+                StudentList = new List<Student>()
+            };
+
+            foreach (var obj in query)
+            {
+                Student newStudent = new Student();
+                newStudent.UserId = obj.UserId;
+                newStudent.FirstName = obj.FirstName;
+                newStudent.LastName = obj.LastName;
+                students.StudentList.Add(newStudent);
+            }
+
+            assignment.ModeSetting = 1;
+
+            ViewData["ClickedAssignment"] = assignment;
+            ViewData["Students"] = students;
+            ViewData["Message"] = session;
+            return View("~/Views/Instructor/Submissions.cshtml");
+        }
     }
 }
