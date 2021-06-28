@@ -551,8 +551,9 @@ namespace cs3750LMS.Controllers
                     string url = "https://api.stripe.com/v1/tokens";
 
                     client.BaseAddress = new Uri(url); 
-                    client.DefaultRequestHeaders.Accept.Clear(); // clear preexisting errors
+                    client.DefaultRequestHeaders.Accept.Clear(); // clear preexisting headers
 
+                    // set headers
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "sk_test_4eC39HqLyjWDarjtT1zdp7dc");
 
@@ -574,8 +575,52 @@ namespace cs3750LMS.Controllers
                     {
                         var responseString = await res.Content.ReadAsStringAsync();
                         Debug.WriteLine(responseString);
-                        // grab token
+                        // parse json response
+                        JsonDocument doc = JsonDocument.Parse(responseString);
+                        // grab root json element
+                        JsonElement root = doc.RootElement;
+                        // grab token id field
+                        string tokenId = root.GetProperty("id").ToString();
+                        Debug.WriteLine(tokenId);
                         // do next request
+
+                        client = new HttpClient();
+                        url = "https://api.stripe.com/v1/charges";
+
+                        client.BaseAddress = new Uri(url);
+                        client.DefaultRequestHeaders.Accept.Clear(); // clear preexisting headers
+
+                        // set headers
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "sk_test_4eC39HqLyjWDarjtT1zdp7dc");
+                       
+                        int iAmt = Int32.Parse(amt);
+
+                        string dollarAmt = (iAmt * 100).ToString();
+                        // defind cc data
+                        bodyData = new Dictionary<string, string>
+                        {
+                            { "amount", dollarAmt },
+                            { "currency", "usd"  },
+                            { "source",  tokenId },
+                            { "description", "Payment Test" }
+                        };
+
+                        // encode data
+                        content = new FormUrlEncodedContent(bodyData);
+
+                        // make request
+                        var chargesRes = await client.PostAsync(client.BaseAddress, content);
+                        if (res.IsSuccessStatusCode)
+                        {
+                            var chargesResString = await chargesRes.Content.ReadAsStringAsync();
+                            Debug.WriteLine(chargesResString);
+
+                        }
+                        else
+                        {
+                            Debug.WriteLine("Charges err");
+                        }
                     }
                     else
                     {
