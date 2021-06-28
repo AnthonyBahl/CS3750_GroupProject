@@ -57,25 +57,25 @@
                     </div>
                     <div class="col-md-6">
                         <label for="cc-number">Credit card number</label>
-                        <input type="text" class="form-control" id="cc-number" placeholder="" required name="ccnum">
+                        <input type="number" class="form-control" id="cc-number" placeholder="" required name="ccnum">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-3">
                         <label for="cc-exp-month">Expiration</label>
-                        <input type="text" class="form-control" id="cc-exp-month" placeholder="M" required name="ccmonth">
+                        <input type="number" class="form-control" id="cc-exp-month" placeholder="M" required name="ccmonth" maxlength="1" minlength="2" min="1" max="12">
                     </div>
                     <div class="col-md-3">
                         <label for="cc-exp-year">Expiration</label>
-                        <input type="text" class="form-control" id="cc-exp-year" placeholder="YYYY" required name="ccyear">
+                        <input type="number" class="form-control" id="cc-exp-year" placeholder="YYYY" required name="ccyear" maxlength="3" minlength="3" min="2020" max="3000">
                     </div>
                     <div class="col-md-3">
                         <label for="cc-cvv">CVV</label>
-                        <input type="text" class="form-control" id="cc-cvv" placeholder="123" required name="cccvv">
+                        <input type="number" class="form-control" id="cc-cvv" placeholder="123" required name="cccvv" maxlength="3" minlength="3">
                     </div>
                     <div class="col-md-3">
                         <label for="cc-amount">Amount</label>
-                        <input type="text" class="form-control" id="cc-amount" placeholder="$" required name="amt">
+                        <input type="number" class="form-control" id="cc-amount" placeholder="$" required name="amt" min="1">
                     </div>
                 </div>
                 <br />
