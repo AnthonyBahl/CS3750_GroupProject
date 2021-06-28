@@ -93,9 +93,10 @@ namespace cs3750LMS.Controllers
 
             if (ModelState.IsValid)
             {
+                //get the assignment from the database
                 _assignment = _context.Assignments.Where(x =>x.AssignmentID == editAssignment.AssignmentID).Single();                                                            
 
-                //update fields
+                //update database assignment with edited form assignment fields
                 _assignment.CourseID = editAssignment.CourseID;
                 _assignment.Title = editAssignment.Title;
                 _assignment.Description = editAssignment.Description;
@@ -103,18 +104,32 @@ namespace cs3750LMS.Controllers
                 _assignment.DueDate = editAssignment.DueDate + editAssignment.DueTime;
                 _assignment.SubmissionType = editAssignment.SubmitType;
         
-        //Update the database
+                  //Update the database to save the changes. 
                  _context.SaveChanges();
 
-                //update the session?? NOT SURE WHATS HAPPENING HERE.   
-                //TODO: FIX THIS PART SO IT UPDATES the session WITHOUT HAVING TO RESTART the application
-
+                 //Update the Session
                 string courseKey = "course" + editAssignment.CourseID;
                 string serialSelected = HttpContext.Session.GetString(courseKey);
                 SpecificCourse course = JsonSerializer.Deserialize<SpecificCourse>(serialSelected);
 
-                //course.AssignmentList.Add(newA);
+
+                Assignment session_assignment = new Assignment();
+
+                //grab the assignment that is in the session. 
+                session_assignment = course.AssignmentList.Where(x => x.AssignmentID == editAssignment.AssignmentID).Single();
+
+                //update the session assignment fields
+                session_assignment.CourseID = editAssignment.CourseID;
+                session_assignment.Title = editAssignment.Title;
+                session_assignment.Description = editAssignment.Description;
+                session_assignment.MaxPoints = editAssignment.MaxPoints;
+                session_assignment.DueDate = editAssignment.DueDate + editAssignment.DueTime;
+                session_assignment.SubmissionType = editAssignment.SubmitType;
+
+
+                //save the session
                 HttpContext.Session.SetString(courseKey, JsonSerializer.Serialize(course));
+      
             }
             return CourseEdit(editAssignment.CourseID);
         }
