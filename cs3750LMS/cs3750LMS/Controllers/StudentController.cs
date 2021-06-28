@@ -593,11 +593,12 @@ namespace cs3750LMS.Controllers
                         // set headers
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "sk_test_51J1K0xA6qDyGoLeeC6aj7Rm39c8lFFfTYZ9k4KyAy6oxH30YYJEKbE73mewvQAAc0jkzATCmsOuzwZ7pZ42bXBSc00t8sYSK1X");
-                       
+                      
+                        // calculate ammount in dollars
                         int iAmt = Int32.Parse(amt);
-
                         string dollarAmt = (iAmt * 100).ToString();
-                        // defind cc data
+
+                        // defind second request data 
                         bodyData = new Dictionary<string, string>
                         {
                             { "amount", dollarAmt },
@@ -613,34 +614,25 @@ namespace cs3750LMS.Controllers
                         var chargesRes = await client.PostAsync(client.BaseAddress, content);
                         if (res.IsSuccessStatusCode)
                         {
+                            // Charges response from the request 
                             var chargesResString = await chargesRes.Content.ReadAsStringAsync();
-                            Debug.WriteLine(chargesResString);
+                           
+                            // TODO Add to transaction table 
 
+                            // TODO pass in data for the calculations
                         }
                         else
                         {
+                            // TODO Better error handling
                             Debug.WriteLine("Charges err");
                         }
                     }
                     else
                     {
+                        // TODO Better error handling
                         Debug.WriteLine("errr");
                     }
 
-                    Debug.WriteLine(ccname);
-                    Debug.WriteLine(ccnum);
-                    Debug.WriteLine(cccvv);
-                    Debug.WriteLine(ccmonth);
-                    Debug.WriteLine(ccyear);
-                    Debug.WriteLine(amt);
-                    Debug.WriteLine(bodyData.Keys.ToList()[0]);
-                    Debug.WriteLine(bodyData.Keys.ToList()[1]);
-                    Debug.WriteLine(bodyData.Keys.ToList()[2]);
-                    Debug.WriteLine(bodyData.Keys.ToList()[3]);
-                    Debug.WriteLine(bodyData.Values.ToList()[0]);
-                    Debug.WriteLine(bodyData.Values.ToList()[1]);
-                    Debug.WriteLine(bodyData.Values.ToList()[2]);
-                    Debug.WriteLine(bodyData.Values.ToList()[3]);
 
                     //get student courses from session
                     string serialCourse = HttpContext.Session.GetString("userCourses");
