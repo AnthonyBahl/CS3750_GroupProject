@@ -53,6 +53,7 @@ namespace cs3750LMS.Controllers
             ViewData["Message"] = session;
             return View("~/Views/Instructor/CourseEdit.cshtml");
         }
+        //-------------------------------Course Edit Logic End----------------
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -68,6 +69,8 @@ namespace cs3750LMS.Controllers
                     DueDate = assignment.DueDate + assignment.DueTime,
                     SubmissionType = assignment.SubmitType
                 };
+
+                //Add to database
                 _context.Assignments.Add(newA);
                 _context.SaveChanges();
 
@@ -79,9 +82,62 @@ namespace cs3750LMS.Controllers
             }
             return CourseEdit(assignment.CourseID);
         }
-        //-------------------------------Course Edit Logic End----------------
 
-        //-----------------------------Add class Locig Begin-----------------
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EditAssignment([Bind("CourseID,Title,Description,MaxPoints,DueDate,DueTime,SubmitType, AssignmentID")] AssignmentValidationAdd editAssignment)
+        {
+            Assignment _assignment = new Assignment();
+
+            if (ModelState.IsValid)
+            {
+                //get the assignment from the database
+                _assignment = _context.Assignments.Where(x =>x.AssignmentID == editAssignment.AssignmentID).Single();                                                            
+
+                //update database assignment with edited form assignment fields
+                _assignment.CourseID = editAssignment.CourseID;
+                _assignment.Title = editAssignment.Title;
+                _assignment.Description = editAssignment.Description;
+                _assignment.MaxPoints = editAssignment.MaxPoints;
+                _assignment.DueDate = editAssignment.DueDate + editAssignment.DueTime;
+                _assignment.SubmissionType = editAssignment.SubmitType;
+        
+                  //Update the database to save the changes. 
+                 _context.SaveChanges();
+
+                 //Update the Session
+                string courseKey = "course" + editAssignment.CourseID;
+                string serialSelected = HttpContext.Session.GetString(courseKey);
+                SpecificCourse course = JsonSerializer.Deserialize<SpecificCourse>(serialSelected);
+
+
+                Assignment session_assignment = new Assignment();
+
+                //grab the assignment that is in the session. 
+                session_assignment = course.AssignmentList.Where(x => x.AssignmentID == editAssignment.AssignmentID).Single();
+
+                //update the session assignment fields
+                session_assignment.CourseID = editAssignment.CourseID;
+                session_assignment.Title = editAssignment.Title;
+                session_assignment.Description = editAssignment.Description;
+                session_assignment.MaxPoints = editAssignment.MaxPoints;
+                session_assignment.DueDate = editAssignment.DueDate + editAssignment.DueTime;
+                session_assignment.SubmissionType = editAssignment.SubmitType;
+
+
+                //save the session
+                HttpContext.Session.SetString(courseKey, JsonSerializer.Serialize(course));
+      
+            }
+            return CourseEdit(editAssignment.CourseID);
+        }
+
+
+
+
+        //-----------------------------Add class Logic Begin-----------------
         public IActionResult AddClass()
         {
             if (HttpContext.Session.Get<string>("user") != null)
@@ -227,7 +283,7 @@ namespace cs3750LMS.Controllers
             bool success = false;
             if (ModelState.IsValid)
             {
-                // Create connectionto the database
+                // Create connection to the database
                 _course = _context.Courses.Where(x => x.CourseID == updatedClass.CourseID).Single();
                 _course.InstructorID = session.UserId;
                 _course.Department = updatedClass.Department;
