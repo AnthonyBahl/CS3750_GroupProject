@@ -552,6 +552,8 @@ namespace cs3750LMS.Controllers
                     HttpClient client = new HttpClient();
                     string url = "https://api.stripe.com/v1/tokens";
 
+                    string ccErrMsg = "";
+
                     client.BaseAddress = new Uri(url); 
                     client.DefaultRequestHeaders.Accept.Clear(); // clear preexisting headers
 
@@ -614,7 +616,7 @@ namespace cs3750LMS.Controllers
 
                         // make request
                         var chargesRes = await client.PostAsync(client.BaseAddress, content);
-                        if (res.IsSuccessStatusCode)
+                        if (chargesRes.IsSuccessStatusCode)
                         {
                             // Charges response from the request 
                             var chargesResString = await chargesRes.Content.ReadAsStringAsync();
@@ -633,6 +635,7 @@ namespace cs3750LMS.Controllers
                                 amount = iChargeAmount,
                                 status = "Settled"
                             };
+
                             //add the new transaction to the database and save changes
                             _context.Add(newTransaction);
                             await _context.SaveChangesAsync();
@@ -644,14 +647,12 @@ namespace cs3750LMS.Controllers
                         }
                         else
                         {
-                            // TODO Better error handling
-                            Debug.WriteLine("Charges err");
+                            ccErrMsg = chargesRes.RequestMessage.ToString();
                         }
                     }
                     else
                     {
-                        // TODO Better error handling
-                        Debug.WriteLine("errr");
+                        ccErrMsg = res.RequestMessage.ToString();
                     }
 
 
@@ -664,6 +665,7 @@ namespace cs3750LMS.Controllers
                     Transactions userTransactions = serialTransactions == null ? null : JsonSerializer.Deserialize<Transactions>(serialTransactions);
 
                     ViewData["UserTransactions"] = userTransactions;
+                    ViewData["CCMessage"] = ccErrMsg;
                     ViewData["Message"] = session;
                     ViewData["Courses"] = allCourses;
                     ViewData["StudentCourses"] = studentCourses;

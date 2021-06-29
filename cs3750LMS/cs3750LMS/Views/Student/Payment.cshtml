@@ -1,7 +1,6 @@
-﻿@{
-    Courses studentCourses = (Courses)ViewData["StudentCourses"];
-    Transactions studentTransactions = (Transactions)ViewData["UserTransactions"];
-    ViewBag.studentTransactions = Newtonsoft.Json.JsonConvert.SerializeObject(studentTransactions);
+﻿@{ Courses studentCourses = (Courses)ViewData["StudentCourses"];
+                Transactions studentTransactions = (Transactions)ViewData["UserTransactions"];
+                ViewBag.studentTransactions = Newtonsoft.Json.JsonConvert.SerializeObject(studentTransactions); 
 }
 
 <script>
@@ -32,21 +31,21 @@
                                 {
                                     @for (int i = 0; i < studentCourses.CourseList.Count; i++)
                                     {
-                                        <tr>
-                                            <td class="col-md-9"><em>@studentCourses.CourseList[i].ClassTitle | @studentCourses.CourseList[i].ClassNumber</em></td>
-                                            <td class="col-md-1 text-center">$@(studentCourses.CourseList[i].Credits * 100)</td>
-                                            @{ grandTotal += studentCourses.CourseList[i].Credits * 100; }
-                                        </tr>
-                                            }
+                                    <tr>
+                                        <td class="col-md-9"><em>@studentCourses.CourseList[i].ClassTitle | @studentCourses.CourseList[i].ClassNumber</em></td>
+                                        <td class="col-md-1 text-center">$@(studentCourses.CourseList[i].Credits * 100)</td>
+                                        @{ grandTotal += studentCourses.CourseList[i].Credits * 100; }
+                                    </tr>
                                     }
-                                @for (int i = 0; i < studentTransactions.TransactionList.Count; i++)
-                                {
-                            <tr style="color: green">
-                                <td class="col-md-9"><em>Payment on @studentTransactions.TransactionList[i].Date.ToString()</em></td>
-                                <td class="col-md-1 text-center">-$@(studentTransactions.TransactionList[i].amount / 100)</td>
-                                @{ grandTotal -= studentTransactions.TransactionList[i].amount / 100; }
-                            </tr>
-                                }
+                                 }
+                                 @for (int i = 0; i < studentTransactions.TransactionList.Count; i++)
+                                 {
+                                    <tr style="color: green">
+                                        <td class="col-md-9"><em>Payment on @studentTransactions.TransactionList[i].Date.ToString()</em></td>
+                                        <td class="col-md-1 text-center">-$@(studentTransactions.TransactionList[i].amount / 100)</td>
+                                        @{ grandTotal -= studentTransactions.TransactionList[i].amount / 100; }
+                                    </tr>
+                                 }
                                 <tr>
                                     <td class="text-right"><h4><strong>Total: </strong></h4></td>
                                     <td class="text-center text-danger"><h4><strong>$@grandTotal</strong></h4></td>
@@ -58,6 +57,12 @@
             </div>
             <form enctype="multipart/form-data" asp-action="Payment" method="post">
                 <h4 class="text-center">Payment</h4>
+                @if (@ViewData["CCMessage"] != "")
+                {
+                    <p>
+                        @ViewData["CCMessage"]
+                    </p>
+                }
                 <div class="row">
                     <div class="col-md-6">
                         <label for="cc-name">Name on card</label>
