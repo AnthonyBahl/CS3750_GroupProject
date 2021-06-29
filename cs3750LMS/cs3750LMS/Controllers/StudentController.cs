@@ -726,7 +726,7 @@ namespace cs3750LMS.Controllers
                             { "amount", dollarAmt },
                             { "currency", "usd"  },
                             { "source",  tokenId },
-                            { "description", ccname + "Payment" }
+                            { "description", ccname + "'s Payment" }
                         };
 
                         // encode data
