@@ -1,0 +1,75 @@
+﻿@{
+    UserSession user = (UserSession)ViewData["Message"];
+    Assignment clickedAssignment = (Assignment)ViewData["ClickedAssignment"];
+    int currentCourse = Int32.Parse((string)ViewData["CurrentCourse"]);
+    
+}
+@model SubmitAssignmentValidation
+
+<div class="container-fluid hero flex-grow-1">
+    <div class="container">
+        <h1 class="display-4 text-center mt-3">@clickedAssignment.Title</h1>
+        <h2>Due: @clickedAssignment.DueDate.ToString("MM/dd/yy hh:mm tt")</h2>
+        <h2>Max Points: @clickedAssignment.MaxPoints</h2>
+        <p>@clickedAssignment.Description</p>
+        @section Scripts{
+            <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+            <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+        }
+        <!--File-->
+        @if (clickedAssignment.SubmissionType == 0)
+        {
+    <form enctype="multipart/form-data" asp-action="FileSubmit" method="post" class="w-75 mx-auto mt-5">
+        <div asp-validation-summary="ModelOnly"></div> <!--ModelOnly mode allows errors to be show per input box-->
+
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="FileSubmission" class="control-label mb-0 text-sm-center text-lg-end">Submission</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <input type="file" asp-for="FileSubmission" class="form-control" required />
+            </div>
+            <div class="col-sm-12">
+                <span class="text-danger" asp-validation-for="FileSubmission"></span>
+            </div>
+        </div>
+        <input asp-for="CourseId" value="@currentCourse" hidden />
+        <input asp-for="AssignmentId" value="@clickedAssignment.AssignmentID"hidden/>
+
+        <div class="form-group text-center mt-sm-3 mt-lg-1">
+            <button type="submit" value="Submit" class="btn btn-primary mx-2">Submit</button>
+
+        </div>
+
+    </form>
+        }
+        else //--Text-->
+        {
+    <form asp-action="TextSubmit" method="post" class="w-75 mx-auto mt-5">
+        <div asp-validation-summary="ModelOnly"></div> <!--ModelOnly mode allows errors to be show per input box-->
+
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="TextSubmission" class="control-label mb-0 text-sm-center text-lg-end">Submission</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <textarea class="form-control" typeof="text" maxlength="1000" rows="6" name="TextSubmission" required></textarea>
+            </div>
+            <div class="col-sm-12">
+                <span class="text-danger" asp-validation-for="TextSubmission"></span>
+            </div>
+        </div>
+
+        <input asp-for="CourseId" value="@currentCourse" hidden />
+        <input asp-for="AssignmentId" value="@clickedAssignment.AssignmentID" hidden />
+
+
+        <div class="form-group text-center mt-sm-3 mt-lg-1">
+            <button type="submit" value="Submit" class="btn btn-primary mx-2">Submit</button>
+
+        </div>
+
+    </form>
+        }
+    </div>
+</div>
