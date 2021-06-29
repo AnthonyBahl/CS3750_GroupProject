@@ -218,6 +218,10 @@ namespace cs3750LMS.Controllers
                     HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(userCourses));
                     ViewData["UserCourses"] = userCourses;
 
+                    //save times
+                    List<TimeStamp> times = new TimeStamp().ParseTimes(userCourses);
+                    HttpContext.Session.SetString("courseTimes", JsonSerializer.Serialize(times));
+
                     // save the user assignments in the sessioin and pass to the view
                     HttpContext.Session.SetString("userAssignments", JsonSerializer.Serialize(userAssignments));
                     ViewData["userAssignments"] = userAssignments;
