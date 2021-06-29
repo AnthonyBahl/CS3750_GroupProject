@@ -15,7 +15,7 @@ namespace cs3750LMS.Models.entites
 
         public int userID { get; set; }
 
-        public float amount { get; set; }
+        public int amount { get; set; }
 
         public string status { get; set; }
     }

@@ -496,6 +496,7 @@ namespace cs3750LMS.Controllers
                 string serialUser = HttpContext.Session.GetString("userInfo");
                 UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
 
+                // Is a Student
                 if (session.AccountType == 0)
                 {
                     //grab session vars for registration
@@ -505,6 +506,7 @@ namespace cs3750LMS.Controllers
                     Courses allCourses;
                     Enrollments enrollment;
 
+                    // Check to see if info was found in the session
                     if (serialEnrollment != null && serialAllCourses != null)
                     {
                         allCourses = JsonSerializer.Deserialize<Courses>(serialAllCourses);
@@ -616,10 +618,29 @@ namespace cs3750LMS.Controllers
                         {
                             // Charges response from the request 
                             var chargesResString = await chargesRes.Content.ReadAsStringAsync();
-                           
-                            // TODO Add to transaction table 
+                            JsonDocument chargesDoc = JsonDocument.Parse(chargesResString);
+                            JsonElement chargesRoot = chargesDoc.RootElement;
 
-                            // TODO pass in data for the calculations
+                            // Parse the amount string and convert it to an int
+                            int iChargeAmount;
+                            int.TryParse(chargesRoot.GetProperty("amount").ToString(), out iChargeAmount);
+
+                            // Create transaction object
+                            Transaction newTransaction = new Transaction
+                            {
+                                Date = DateTime.Now,
+                                userID = session.UserId,
+                                amount = iChargeAmount,
+                                status = "Settled"
+                            };
+                            //add the new transaction to the database and save changes
+                            _context.Add(newTransaction);
+                            await _context.SaveChangesAsync();
+
+                            // Update Session
+                            Transactions newUserTransactions = new Transactions();
+                            newUserTransactions.TransactionList = _context.Transactions.Where(t => t.userID == session.UserId).ToList();
+                            HttpContext.Session.SetString("userTransactions", JsonSerializer.Serialize(newUserTransactions));
                         }
                         else
                         {

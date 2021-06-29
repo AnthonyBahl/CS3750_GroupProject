@@ -256,9 +256,7 @@ namespace cs3750LMS.Models
 
                 entity.Property(e => e.amount).HasColumnName("amount");
 
-                entity.Property(e => e.status)
-                .HasMaxLength(50)
-                .HasColumnName("status");
+                entity.Property(e => e.status).HasColumnName("status");
             });
 
             OnModelCreatingPartial(modelBuilder);
