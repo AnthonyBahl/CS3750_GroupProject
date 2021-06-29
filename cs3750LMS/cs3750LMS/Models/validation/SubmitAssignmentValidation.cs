@@ -12,5 +12,7 @@ namespace cs3750LMS.Models
         public IFormFile FileSubmission { get; set; }
         [MaxLength(1000,ErrorMessage ="Maximum character Length is 1000")]
         public string TextSubmission { get; set; }
+        public int CourseId { get; set; }
+        public int AssignmentId { get; set; }
     }
 }

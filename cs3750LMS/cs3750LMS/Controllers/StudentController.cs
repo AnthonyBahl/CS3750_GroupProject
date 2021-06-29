@@ -56,7 +56,9 @@ namespace cs3750LMS.Controllers
             //get submissions
             string serialSubmissions = HttpContext.Session.GetString("userSubmissions");
             List<Submission> submissions = JsonSerializer.Deserialize<List<Submission>>(serialSubmissions);
-
+            
+            //set current course being viewed for assignmemt submissions
+            HttpContext.Session.SetString("CurrentCourse", id.ToString());
             ViewData["Submission"] = submissions;
             ViewData["ClickedCourse"] = course;
             ViewData["Message"] = session;
@@ -82,11 +84,51 @@ namespace cs3750LMS.Controllers
 
             Assignment clickedAssignment = userAssignments.AssignmentList.Where(x => x.AssignmentID == id).Single();
 
+            ViewData["currentCourse"] = HttpContext.Session.GetString("CurrentCourse");
             ViewData["Submission"] = submissions;
             ViewData["ClickedAssignment"] = clickedAssignment;
             ViewData["Message"] = session;
 
             return View("~/Views/Student/SubmitAssignment.cshtml");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult TextSubmit([Bind("TextSubmission, CourseId, AssignmentId")] SubmitAssignmentValidation submiting)
+        {
+            //get user info from session
+            string serialUser = HttpContext.Session.GetString("userInfo");
+            UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
+            if (ModelState.IsValid)
+            {
+                //create new submission
+                Submission newSubmission = new Submission
+                {
+                    AssignmentID = submiting.AssignmentId,
+                    StudentID = session.UserId,
+                    SubmissionDate = DateTime.Now,
+                    SubmissionType = 1,
+                    Grade = -1,
+                    Contents = submiting.TextSubmission
+                };
+
+                //save to database
+                _context.Submissions.Add(newSubmission);
+                _context.SaveChanges();
+
+                //get submissions, add new, and save to session
+                string serialSubmissions = HttpContext.Session.GetString("userSubmissions");
+                List<Submission> submissions = JsonSerializer.Deserialize<List<Submission>>(serialSubmissions);
+
+                submissions.Add(newSubmission);
+
+                HttpContext.Session.SetString("userSubmissions", JsonSerializer.Serialize(submissions));
+
+            }
+            else
+            {
+                return SubmitAssignment(submiting.AssignmentId);
+            }
+            return ViewCourse(submiting.CourseId);
         }
         //--------------------------View Course logic/submit assignment end
         [HttpPost]

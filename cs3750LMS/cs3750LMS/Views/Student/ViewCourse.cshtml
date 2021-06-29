@@ -2,7 +2,7 @@
     UserSession user = (UserSession)ViewData["Message"];
     SpecificCourse course = (SpecificCourse)ViewData["ClickedCourse"];
     List<Submission> submission = (List<Submission>)ViewData["Submission"];
-    List<int> submissionIds = submission.Select(x => x.AssignmentID).ToList();
+    List<int> submissionIds = (submission != null)?submission.Select(x => x.AssignmentID).ToList():new List<int>();
     ViewData["Title"] = course.Selection.ClassTitle;
 }
 <h1>@course.Selection.ClassNumber - @course.Selection.ClassTitle</h1>
@@ -28,7 +28,7 @@
                 {
                     Submission currentIteration = submission.Where(x => x.AssignmentID == course.AssignmentList[i].AssignmentID).Single();
 
-                    if (currentIteration.Grade == null)
+                    if (currentIteration.Grade == -1)
                     {
                     <td>
                         Submitted
