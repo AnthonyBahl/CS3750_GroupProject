@@ -228,6 +228,10 @@ namespace cs3750LMS.Controllers
                     HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(userCourses));
                     ViewData["UserCourses"] = userCourses;
 
+                    //save times
+                    List<TimeStamp> times = new TimeStamp().ParseTimes(userCourses);
+                    HttpContext.Session.SetString("courseTimes", JsonSerializer.Serialize(times));
+
                     // save the user assignments in the sessioin and pass to the view
                     HttpContext.Session.SetString("userAssignments", JsonSerializer.Serialize(userAssignments));
                     ViewData["userAssignments"] = userAssignments;
@@ -240,14 +244,10 @@ namespace cs3750LMS.Controllers
                         Transactions userTransactions = new Transactions();
 
                         // Get data from database
-                        userTransactions.TransactionList = _context.Transactions.Where(t => t.userID == userFound.UserId).ToList();
+                        userTransactions.TransactionList = _context.Transactions.Where(x => x.userID == userFound.UserId).ToList();
 
                         HttpContext.Session.SetString("userTransactions", JsonSerializer.Serialize(userTransactions));
                     }
-
-                    //save times
-                    List<TimeStamp> times = new TimeStamp().ParseTimes(userCourses);
-                    HttpContext.Session.SetString("courseTimes", JsonSerializer.Serialize(times));
 
                     //on success is logged in route to dashboard
                     return View("~/Views/Home/Index.cshtml");

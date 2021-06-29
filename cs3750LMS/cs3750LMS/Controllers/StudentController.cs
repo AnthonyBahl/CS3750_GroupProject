@@ -7,7 +7,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -524,6 +527,7 @@ namespace cs3750LMS.Controllers
             return View("~/Views/Student/Register.cshtml");
         }
 
+        [HttpGet]
         public IActionResult Payment()
         {
             if (HttpContext.Session.Get<string>("user") != null)
@@ -582,7 +586,6 @@ namespace cs3750LMS.Controllers
                         HttpContext.Session.SetString("AllCourses", JsonSerializer.Serialize(allCourses));
                     }
 
-
                     //get student courses from session
                     string serialCourse = HttpContext.Session.GetString("userCourses");
                     Courses studentCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
@@ -596,6 +599,194 @@ namespace cs3750LMS.Controllers
                     ViewData["Courses"] = allCourses;
                     ViewData["StudentCourses"] = studentCourses;
                     return View();
+                }
+            }
+            return View("~/Views/Home/Login.cshtml");
+        }
+
+        // POST: 
+        [HttpPost]
+        public async Task<IActionResult> PaymentAsync(string ccname, string ccnum, string ccmonth, string ccyear, string cccvv, string amt)
+        {
+            if (HttpContext.Session.Get<string>("user") != null)
+            {
+                //get user info from session
+                string serialUser = HttpContext.Session.GetString("userInfo");
+                UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
+
+                // Is a Student
+                if (session.AccountType == 0)
+                {
+                    //grab session vars for registration
+                    string serialEnrollment = HttpContext.Session.GetString("userEnrollment");
+                    string serialAllCourses = HttpContext.Session.GetString("AllCourses");
+
+                    Courses allCourses;
+                    Enrollments enrollment;
+
+                    // Check to see if info was found in the session
+                    if (serialEnrollment != null && serialAllCourses != null)
+                    {
+                        allCourses = JsonSerializer.Deserialize<Courses>(serialAllCourses);
+                        enrollment = JsonSerializer.Deserialize<Enrollments>(serialEnrollment);
+                    }
+                    else
+                    {
+                        //grab enrollment
+                        enrollment = new Enrollments
+                        {
+                            EnrollmentList = _context.Enrollments.Where(x => x.studentID == session.UserId).ToList()
+                        };
+
+                        //grab instructors
+                        Instructors instructors = new Instructors
+                        {
+                            InstructorUsers = _context.Users.Where(x => x.AccountType == 1).ToList(),
+                            InstructorList = new List<Instructor>()
+                        };
+
+                        for (int i = 0; i < instructors.InstructorUsers.Count; i++)
+                        {
+                            Instructor newInstructor = new Instructor();
+                            newInstructor.UserId = instructors.InstructorUsers[i].UserId;
+                            newInstructor.FirstName = instructors.InstructorUsers[i].FirstName;
+                            newInstructor.LastName = instructors.InstructorUsers[i].LastName;
+                            instructors.InstructorList.Add(newInstructor);
+                        }
+
+                        //grab all courses
+                        allCourses = new Courses
+                        {
+                            CourseList = _context.Courses.ToList(),
+                            CourseInstructors = instructors.InstructorList
+                        };
+
+                        //save to session
+                        HttpContext.Session.SetString("userEnrollment", JsonSerializer.Serialize(enrollment));
+                        HttpContext.Session.SetString("AllCourses", JsonSerializer.Serialize(allCourses));
+                    }
+
+                    // Payment request to stripe
+                    HttpClient client = new HttpClient();
+                    string url = "https://api.stripe.com/v1/tokens";
+
+                    string ccErrMsg = "";
+
+                    client.BaseAddress = new Uri(url); 
+                    client.DefaultRequestHeaders.Accept.Clear(); // clear preexisting headers
+
+                    // set headers
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "sk_test_51J1K0xA6qDyGoLeeC6aj7Rm39c8lFFfTYZ9k4KyAy6oxH30YYJEKbE73mewvQAAc0jkzATCmsOuzwZ7pZ42bXBSc00t8sYSK1X");
+
+                    // defind cc data
+                    var bodyData = new Dictionary<string, string>
+                    {
+                        { "card[number]",  ccnum },
+                        { "card[exp_month]", ccmonth },
+                        { "card[exp_year]", ccyear },
+                        { "card[cvc]", ccyear }
+                    };
+
+                    // encode data
+                    var content = new FormUrlEncodedContent(bodyData);
+
+                    // make request
+                    var res = await client.PostAsync(client.BaseAddress, content);
+                    if (res.IsSuccessStatusCode)
+                    {
+                        var responseString = await res.Content.ReadAsStringAsync();
+                        Debug.WriteLine(responseString);
+                        // parse json response
+                        JsonDocument doc = JsonDocument.Parse(responseString);
+                        // grab root json element
+                        JsonElement root = doc.RootElement;
+                        // grab token id field
+                        string tokenId = root.GetProperty("id").ToString();
+                        Debug.WriteLine(tokenId);
+                        // do next request
+
+                        client = new HttpClient();
+                        url = "https://api.stripe.com/v1/charges";
+
+                        client.BaseAddress = new Uri(url);
+                        client.DefaultRequestHeaders.Accept.Clear(); // clear preexisting headers
+
+                        // set headers
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "sk_test_51J1K0xA6qDyGoLeeC6aj7Rm39c8lFFfTYZ9k4KyAy6oxH30YYJEKbE73mewvQAAc0jkzATCmsOuzwZ7pZ42bXBSc00t8sYSK1X");
+                      
+                        // calculate ammount in dollars
+                        int iAmt = Int32.Parse(amt);
+                        string dollarAmt = (iAmt * 100).ToString();
+
+                        // defind second request data 
+                        bodyData = new Dictionary<string, string>
+                        {
+                            { "amount", dollarAmt },
+                            { "currency", "usd"  },
+                            { "source",  tokenId },
+                            { "description", ccname + "'s Payment" }
+                        };
+
+                        // encode data
+                        content = new FormUrlEncodedContent(bodyData);
+
+                        // make request
+                        var chargesRes = await client.PostAsync(client.BaseAddress, content);
+                        if (chargesRes.IsSuccessStatusCode)
+                        {
+                            // Charges response from the request 
+                            var chargesResString = await chargesRes.Content.ReadAsStringAsync();
+                            JsonDocument chargesDoc = JsonDocument.Parse(chargesResString);
+                            JsonElement chargesRoot = chargesDoc.RootElement;
+
+                            // Parse the amount string and convert it to an int
+                            int iChargeAmount;
+                            int.TryParse(chargesRoot.GetProperty("amount").ToString(), out iChargeAmount);
+
+                            // Create transaction object
+                            Transaction newTransaction = new Transaction
+                            {
+                                Date = DateTime.Now,
+                                userID = session.UserId,
+                                amount = iChargeAmount,
+                                status = "Settled"
+                            };
+
+                            //add the new transaction to the database and save changes
+                            _context.Add(newTransaction);
+                            await _context.SaveChangesAsync();
+
+                            // Update Session
+                            Transactions newUserTransactions = new Transactions();
+                            newUserTransactions.TransactionList = _context.Transactions.Where(t => t.userID == session.UserId).ToList();
+                            HttpContext.Session.SetString("userTransactions", JsonSerializer.Serialize(newUserTransactions));
+                        }
+                        else
+                        {
+                            ccErrMsg = "Payment not processed, Check your card inputs";
+                        }
+                    }
+                    else
+                    {
+                        ccErrMsg = "Payment not processed, Check your card inputs";
+                    }
+
+                    //get student courses from session
+                    string serialCourse = HttpContext.Session.GetString("userCourses");
+                    Courses studentCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+
+                    // Transactions
+                    string serialTransactions = HttpContext.Session.GetString("userTransactions");
+                    Transactions userTransactions = serialTransactions == null ? null : JsonSerializer.Deserialize<Transactions>(serialTransactions);
+
+                    ViewData["UserTransactions"] = userTransactions;
+                    ViewData["CCMessage"] = ccErrMsg;
+                    ViewData["Message"] = session;
+                    ViewData["Courses"] = allCourses;
+                    ViewData["StudentCourses"] = studentCourses;
+                    return View("Payment");
                 }
             }
             return View("~/Views/Home/Login.cshtml");
