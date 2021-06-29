@@ -20,5 +20,6 @@ namespace cs3750LMS.Models.entites
         public int SubmissionType { get; set; }
    
         public int Grade { get; set; }
+        public string Contents { get; set; }
     }
 }

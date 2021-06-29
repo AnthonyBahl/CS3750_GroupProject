@@ -245,6 +245,11 @@ namespace cs3750LMS.Models
                 entity.Property(e => e.SubmissionType).HasColumnName("SubmissionType");
 
                 entity.Property(e => e.Grade).HasColumnName("Grade");
+
+                entity.Property(e => e.Contents).
+                IsUnicode(false).
+                HasMaxLength(1000).
+                HasColumnName("Contents");
             });
 
             modelBuilder.Entity<Transaction>(entity =>
