@@ -1,7 +1,8 @@
 ﻿@{
     UserSession user = (UserSession)ViewData["Message"];
     SpecificCourse course = (SpecificCourse)ViewData["ClickedCourse"];
-    List<Submission> submissions = (List<Submission>)ViewData["Submissions"];
+    List<Submission> submission = (List<Submission>)ViewData["Submission"];
+    List<int> submissionIds = submission.Select(x => x.AssignmentID).ToList();
     ViewData["Title"] = course.Selection.ClassTitle;
 }
 <h1>@course.Selection.ClassNumber - @course.Selection.ClassTitle</h1>
@@ -23,16 +24,30 @@
                 <th scope="row">@course.AssignmentList[i].Title</th>
                 <td scope="row">@course.AssignmentList[i].DueDate.ToString("MM/dd/yy")</td>
                 <td scope="row">@course.AssignmentList[i].DueDate.ToString("hh:mm tt")</td>
-                if()
+                @if (submissionIds.Contains(course.AssignmentList[i].AssignmentID))
+                {
+                    Submission currentIteration = submission.Where(x => x.AssignmentID == course.AssignmentList[i].AssignmentID).Single();
+
+                    if (currentIteration.Grade == null)
+                    {
+                    <td>
+                        Submitted
+                    </td>
+                    }
+                    else
+                    {
+                        <td>
+                            Grade: @currentIteration.Grade
+                        </td>
+                    }
+                }
+                else {
                 <td>
-                    <a type="button" asp-controller="Instructor" asp-action="Submissions" asp-route-id="@course.AssignmentList[i].AssignmentID" class="btn btn-success">Submit</a>
+                    <a type="button" asp-controller="Student" asp-action="SubmitAssignment" asp-route-id="@course.AssignmentList[i].AssignmentID" class="btn btn-success">Submit</a>
                 </td>
+                }
             </tr>
             }
         </tbody>
     </table>
-    <br />
-    <div class="text-center mt-3">
-        <button type="button" class="btn btn-primary mx-2" onclick="ToggleView(1,1)">Add Assignment</button>
-    </div>
 </div>

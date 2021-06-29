@@ -57,11 +57,36 @@ namespace cs3750LMS.Controllers
             string serialSubmissions = HttpContext.Session.GetString("userSubmissions");
             List<Submission> submissions = JsonSerializer.Deserialize<List<Submission>>(serialSubmissions);
 
-            ViewData["Submissions"] = submissions;
+            ViewData["Submission"] = submissions;
             ViewData["ClickedCourse"] = course;
             ViewData["Message"] = session;
 
             return View("~/Views/Student/ViewCourse.cshtml");
+        }
+
+        [HttpGet]
+        public IActionResult SubmitAssignment (int id)
+        {
+
+            //get user info from session
+            string serialUser = HttpContext.Session.GetString("userInfo");
+            UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
+
+            //get submissions
+            string serialSubmissions = HttpContext.Session.GetString("userSubmissions");
+            List<Submission> submissions = JsonSerializer.Deserialize<List<Submission>>(serialSubmissions);
+
+            //get assignments
+            string serialAssignment = HttpContext.Session.GetString("userAssignments");
+            Assignments userAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
+
+            Assignment clickedAssignment = userAssignments.AssignmentList.Where(x => x.AssignmentID == id).Single();
+
+            ViewData["Submission"] = submissions;
+            ViewData["ClickedAssignment"] = clickedAssignment;
+            ViewData["Message"] = session;
+
+            return View("~/Views/Student/SubmitAssignment.cshtml");
         }
         //--------------------------View Course logic/submit assignment end
         [HttpPost]
