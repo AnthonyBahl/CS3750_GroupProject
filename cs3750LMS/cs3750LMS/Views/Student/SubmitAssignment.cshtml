@@ -1,7 +1,7 @@
 ﻿@{
     UserSession user = (UserSession)ViewData["Message"];
     Assignment clickedAssignment = (Assignment)ViewData["ClickedAssignment"];
-    int currentCourse = Int32.Parse((string)ViewData["CurrentCourse"]);
+    int currentCourse = (int)ViewData["CurrentCourse"];
     
 }
 @model SubmitAssignmentValidation

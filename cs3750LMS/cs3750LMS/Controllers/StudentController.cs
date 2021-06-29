@@ -59,9 +59,7 @@ namespace cs3750LMS.Controllers
             //get submissions
             string serialSubmissions = HttpContext.Session.GetString("userSubmissions");
             List<Submission> submissions = JsonSerializer.Deserialize<List<Submission>>(serialSubmissions);
-            
-            //set current course being viewed for assignmemt submissions
-            HttpContext.Session.SetString("CurrentCourse", id.ToString());
+
             ViewData["Submission"] = submissions;
             ViewData["ClickedCourse"] = course;
             ViewData["Message"] = session;
@@ -87,7 +85,8 @@ namespace cs3750LMS.Controllers
 
             Assignment clickedAssignment = userAssignments.AssignmentList.Where(x => x.AssignmentID == id).Single();
 
-            ViewData["currentCourse"] = HttpContext.Session.GetString("CurrentCourse");
+
+            ViewData["currentCourse"] = clickedAssignment.CourseID;
             ViewData["Submission"] = submissions;
             ViewData["ClickedAssignment"] = clickedAssignment;
             ViewData["Message"] = session;
