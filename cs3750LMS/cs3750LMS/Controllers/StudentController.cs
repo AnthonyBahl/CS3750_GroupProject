@@ -608,7 +608,7 @@ namespace cs3750LMS.Controllers
                             { "amount", dollarAmt },
                             { "currency", "usd"  },
                             { "source",  tokenId },
-                            { "description", "Payment Test" }
+                            { "description", ccname + "Payment" }
                         };
 
                         // encode data
@@ -647,14 +647,13 @@ namespace cs3750LMS.Controllers
                         }
                         else
                         {
-                            ccErrMsg = chargesRes.RequestMessage.ToString();
+                            ccErrMsg = "Payment not processed, Check your card inputs";
                         }
                     }
                     else
                     {
-                        ccErrMsg = res.RequestMessage.ToString();
+                        ccErrMsg = "Payment not processed, Check your card inputs";
                     }
-
 
                     //get student courses from session
                     string serialCourse = HttpContext.Session.GetString("userCourses");
