@@ -1,0 +1,38 @@
+﻿@{
+    UserSession user = (UserSession)ViewData["Message"];
+    SpecificCourse course = (SpecificCourse)ViewData["ClickedCourse"];
+    List<Submission> submissions = (List<Submission>)ViewData["Submissions"];
+    ViewData["Title"] = course.Selection.ClassTitle;
+}
+<h1>@course.Selection.ClassNumber - @course.Selection.ClassTitle</h1>
+<div id="AssignmentView" class="container">
+    <h2 class="text-center mt-3">Assignments</h2>
+    <table class="table table-hover bg-white mt-5">
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Due Date</th>
+                <th scope="col">Due Time</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < course.AssignmentList.Count; i++)
+            {
+            <tr>
+                <th scope="row">@course.AssignmentList[i].Title</th>
+                <td scope="row">@course.AssignmentList[i].DueDate.ToString("MM/dd/yy")</td>
+                <td scope="row">@course.AssignmentList[i].DueDate.ToString("hh:mm tt")</td>
+                if()
+                <td>
+                    <a type="button" asp-controller="Instructor" asp-action="Submissions" asp-route-id="@course.AssignmentList[i].AssignmentID" class="btn btn-success">Submit</a>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    <div class="text-center mt-3">
+        <button type="button" class="btn btn-primary mx-2" onclick="ToggleView(1,1)">Add Assignment</button>
+    </div>
+</div>

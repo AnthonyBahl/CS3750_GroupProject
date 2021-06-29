@@ -133,6 +133,10 @@ namespace cs3750LMS.Controllers
                     List<TimeStamp> times = new TimeStamp().ParseTimes(userCourses);
                     HttpContext.Session.SetString("courseTimes", JsonSerializer.Serialize(times));
 
+                    //save empty submissions
+                    List<Submission> submissions = new List<Submission>();
+                    HttpContext.Session.SetString("userSubmissions", JsonSerializer.Serialize(submissions));
+
                     //on success is now logged in, route to dashboard
                     return View("~/Views/Home/Index.cshtml");
                 }
@@ -197,8 +201,9 @@ namespace cs3750LMS.Controllers
                     //grab user courses from database
                     Courses userCourses = new Courses();
                     Assignments userAssignments = new Assignments();
+                    List<int> assignmentIds = new List<int>();
 
-                    //Student course list
+                    //Student course list and submissions
                     if (session.AccountType == 0)
                     {
                         List<int> enrolled = _context.Enrollments.Where(y => y.studentID == userFound.UserId).Select(z => z.courseID).ToList();
@@ -206,13 +211,18 @@ namespace cs3750LMS.Controllers
 
                         userAssignments.AssignmentList = _context.Assignments.Where(x => enrolled.Contains(x.CourseID)).OrderBy(y => y.DueDate).ToList();
                     }
-                    //Instructor course list
+                    //Instructor course list and submissions
                     if (session.AccountType == 1)
                     {
                         userCourses.CourseList = _context.Courses.Where(x => x.InstructorID == userFound.UserId).ToList();
                         List<int> teaching = userCourses.CourseList.Select(y => y.CourseID).ToList();
-                        userAssignments.AssignmentList = _context.Assignments.Where(x => teaching.Contains(x.CourseID)).OrderBy(y => y.DueDate).ToList();
+                        userAssignments.AssignmentList = _context.Assignments.Where(x => teaching.Contains(x.CourseID)).OrderBy(y => y.DueDate).ToList();  
                     }
+
+                    //set submissions
+                    assignmentIds = userAssignments.AssignmentList.Select(x => x.AssignmentID).ToList();
+                    List<Submission> submissions = _context.Submissions.Where(x => assignmentIds.Contains(x.AssignmentID)).ToList();
+                    HttpContext.Session.SetString("userSubmissions", JsonSerializer.Serialize(submissions));
 
                     //save the user courses in the session and pass to view
                     HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(userCourses));

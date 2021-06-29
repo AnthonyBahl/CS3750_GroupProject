@@ -20,6 +20,50 @@ namespace cs3750LMS.Controllers
         {
             _context = context;
         }
+
+        //--------------------------View Course logic/ submit assignment start
+        [HttpGet]
+        public IActionResult ViewCourse(int id)
+        {
+            //grab the specific course
+            string courseKey = "course" + id;
+
+            //see if already exists in session, if not grab data and store to session
+            string serialSelected = HttpContext.Session.GetString(courseKey);
+            SpecificCourse course = new SpecificCourse();
+            if (serialSelected != null)
+            {
+                course = JsonSerializer.Deserialize<SpecificCourse>(serialSelected);
+            }
+            else
+            {
+                string serialCourse = HttpContext.Session.GetString("userCourses");
+                Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+
+                string serialAssignment = HttpContext.Session.GetString("userAssignments");
+                Assignments userAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
+
+                course.Selection = userCourses.CourseList.Where(x => x.CourseID == id).Single();
+                course.AssignmentList = userAssignments.AssignmentList.Where(y => y.CourseID == id).ToList();
+
+                HttpContext.Session.SetString(courseKey, JsonSerializer.Serialize(course));
+            }
+
+            //get user info from session
+            string serialUser = HttpContext.Session.GetString("userInfo");
+            UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
+
+            //get submissions
+            string serialSubmissions = HttpContext.Session.GetString("userSubmissions");
+            List<Submission> submissions = JsonSerializer.Deserialize<List<Submission>>(serialSubmissions);
+
+            ViewData["Submissions"] = submissions;
+            ViewData["ClickedCourse"] = course;
+            ViewData["Message"] = session;
+
+            return View("~/Views/Student/ViewCourse.cshtml");
+        }
+        //--------------------------View Course logic/submit assignment end
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult SearchCourses([Bind("Department,Title")] SearchValidation pars)
