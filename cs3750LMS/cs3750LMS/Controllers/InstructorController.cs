@@ -169,6 +169,7 @@ namespace cs3750LMS.Controllers
                         {
                             DeptsList = _context.Departments.ToList()
                         };
+                        HttpContext.Session.SetString("Departments", JsonSerializer.Serialize(depts));
                     }
                   
                     //pass data to view
@@ -252,6 +253,7 @@ namespace cs3750LMS.Controllers
                 {
                     DeptsList = _context.Departments.ToList()
                 };
+                HttpContext.Session.SetString("Departments", JsonSerializer.Serialize(depts));
             }
 
             //pass data to view
@@ -345,6 +347,7 @@ namespace cs3750LMS.Controllers
                 {
                     DeptsList = _context.Departments.ToList()
                 };
+                HttpContext.Session.SetString("Departments", JsonSerializer.Serialize(depts));
             }
 
             //pass data to view
