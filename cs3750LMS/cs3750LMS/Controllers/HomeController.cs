@@ -210,6 +210,8 @@ namespace cs3750LMS.Controllers
                     if (session.AccountType == 1)
                     {
                         userCourses.CourseList = _context.Courses.Where(x => x.InstructorID == userFound.UserId).ToList();
+                        List<int> teaching = userCourses.CourseList.Select(y => y.CourseID).ToList();
+                        userAssignments.AssignmentList = _context.Assignments.Where(x => teaching.Contains(x.CourseID)).OrderBy(y => y.DueDate).ToList();
                     }
 
                     //save the user courses in the session and pass to view

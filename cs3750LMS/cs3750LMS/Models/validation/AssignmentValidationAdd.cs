@@ -8,6 +8,10 @@ namespace cs3750LMS.Models
 {
     public class AssignmentValidationAdd
     {
+
+        [RegularExpression("^[0-9]*$")]
+        public int AssignmentID { get; set; }
+
         [Required]
         public int CourseID { get; set; }
         [Required]

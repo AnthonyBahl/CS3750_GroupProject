@@ -27,6 +27,7 @@ namespace cs3750LMS.Models
         public virtual DbSet<Department> Departments { get; set; }
         public virtual DbSet<Enrollment> Enrollments { get; set; }
         public virtual DbSet<Assignment> Assignments { get; set; }
+        public virtual DbSet<Submission> Submissions { get; set; }
         public virtual DbSet<Transaction> Transactions { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
