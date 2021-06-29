@@ -130,6 +130,13 @@ namespace cs3750LMS.Controllers
             }
             return ViewCourse(submiting.CourseId);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult FileSubmit([Bind("FileSubmission,CourseId,AssignmentId")]SubmitAssignmentValidation submiting)
+        {
+            return ViewCourse(submiting.CourseId);
+        }
         //--------------------------View Course logic/submit assignment end
         [HttpPost]
         [ValidateAntiForgeryToken]
