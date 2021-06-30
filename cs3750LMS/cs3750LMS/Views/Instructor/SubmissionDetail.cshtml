@@ -46,9 +46,7 @@
                 <label asp-for="Contents" class="control-label mb-0 text-sm-center text-lg-end">Submission</label>
             </div>
             <div class="col-sm-12 col-lg-10">
-                <textarea id="Contents" asp-for="Contents" name="Contents" class="form-control AddField" required rows="3" cols="50" disabled>
-                    @submission.Contents
-                </textarea>
+                <textarea class="form-control" type="text" maxlength="1000" rows="3" name="Contents" readonly>@submission.Contents</textarea>
             </div>
         </div>
 
