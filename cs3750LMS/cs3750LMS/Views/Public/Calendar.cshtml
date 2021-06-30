@@ -22,9 +22,7 @@
         document.addEventListener('DOMContentLoaded', function () {
 
             var _userCourses = @Html.Raw(ViewBag.userCourses);
-            console.log(_userCourses);
             var _userAssignments = @Html.Raw(ViewBag.userAssignments);
-            console.log(_userAssignments);
             let eventsArray = [];
 
             for (var i = 0; i < _userCourses.CourseList.length; i++) {
@@ -59,10 +57,15 @@
                             groupId: _userAssignments.AssignmentList[i].AssignmentID.toString() + "_" + _userAssignments.AssignmentList[i].CourseID.toString(),
                             title: _userAssignments.AssignmentList[i].Title,
                             start: new Date(Date.parse(_userAssignments.AssignmentList[i].DueDate))
+                            , url: '/Student/SubmitAssignment/' + _userAssignments.AssignmentList[i].AssignmentID.toString()
                         }
                     );
                 }
             }
+
+            console.log(eventsArray)
+
+            
 
             var calendarEl = document.getElementById('calendar');
 
