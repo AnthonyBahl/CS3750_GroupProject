@@ -222,6 +222,7 @@ namespace cs3750LMS.Controllers
                 _context.Courses.Add(newCourse);
                 _context.SaveChanges();
                 //update session saved courses
+                userCourses.CourseList.Add(newCourse);
                 HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(userCourses));
                 success = true;
                 //save times
