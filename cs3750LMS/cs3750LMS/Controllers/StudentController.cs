@@ -605,6 +605,7 @@ namespace cs3750LMS.Controllers
 
         // POST: 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> PaymentAsync(string ccname, string ccnum, string ccmonth, string ccyear, string cccvv, string amt)
         {
             if (HttpContext.Session.Get<string>("user") != null)
@@ -695,14 +696,14 @@ namespace cs3750LMS.Controllers
                     if (res.IsSuccessStatusCode)
                     {
                         var responseString = await res.Content.ReadAsStringAsync();
-                        Debug.WriteLine(responseString);
+                       
                         // parse json response
                         JsonDocument doc = JsonDocument.Parse(responseString);
                         // grab root json element
                         JsonElement root = doc.RootElement;
                         // grab token id field
                         string tokenId = root.GetProperty("id").ToString();
-                        Debug.WriteLine(tokenId);
+                        
                         // do next request
 
                         client = new HttpClient();
