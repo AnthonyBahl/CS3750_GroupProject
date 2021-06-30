@@ -2,6 +2,7 @@
 using cs3750LMS.Models;
 using cs3750LMS.Models.entites;
 using cs3750LMS.Models.general;
+using cs3750LMS.Models.validation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -78,6 +79,12 @@ namespace cs3750LMS.Controllers
                 string serialSelected = HttpContext.Session.GetString(courseKey);
                 SpecificCourse course = JsonSerializer.Deserialize<SpecificCourse>(serialSelected);
                 course.AssignmentList.Add(newA);
+                //set assignments object for next pass
+                string serialAssignment = HttpContext.Session.GetString("userAssignments");
+                Assignments userAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
+                //update session saved courses
+                userAssignments.AssignmentList.Add(newA);
+                HttpContext.Session.SetString("userAssignments", JsonSerializer.Serialize(userAssignments));
                 HttpContext.Session.SetString(courseKey, JsonSerializer.Serialize(course));
             }
             return CourseEdit(assignment.CourseID);
@@ -365,21 +372,21 @@ namespace cs3750LMS.Controllers
             string serialUser = HttpContext.Session.GetString("userInfo");
             UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
 
-            string serialSelected = HttpContext.Session.GetString(assignmentKey);
+            string serialAssignments = HttpContext.Session.GetString("userAssignments");
+            Assignments courseAssignments = serialAssignments == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignments);
+
             SpecificAssignment assignment = new SpecificAssignment();
-            if (serialSelected != null)
+
+            if(courseAssignments.AssignmentList.Any(x => x.AssignmentID == id))
             {
-                assignment = JsonSerializer.Deserialize<SpecificAssignment>(serialSelected);
+                assignment.Selection = courseAssignments.AssignmentList.Where(x => x.AssignmentID == id).Single();
             }
             else
             {
-                string serialAssignment = HttpContext.Session.GetString("userAssignments");
-                Assignments courseAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
-                assignment.Selection = courseAssignments.AssignmentList.Where(x => x.AssignmentID == id).Single();
-                assignment.SubmissionList = _context.Submissions.Where(y => y.AssignmentID == id).ToList();
-
-                HttpContext.Session.SetString(assignmentKey, JsonSerializer.Serialize(assignment));
+                assignment.Selection = _context.Assignments.Where(x => x.AssignmentID == id).Single();
             }
+            assignment.SubmissionList = _context.Submissions.Where(y => y.AssignmentID == id).ToList();
+            HttpContext.Session.SetString(assignmentKey, JsonSerializer.Serialize(assignment));
 
             //grab enrollment
             Enrollments enrollment;
@@ -408,6 +415,7 @@ namespace cs3750LMS.Controllers
                 newStudent.LastName = obj.LastName;
                 students.StudentList.Add(newStudent);
             }
+            HttpContext.Session.SetString("courseStudents", JsonSerializer.Serialize(students));
 
             assignment.ModeSetting = 1;
 
@@ -415,6 +423,96 @@ namespace cs3750LMS.Controllers
             ViewData["Students"] = students;
             ViewData["Message"] = session;
             return View("~/Views/Instructor/Submissions.cshtml");
+        }
+
+        [HttpGet]
+        public IActionResult SubmissionDetail(int id)
+        {
+            string serialUser = HttpContext.Session.GetString("userInfo");
+            UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
+
+            string serialAssignments = HttpContext.Session.GetString("userAssignments");
+            Assignments courseAssignments = serialAssignments == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignments);
+
+            string serialStudents = HttpContext.Session.GetString("courseStudents");
+            Students courseStudents = serialStudents == null ? null : JsonSerializer.Deserialize<Students>(serialStudents);
+
+            Submission submission = new Submission();
+            submission = _context.Submissions.Where(y => y.SubmissionID == id).Single();
+
+            SpecificAssignment assignment = new SpecificAssignment();
+
+            if (courseAssignments.AssignmentList.Any(x => x.AssignmentID == submission.AssignmentID))
+            {
+                assignment.Selection = courseAssignments.AssignmentList.Where(x => x.AssignmentID == submission.AssignmentID).Single();
+            }
+            else
+            {
+                assignment.Selection = _context.Assignments.Where(x => x.AssignmentID == submission.AssignmentID).Single();
+            }
+
+            Student student = courseStudents.StudentList.Where(x => x.UserId == submission.StudentID).Single();
+
+            assignment.ModeSetting = 1;
+
+            ViewData["Assignment"] = assignment;
+            ViewData["Submission"] = submission;
+            ViewData["Student"] = student;
+            ViewData["Message"] = session;
+            return View("~/Views/Instructor/SubmissionDetail.cshtml");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SubmissionDetailAsync([Bind("SubmissionID", "AssignmentID", "StudentID", "SubmissionDate", "SubmissionType", "Grade", "Contents")] GradeValidation updatedGrade)
+        {
+            string serialUser = HttpContext.Session.GetString("userInfo");
+            UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
+
+            string serialAssignments = HttpContext.Session.GetString("userAssignments");
+            Assignments courseAssignments = serialAssignments == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignments);
+
+            string serialStudents = HttpContext.Session.GetString("courseStudents");
+            Students courseStudents = serialStudents == null ? null : JsonSerializer.Deserialize<Students>(serialStudents);
+
+            Submission submission = new Submission();
+            bool success = false;
+            if (ModelState.IsValid)
+            {
+                // Create connection to the database
+                submission = _context.Submissions.Where(x => x.SubmissionID == updatedGrade.SubmissionID).Single();
+                submission.Grade = updatedGrade.Grade;
+                // Update Database
+                await _context.SaveChangesAsync();
+
+                success = true;
+            }
+
+            SpecificAssignment assignment = new SpecificAssignment();
+
+            if (courseAssignments.AssignmentList.Any(x => x.AssignmentID == submission.AssignmentID))
+            {
+                assignment.Selection = courseAssignments.AssignmentList.Where(x => x.AssignmentID == updatedGrade.AssignmentID).Single();
+            }
+            else
+            {
+                assignment.Selection = _context.Assignments.Where(x => x.AssignmentID == updatedGrade.AssignmentID).Single();
+            }
+            assignment.SubmissionList = _context.Submissions.Where(y => y.AssignmentID == updatedGrade.AssignmentID).ToList();
+
+            //grab enrollment
+            Enrollments enrollment;
+            enrollment = new Enrollments
+            {
+                EnrollmentList = _context.Enrollments.Where(x => x.courseID == assignment.Selection.CourseID).ToList()
+            };
+
+            assignment.ModeSetting = 1;
+
+            ViewData["ClickedAssignment"] = assignment;
+            ViewData["Students"] = courseStudents;
+            ViewData["Message"] = session;
+            return View("Submissions", assignment.Selection.AssignmentID);
         }
     }
 }

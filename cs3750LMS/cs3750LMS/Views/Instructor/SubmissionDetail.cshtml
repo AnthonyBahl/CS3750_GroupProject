@@ -1,0 +1,76 @@
+﻿@model cs3750LMS.Models.validation.GradeValidation;
+@{
+    UserSession user = (UserSession)ViewData["Message"];
+    cs3750LMS.Models.general.Student student = (cs3750LMS.Models.general.Student)ViewData["Student"];
+    cs3750LMS.Models.general.SpecificAssignment assignment = (cs3750LMS.Models.general.SpecificAssignment)ViewData["Assignment"];
+    Submission submission = (Submission)ViewData["Submission"];
+    ViewData["Title"] = "Courses";
+}
+@section Scripts{
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+}
+
+<div id="SubmissionDetailView" class="container">
+    <h1 class="text-center">@assignment.Selection.Title</h1>
+    <form asp-action="SubmissionDetail" method="post" class="w-75 mx-auto mt-5">
+        <div asp-validation-summary="ModelOnly"></div>
+        <h2>
+            Student Name: <span>@student.FirstName</span>
+            <span>@student.LastName</span>
+        </h2>
+        <div>
+            <input type="text" asp-for="SubmissionID" name="SubmissionID" class="form-control" hidden value="@submission.SubmissionID" />
+        </div>
+        <div>
+            <input type="text" asp-for="AssignmentID" name="AssignmentID" class="form-control" hidden value="@submission.AssignmentID" />
+        </div>
+        <div>
+            <input type="text" asp-for="StudentID" name="StudentID" class="form-control" hidden value="@submission.StudentID" />
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="SubmissionDate" class="control-label mb-0 text-sm-center text-lg-end">Submission Date:</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <input id="SubmissionDate" type="text" asp-for="SubmissionDate" name="SubmissionDate" class="form-control" value="@submission.SubmissionDate" disabled />
+            </div>
+        </div>
+        <div>
+            <input type="text" asp-for="SubmissionType" name="SubmissionType" class="form-control" hidden value="@submission.SubmissionType" />
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Contents" class="control-label mb-0 text-sm-center text-lg-end">Submission</label>
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <textarea id="Contents" asp-for="Contents" name="Contents" class="form-control AddField" required rows="3" cols="50" disabled>
+                    @submission.Contents
+                </textarea>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                <label asp-for="Grade" class="control-label mb-0 text-sm-center text-lg-end">Grade</label>
+            </div>
+            <div class="col-sm-3">
+                <input id="Grade" type="text" asp-for="Grade" name="Grade" class="form-control AddField" required placeholder=@submission.Grade />
+            </div>
+            <div class="col-sm-3">
+                / @assignment.Selection.MaxPoints
+            </div>
+            <div class="col-sm-12 col-lg-10">
+                <span class="text-danger" asp-validation-for="Grade"></span>
+            </div>
+        </div>
+
+        <div class="form-group text-center">
+            <input type="submit" value="Update Grade" class="btn btn-primary mx-2" />
+            <a type="button" asp-controller="Instructor" asp-action="Submissions" asp-route-id="@assignment.Selection.AssignmentID" class="btn btn-warning">Cancel</a>
+        </div>
+
+    </form>
+</div>
