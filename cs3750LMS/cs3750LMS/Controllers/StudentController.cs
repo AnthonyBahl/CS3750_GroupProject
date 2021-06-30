@@ -59,9 +59,7 @@ namespace cs3750LMS.Controllers
             //get submissions
             string serialSubmissions = HttpContext.Session.GetString("userSubmissions");
             List<Submission> submissions = JsonSerializer.Deserialize<List<Submission>>(serialSubmissions);
-            
-            //set current course being viewed for assignmemt submissions
-            HttpContext.Session.SetString("CurrentCourse", id.ToString());
+
             ViewData["Submission"] = submissions;
             ViewData["ClickedCourse"] = course;
             ViewData["Message"] = session;
@@ -87,7 +85,8 @@ namespace cs3750LMS.Controllers
 
             Assignment clickedAssignment = userAssignments.AssignmentList.Where(x => x.AssignmentID == id).Single();
 
-            ViewData["currentCourse"] = HttpContext.Session.GetString("CurrentCourse");
+
+            ViewData["currentCourse"] = clickedAssignment.CourseID;
             ViewData["Submission"] = submissions;
             ViewData["ClickedAssignment"] = clickedAssignment;
             ViewData["Message"] = session;
@@ -606,6 +605,7 @@ namespace cs3750LMS.Controllers
 
         // POST: 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> PaymentAsync(string ccname, string ccnum, string ccmonth, string ccyear, string cccvv, string amt)
         {
             if (HttpContext.Session.Get<string>("user") != null)
@@ -696,14 +696,14 @@ namespace cs3750LMS.Controllers
                     if (res.IsSuccessStatusCode)
                     {
                         var responseString = await res.Content.ReadAsStringAsync();
-                        Debug.WriteLine(responseString);
+                       
                         // parse json response
                         JsonDocument doc = JsonDocument.Parse(responseString);
                         // grab root json element
                         JsonElement root = doc.RootElement;
                         // grab token id field
                         string tokenId = root.GetProperty("id").ToString();
-                        Debug.WriteLine(tokenId);
+                        
                         // do next request
 
                         client = new HttpClient();
