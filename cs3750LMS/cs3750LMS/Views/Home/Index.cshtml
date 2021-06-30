@@ -44,7 +44,7 @@
                         {
                             @for (int i = 0; i < 5; i++)
                             {
-                                <a href="#" class="list-group-item list-group-item-action">
+                                <a asp-controller="Student" asp-action="ViewCourse" asp-route-id="@assignments.AssignmentList[i].CourseID" class="list-group-item list-group-item-action">
                                     <div class="d-flex w-100 justify-content-between">
                                         <h5 class="mb-1">@assignments.AssignmentList[i].Title</h5>
                                         <small>@assignments.AssignmentList[i].DueDate</small>
