@@ -17,8 +17,9 @@
 <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
 }
-<h1>@course.Selection.ClassNumber - @course.Selection.ClassTitle</h1>
+
 <div id="AssignmentView" class="container" style="display: @viewState">
+    <h1 class="text-center">@course.Selection.ClassNumber - @course.Selection.ClassTitle</h1>
     <h2 class="text-center mt-3">Assignments</h2>
     <table class="table table-hover bg-white mt-5">
         <thead>
@@ -34,20 +35,20 @@
         <tbody>
             @for (int i = 0; i < course.AssignmentList.Count; i++)
             {
-            <tr>
-                <th scope="row">@course.AssignmentList[i].Title</th>
-                <td scope="row">@course.AssignmentList[i].DueDate.ToString("MM/dd/yy")</td>
-                <td scope="row">@course.AssignmentList[i].DueDate.ToString("hh:mm tt")</td>
-                <td>
-                    <button type="button" onclick="ToggleView(2,@course.AssignmentList[i].AssignmentID)" class="btn btn-success">Edit</button>
-                </td>
-                <td>
-                    <button type="button" class="btn btn-danger">Delete</button>
-                </td>
-                <td>
-                    <a type="button" asp-controller="Instructor" asp-action="Submissions" asp-route-id="@course.AssignmentList[i].AssignmentID" class="btn btn-success">Submissions</a>
-                </td>
-            </tr>
+                <tr>
+                    <th scope="row">@course.AssignmentList[i].Title</th>
+                    <td scope="row">@course.AssignmentList[i].DueDate.ToString("MM/dd/yy")</td>
+                    <td scope="row">@course.AssignmentList[i].DueDate.ToString("hh:mm tt")</td>
+                    <td>
+                        <button type="button" onclick="ToggleView(2,@course.AssignmentList[i].AssignmentID)" class="btn btn-success">Edit</button>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger">Delete</button>
+                    </td>
+                    <td>
+                        <a type="button" asp-controller="Instructor" asp-action="Submissions" asp-route-id="@course.AssignmentList[i].AssignmentID" class="btn btn-success">Submissions</a>
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
