@@ -3,11 +3,13 @@ using cs3750LMS.Models;
 using cs3750LMS.Models.entites;
 using cs3750LMS.Models.general;
 using cs3750LMS.Models.validation;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -19,9 +21,11 @@ namespace cs3750LMS.Controllers
     public class StudentController : Controller
     {
         private readonly cs3750Context _context;
-        public StudentController(cs3750Context context)
+        private IHostingEnvironment Environment;
+        public StudentController(cs3750Context context, IHostingEnvironment _environment)
         {
             _context = context;
+            Environment = _environment;
         }
 
         //--------------------------View Course logic/ submit assignment start
@@ -126,7 +130,7 @@ namespace cs3750LMS.Controllers
                 HttpContext.Session.SetString("userSubmissions", JsonSerializer.Serialize(submissions));
 
             }
-            else
+            else //fail case
             {
                 return SubmitAssignment(submiting.AssignmentId);
             }
@@ -137,6 +141,60 @@ namespace cs3750LMS.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult FileSubmit([Bind("FileSubmission,CourseId,AssignmentId")]SubmitAssignmentValidation submiting)
         {
+            //get user info from session
+            string serialUser = HttpContext.Session.GetString("userInfo");
+            UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
+            if (ModelState.IsValid)
+            {
+                //file storage   stored in file assignment id directory first, and student id second, with the file inside                 
+                string wwwPath = this.Environment.WebRootPath;
+                string contentPath = this.Environment.ContentRootPath;
+                string path = Path.Combine(this.Environment.WebRootPath, "Submissions/" + submiting.AssignmentId + "/"+session.UserId);
+
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                string dbPath = Path.GetFileName(submiting.FileSubmission.FileName);                   //name of file, could save to db as well
+                string FullPath = Path.Combine(path, dbPath);                               //save to database for later reference
+
+
+                //add to files
+                using (FileStream stream = new FileStream(FullPath, FileMode.Create))
+                {
+                    submiting.FileSubmission.CopyTo(stream);
+                }
+
+
+                //create new submission
+                Submission newSubmission = new Submission
+                {
+                    AssignmentID = submiting.AssignmentId,
+                    StudentID = session.UserId,
+                    SubmissionDate = DateTime.Now,
+                    SubmissionType = 0,
+                    Grade = -1,
+                    Contents = "/Submissions/" + submiting.AssignmentId + "/" + session.UserId + "/" + submiting.FileSubmission.FileName //save file path to database
+                };
+
+                //save to database
+                _context.Submissions.Add(newSubmission);
+                _context.SaveChanges();
+
+                //get submissions, add new, and save to session
+                string serialSubmissions = HttpContext.Session.GetString("userSubmissions");
+                List<Submission> submissions = JsonSerializer.Deserialize<List<Submission>>(serialSubmissions);
+
+                submissions.Add(newSubmission);
+
+                HttpContext.Session.SetString("userSubmissions", JsonSerializer.Serialize(submissions));
+            }
+            else //fail case
+            {
+                return SubmitAssignment(submiting.AssignmentId);
+            }
+
             return ViewCourse(submiting.CourseId);
         }
         //--------------------------View Course logic/submit assignment end
