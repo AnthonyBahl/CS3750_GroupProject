@@ -3,10 +3,12 @@ using cs3750LMS.Models;
 using cs3750LMS.Models.entites;
 using cs3750LMS.Models.general;
 using cs3750LMS.Models.validation;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -16,6 +18,7 @@ namespace cs3750LMS.Controllers
     public class InstructorController : Controller
     {
         private readonly cs3750Context _context;
+        private IHostingEnvironment Environment;
         public InstructorController(cs3750Context context)
         {
             _context = context;
@@ -454,10 +457,20 @@ namespace cs3750LMS.Controllers
             Student student = courseStudents.StudentList.Where(x => x.UserId == submission.StudentID).Single();
 
             assignment.ModeSetting = 1;
+            string path = "";
+
+            if(submission.SubmissionType == 1)
+            {
+                //file storage   stored in file assignment id directory first, and student id second, with the file inside                 
+                string wwwPath = this.Environment.WebRootPath;
+                string contentPath = this.Environment.ContentRootPath;
+                path = Path.Combine(this.Environment.WebRootPath, "Submissions/" + assignment.Selection.AssignmentID + "/" + student.UserId);
+            }
 
             ViewData["Assignment"] = assignment;
             ViewData["Submission"] = submission;
             ViewData["Student"] = student;
+            ViewData["File"] = path;
             ViewData["Message"] = session;
             return View("~/Views/Instructor/SubmissionDetail.cshtml");
         }
