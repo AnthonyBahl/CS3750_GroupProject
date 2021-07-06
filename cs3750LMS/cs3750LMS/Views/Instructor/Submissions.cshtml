@@ -60,8 +60,8 @@
             {
 <tr>
     <th scope="row">
-        <span>@students.StudentList.Find(x => x.UserId == assignment.SubmissionList[i].StudentID).FirstName</span>
-        <span>@students.StudentList.Find(x => x.UserId == assignment.SubmissionList[i].StudentID).LastName</span>
+        <span>@students.SIUserList.Find(x => x.UserId == assignment.SubmissionList[i].StudentID).FirstName</span>
+        <span>@students.SIUserList.Find(x => x.UserId == assignment.SubmissionList[i].StudentID).LastName</span>
     </th>
     <td scope="row">@assignment.SubmissionList[i].SubmissionDate</td>
     <td scope="row">
