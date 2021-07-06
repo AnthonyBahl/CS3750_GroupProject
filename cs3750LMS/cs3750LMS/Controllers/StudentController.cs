@@ -284,9 +284,9 @@ namespace cs3750LMS.Controllers
             }
             if(pars.Title != null && pars.Title != string.Empty)
             {
-                for(int i = 0; i < allCourses.CourseList.Count; i++)
+                for (int i = 0; i < allCourses.CourseList.Count; i++)
                 {
-                    if (!allCourses.CourseList[i].ClassTitle.Contains(pars.Title))
+                    if (!allCourses.CourseList[i].ClassTitle.Contains(pars.Title) || !allCourses.CourseList[i].ClassTitle.Contains(pars.Title.ToUpper()) || !allCourses.CourseList[i].ClassTitle.Contains(pars.Title.ToLower()))
                     {
                         removeList.Add(allCourses.CourseList[i]);
                     }
