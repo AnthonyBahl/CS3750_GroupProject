@@ -1,7 +1,7 @@
 ﻿@model cs3750LMS.Models.validation.GradeValidation;
 @{
     UserSession user = (UserSession)ViewData["Message"];
-    cs3750LMS.Models.general.Student student = (cs3750LMS.Models.general.Student)ViewData["Student"];
+    cs3750LMS.Models.general.SIUser student = (cs3750LMS.Models.general.SIUser)ViewData["Student"];
     cs3750LMS.Models.general.SpecificAssignment assignment = (cs3750LMS.Models.general.SpecificAssignment)ViewData["Assignment"];
     Submission submission = (Submission)ViewData["Submission"];
     string file = (string)ViewData["File"];

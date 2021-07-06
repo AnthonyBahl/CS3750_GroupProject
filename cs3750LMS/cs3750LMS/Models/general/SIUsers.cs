@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace cs3750LMS.Models.general
 {
-    public class Students
+    public class SIUsers
     {
-        public List<User> StudentUsers { get; set; }
-        public List<Student> StudentList { get; set; }
+        public List<User> SIUusers { get; set; }
+        public List<SIUser> SIUserList { get; set; }
     }
 }

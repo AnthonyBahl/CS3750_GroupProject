@@ -404,19 +404,19 @@ namespace cs3750LMS.Controllers
                         join b in enrollment.EnrollmentList on a.UserId equals b.studentID
                         select a;
 
-            Students students = new Students
+            SIUsers students = new SIUsers
             {
-                StudentUsers = query.ToList(),
-                StudentList = new List<Student>()
+                SIUusers = query.ToList(),
+                SIUserList = new List<SIUser>()
             };
 
             foreach (var obj in query)
             {
-                Student newStudent = new Student();
+                SIUser newStudent = new SIUser();
                 newStudent.UserId = obj.UserId;
                 newStudent.FirstName = obj.FirstName;
                 newStudent.LastName = obj.LastName;
-                students.StudentList.Add(newStudent);
+                students.SIUserList.Add(newStudent);
             }
             HttpContext.Session.SetString("courseStudents", JsonSerializer.Serialize(students));
 
@@ -438,7 +438,7 @@ namespace cs3750LMS.Controllers
             Assignments courseAssignments = serialAssignments == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignments);
 
             string serialStudents = HttpContext.Session.GetString("courseStudents");
-            Students courseStudents = serialStudents == null ? null : JsonSerializer.Deserialize<Students>(serialStudents);
+            SIUsers courseStudents = serialStudents == null ? null : JsonSerializer.Deserialize<SIUsers>(serialStudents);
 
             Submission submission = new Submission();
             submission = _context.Submissions.Where(y => y.SubmissionID == id).Single();
@@ -454,7 +454,7 @@ namespace cs3750LMS.Controllers
                 assignment.Selection = _context.Assignments.Where(x => x.AssignmentID == submission.AssignmentID).Single();
             }
 
-            Student student = courseStudents.StudentList.Where(x => x.UserId == submission.StudentID).Single();
+            SIUser student = courseStudents.SIUserList.Where(x => x.UserId == submission.StudentID).Single();
 
             assignment.ModeSetting = 1;
             string path = "";
@@ -486,7 +486,7 @@ namespace cs3750LMS.Controllers
             Assignments courseAssignments = serialAssignments == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignments);
 
             string serialStudents = HttpContext.Session.GetString("courseStudents");
-            Students courseStudents = serialStudents == null ? null : JsonSerializer.Deserialize<Students>(serialStudents);
+            SIUsers courseStudents = serialStudents == null ? null : JsonSerializer.Deserialize<SIUsers>(serialStudents);
 
             Submission submission = new Submission();
             bool success = false;
