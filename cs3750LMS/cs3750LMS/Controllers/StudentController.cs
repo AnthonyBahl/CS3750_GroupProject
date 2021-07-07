@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -287,7 +288,9 @@ namespace cs3750LMS.Controllers
             {
                 for (int i = 0; i < allCourses.CourseList.Count; i++)
                 {
-                    if (!allCourses.CourseList[i].ClassTitle.Contains(pars.Title) || !allCourses.CourseList[i].ClassTitle.Contains(pars.Title.ToUpper()) || !allCourses.CourseList[i].ClassTitle.Contains(pars.Title.ToLower()))
+                    TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+                    string title = textInfo.ToTitleCase(pars.Title);
+                    if (!allCourses.CourseList[i].ClassTitle.Contains(title) && !allCourses.CourseList[i].ClassTitle.Contains(pars.Title.ToUpper()) && !allCourses.CourseList[i].ClassTitle.Contains(pars.Title.ToLower()))
                     {
                         removeList.Add(allCourses.CourseList[i]);
                     }
