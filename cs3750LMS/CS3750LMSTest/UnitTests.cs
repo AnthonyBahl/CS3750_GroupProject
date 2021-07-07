@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using cs3750LMS.DataAccess;
 
 namespace CS3750LMSTest
 {
@@ -30,8 +31,7 @@ namespace CS3750LMSTest
                     .UseInternalServiceProvider(serviceProvider);
 
             _context = new cs3750Context(builder.Options);
-            _context.Database.Migrate();
-
+            _context.Database.Migrate(); 
             //Environment.EnvironmentName();
         }
 
@@ -50,55 +50,38 @@ namespace CS3750LMSTest
                 // maybe use context
 
                 // Arrange
-                var instructor = _context.Users.Find(2);
+                var instructor = _context.Users.Find(1025);
 
                 var instructorCourses = _context.Courses.Count(c => c.InstructorID.Equals(instructor.UserId));
                 var expectedInstructorCourses = instructorCourses + 1;
 
-                TimeSpan startTime = new TimeSpan(1, 12, 23, 62);
-                TimeSpan endTime = new TimeSpan(4, 1, 23, 73);
-
-                //newClass: Instructor,Department,ClassNumber,ClassTitle,Description,Location,Credits,Capacity,MeetDays,StartTime,EndTime,Color"
-                var newClass = new Dictionary<string, object>(){
-                  {"Instructor", instructor.UserId },
-                  {"Department", 3},
-                  {"ClassNumber", "1234"},
-                  {"ClassTitle", "TestClass"},
-                  {"Description", "This is a test"},
-                  {"Location", "Test Location"},
-                  {"Credits", 4},
-                  {"Capacity", 40},
-                  {"MeetDays", "Monday, Wendesday, Friday"},
-                  {"StartTime", startTime},
-                  {"EndTime", endTime},
-                  {"Color", "#1ecbe1"}
-                };
+                TimeSpan startTime = new TimeSpan(21, 40, 50);
+                TimeSpan endTime = new TimeSpan(21, 50, 50); 
 
                var controller = new InstructorController(_context, Environment);
 
-                ClassValidationAdd newClass2 = new ClassValidationAdd();
-                newClass2.Instructor = instructor.UserId.ToString();
-                newClass2.Department = 3;
-                newClass2.ClassNumber = "1234";
-                newClass2.ClassTitle = "TestClass";
-                newClass2.Description = "This is a test";
-                newClass2.Location = "Test Location";
-                newClass2.Credits = 4;
-                newClass2.Capacity = 40;
-                newClass2.MeetDays = "Monday, Wendesday, Friday";
-                newClass2.StartTime = startTime;
-                newClass2.EndTime = endTime;
-                newClass2.Color = "#1ecbe1";
+                ClassValidationAdd newClass = new ClassValidationAdd();
 
-
-                HttpContext.Session.SetString("userInfo") = (object)instructor;
+                // add fields
+                newClass.Instructor = instructor.UserId.ToString();
+                newClass.Department = 3;
+                newClass.ClassNumber = "1234";
+                newClass.ClassTitle = "TestClass";
+                newClass.Description = "This is a test";
+                newClass.Location = "Test Location";
+                newClass.Credits = 4;
+                newClass.Capacity = 40;
+                newClass.MeetDays = "xyxyxyx";
+                newClass.StartTime = startTime;
+                newClass.EndTime = endTime;
+                newClass.Color = "#1ecbe1";
 
                 // Act
-                controller.AddClass(newClass2);
-
+                controller.AddClassTodb(instructor.UserId, newClass);
+                instructorCourses = _context.Courses.Count(c => c.InstructorID.Equals(instructor.UserId));
                 // Assert
 
-                Assert.Equals(instructorCourses, expectedInstructorCourses);
+                Assert.AreEqual(instructorCourses, expectedInstructorCourses);
        
             } // Dispose rolls back everything.
 

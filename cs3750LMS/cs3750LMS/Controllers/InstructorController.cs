@@ -213,25 +213,7 @@ namespace cs3750LMS.Controllers
             bool success = false;
             if (ModelState.IsValid)
             {
-                Course newCourse = new Course
-                {
-                    InstructorID = session.UserId,
-                    Department = newClass.Department,
-                    ClassNumber = newClass.ClassNumber,
-                    ClassTitle = newClass.ClassTitle,
-                    Description = newClass.Description,
-                    Location = newClass.Location,
-                    Credits = newClass.Credits,
-                    Capacity = newClass.Capacity,
-                    MeetDays = newClass.MeetDays,
-                    StartTime = newClass.StartTime,
-                    EndTime = newClass.EndTime,
-                    Color = newClass.Color
-                };
-
-                //update database
-                _context.Courses.Add(newCourse);
-                _context.SaveChanges();
+                Course newCourse = AddClassTodb(session.UserId, newClass);
                 //update session saved courses
                 userCourses.CourseList.Add(newCourse);
                 HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(userCourses));
@@ -273,6 +255,31 @@ namespace cs3750LMS.Controllers
             ViewData["Message"] = session;
             ViewData["Courses"] = userCourses;
             return View();
+        }
+
+        public Course AddClassTodb(int UserId, ClassValidationAdd newClass)
+        {
+            Course newCourse = new Course
+            {
+                InstructorID = UserId,
+                Department = newClass.Department,
+                ClassNumber = newClass.ClassNumber,
+                ClassTitle = newClass.ClassTitle,
+                Description = newClass.Description,
+                Location = newClass.Location,
+                Credits = newClass.Credits,
+                Capacity = newClass.Capacity,
+                MeetDays = newClass.MeetDays,
+                StartTime = newClass.StartTime,
+                EndTime = newClass.EndTime,
+                Color = newClass.Color
+            };
+
+            //update database
+            _context.Courses.Add(newCourse);
+            _context.SaveChanges();
+
+            return newCourse;
         }
 
         [HttpPost]
