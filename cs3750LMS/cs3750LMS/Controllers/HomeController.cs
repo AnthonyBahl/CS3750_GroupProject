@@ -221,7 +221,7 @@ namespace cs3750LMS.Controllers
 
                     //set submissions
                     assignmentIds = userAssignments.AssignmentList.Select(x => x.AssignmentID).ToList();
-                    List<Submission> submissions = _context.Submissions.Where(x => assignmentIds.Contains(x.AssignmentID)).ToList();
+                    List<Submission> submissions = _context.Submissions.Where(x => assignmentIds.Contains(x.AssignmentID)&&x.StudentID==userFound.UserId).ToList();
                     HttpContext.Session.SetString("userSubmissions", JsonSerializer.Serialize(submissions));
 
                     //save the user courses in the session and pass to view
