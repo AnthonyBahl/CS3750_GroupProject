@@ -7,6 +7,8 @@ using System.Transactions;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 
 namespace CS3750LMSTest
 {
@@ -15,8 +17,8 @@ namespace CS3750LMSTest
     {
         private cs3750Context db = new cs3750Context();
 
-       cs3750Context _context;
-
+        cs3750Context _context;
+        private IHostingEnvironment Environment;
         public UnitTests()
         {
             var serviceProvider = new ServiceCollection()
@@ -29,6 +31,8 @@ namespace CS3750LMSTest
 
             _context = new cs3750Context(builder.Options);
             _context.Database.Migrate();
+
+            //Environment.EnvironmentName();
         }
 
         [TestMethod]
@@ -70,14 +74,31 @@ namespace CS3750LMSTest
                   {"Color", "#1ecbe1"}
                 };
 
-               // var controller = new InstructorController();
+               var controller = new InstructorController(_context, Environment);
+
+                ClassValidationAdd newClass2 = new ClassValidationAdd();
+                newClass2.Instructor = instructor.UserId.ToString();
+                newClass2.Department = 3;
+                newClass2.ClassNumber = "1234";
+                newClass2.ClassTitle = "TestClass";
+                newClass2.Description = "This is a test";
+                newClass2.Location = "Test Location";
+                newClass2.Credits = 4;
+                newClass2.Capacity = 40;
+                newClass2.MeetDays = "Monday, Wendesday, Friday";
+                newClass2.StartTime = startTime;
+                newClass2.EndTime = endTime;
+                newClass2.Color = "#1ecbe1";
+
+
+                HttpContext.Session.SetString("userInfo") = (object)instructor;
 
                 // Act
-               // controller.AddClass();
+                controller.AddClass(newClass2);
 
                 // Assert
 
-                //Assert.Equals(instructorCourses, expectedInstructorCourses);
+                Assert.Equals(instructorCourses, expectedInstructorCourses);
        
             } // Dispose rolls back everything.
 
