@@ -1,6 +1,6 @@
 ﻿@{
     UserSession user = (UserSession)ViewData["Message"];
-    cs3750LMS.Models.general.Students students = (cs3750LMS.Models.general.Students)ViewData["Students"];
+    cs3750LMS.Models.general.SIUsers students = (cs3750LMS.Models.general.SIUsers)ViewData["Students"];
     cs3750LMS.Models.general.SpecificAssignment assignment = (cs3750LMS.Models.general.SpecificAssignment)ViewData["ClickedAssignment"];
     ViewData["Title"] = "Courses";
 }
@@ -57,8 +57,8 @@
             {
 <tr>
     <th scope="row">
-        <span>@students.StudentList.Find(x => x.UserId == assignment.SubmissionList[i].StudentID).FirstName</span>
-        <span>@students.StudentList.Find(x => x.UserId == assignment.SubmissionList[i].StudentID).LastName</span>
+        <span>@students.SIUserList.Find(x => x.UserId == assignment.SubmissionList[i].StudentID).FirstName</span>
+        <span>@students.SIUserList.Find(x => x.UserId == assignment.SubmissionList[i].StudentID).LastName</span>
     </th>
     <td scope="row">@assignment.SubmissionList[i].SubmissionDate</td>
     <td scope="row">

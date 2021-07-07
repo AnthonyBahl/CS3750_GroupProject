@@ -3,11 +3,14 @@ using cs3750LMS.Models;
 using cs3750LMS.Models.entites;
 using cs3750LMS.Models.general;
 using cs3750LMS.Models.validation;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -19,9 +22,11 @@ namespace cs3750LMS.Controllers
     public class StudentController : Controller
     {
         private readonly cs3750Context _context;
-        public StudentController(cs3750Context context)
+        private IHostingEnvironment Environment;
+        public StudentController(cs3750Context context, IHostingEnvironment _environment)
         {
             _context = context;
+            Environment = _environment;
         }
 
         //--------------------------View Course logic/ submit assignment start
@@ -126,7 +131,7 @@ namespace cs3750LMS.Controllers
                 HttpContext.Session.SetString("userSubmissions", JsonSerializer.Serialize(submissions));
 
             }
-            else
+            else //fail case
             {
                 return SubmitAssignment(submiting.AssignmentId);
             }
@@ -137,6 +142,61 @@ namespace cs3750LMS.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult FileSubmit([Bind("FileSubmission,CourseId,AssignmentId")]SubmitAssignmentValidation submiting)
         {
+            //get user info from session
+            string serialUser = HttpContext.Session.GetString("userInfo");
+            UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
+            if (ModelState.IsValid)
+            {
+                //file storage   stored in file assignment id directory first, and student id second, with the file inside                 
+                string wwwPath = this.Environment.WebRootPath;
+                string contentPath = this.Environment.ContentRootPath;
+                string path = Path.Combine(this.Environment.WebRootPath, "Submissions/" + submiting.AssignmentId + "/"+session.UserId);
+
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                string dbPath = Path.GetFileName(submiting.FileSubmission.FileName);                   //name of file, could save to db as well
+                string FullPath = Path.Combine(path, dbPath);                               //save to database for later reference
+
+
+                //add to files
+                using (FileStream stream = new FileStream(FullPath, FileMode.Create))
+                {
+                    submiting.FileSubmission.CopyTo(stream);
+                }
+
+
+                //create new submission
+                Submission newSubmission = new Submission
+                {
+                    AssignmentID = submiting.AssignmentId,
+                    StudentID = session.UserId,
+                    SubmissionDate = DateTime.Now,
+                    SubmissionType = 0,
+                    Grade = -1,
+                    //Contents = "/Submissions/" + submiting.AssignmentId + "/" + session.UserId + "/" + submiting.FileSubmission.FileName //save file path to database
+                    Contents = submiting.FileSubmission.FileName
+                };
+
+                //save to database
+                _context.Submissions.Add(newSubmission);
+                _context.SaveChanges();
+
+                //get submissions, add new, and save to session
+                string serialSubmissions = HttpContext.Session.GetString("userSubmissions");
+                List<Submission> submissions = JsonSerializer.Deserialize<List<Submission>>(serialSubmissions);
+
+                submissions.Add(newSubmission);
+
+                HttpContext.Session.SetString("userSubmissions", JsonSerializer.Serialize(submissions));
+            }
+            else //fail case
+            {
+                return SubmitAssignment(submiting.AssignmentId);
+            }
+
             return ViewCourse(submiting.CourseId);
         }
         //--------------------------View Course logic/submit assignment end
@@ -173,25 +233,25 @@ namespace cs3750LMS.Controllers
                 };
 
                 //grab instructors
-                Instructors instructors = new Instructors
+                SIUsers instructors = new SIUsers
                 {
-                    InstructorUsers = _context.Users.Where(x => x.AccountType == 1).ToList(),
-                    InstructorList = new List<Instructor>()
+                    SIUusers = _context.Users.Where(x => x.AccountType == 1).ToList(),
+                    SIUserList = new List<SIUser>()
                 };
 
-                for (int i = 0; i < instructors.InstructorUsers.Count; i++)
+                for (int i = 0; i < instructors.SIUusers.Count; i++)
                 {
-                    Instructor newInstructor = new Instructor();
-                    newInstructor.UserId = instructors.InstructorUsers[i].UserId;
-                    newInstructor.FirstName = instructors.InstructorUsers[i].FirstName;
-                    newInstructor.LastName = instructors.InstructorUsers[i].LastName;
-                    instructors.InstructorList.Add(newInstructor);
+                    SIUser newInstructor = new SIUser();
+                    newInstructor.UserId = instructors.SIUusers[i].UserId;
+                    newInstructor.FirstName = instructors.SIUusers[i].FirstName;
+                    newInstructor.LastName = instructors.SIUusers[i].LastName;
+                    instructors.SIUserList.Add(newInstructor);
                 }
 
                 allCourses = new Courses
                 {
                     CourseList = _context.Courses.ToList(),
-                    CourseInstructors = instructors.InstructorList
+                    CourseInstructors = instructors.SIUserList
                 };
                 //save times
                 List<TimeStamp> timesSaveA = new TimeStamp().ParseTimes(allCourses);
@@ -226,9 +286,11 @@ namespace cs3750LMS.Controllers
             }
             if(pars.Title != null && pars.Title != string.Empty)
             {
-                for(int i = 0; i < allCourses.CourseList.Count; i++)
+                for (int i = 0; i < allCourses.CourseList.Count; i++)
                 {
-                    if (!allCourses.CourseList[i].ClassTitle.Contains(pars.Title))
+                    TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+                    string title = textInfo.ToTitleCase(pars.Title);
+                    if (!allCourses.CourseList[i].ClassTitle.Contains(title) && !allCourses.CourseList[i].ClassTitle.Contains(pars.Title.ToUpper()) && !allCourses.CourseList[i].ClassTitle.Contains(pars.Title.ToLower()))
                     {
                         removeList.Add(allCourses.CourseList[i]);
                     }
@@ -298,25 +360,25 @@ namespace cs3750LMS.Controllers
                         };
 
                         //grab instructors
-                        Instructors instructors = new Instructors
+                        SIUsers instructors = new SIUsers
                         {
-                            InstructorUsers = _context.Users.Where(x => x.AccountType == 1).ToList(),
-                            InstructorList = new List<Instructor>()
+                            SIUusers = _context.Users.Where(x => x.AccountType == 1).ToList(),
+                            SIUserList = new List<SIUser>()
                         };
 
-                        for (int i = 0; i < instructors.InstructorUsers.Count; i++)
+                        for (int i = 0; i < instructors.SIUusers.Count; i++)
                         {
-                            Instructor newInstructor = new Instructor();
-                            newInstructor.UserId = instructors.InstructorUsers[i].UserId;
-                            newInstructor.FirstName = instructors.InstructorUsers[i].FirstName;
-                            newInstructor.LastName = instructors.InstructorUsers[i].LastName;
-                            instructors.InstructorList.Add(newInstructor);
+                            SIUser newInstructor = new SIUser();
+                            newInstructor.UserId = instructors.SIUusers[i].UserId;
+                            newInstructor.FirstName = instructors.SIUusers[i].FirstName;
+                            newInstructor.LastName = instructors.SIUusers[i].LastName;
+                            instructors.SIUserList.Add(newInstructor);
                         }
 
                         allCourses = new Courses
                         {
                             CourseList = _context.Courses.ToList(),
-                            CourseInstructors = instructors.InstructorList
+                            CourseInstructors = instructors.SIUserList
                         };
                         //save times
                         List<TimeStamp> timesSaveA = new TimeStamp().ParseTimes(allCourses);
@@ -558,26 +620,26 @@ namespace cs3750LMS.Controllers
                         };
 
                         //grab instructors
-                        Instructors instructors = new Instructors
+                        SIUsers instructors = new SIUsers
                         {
-                            InstructorUsers = _context.Users.Where(x => x.AccountType == 1).ToList(),
-                            InstructorList = new List<Instructor>()
+                            SIUusers = _context.Users.Where(x => x.AccountType == 1).ToList(),
+                            SIUserList = new List<SIUser>()
                         };
 
-                        for (int i = 0; i < instructors.InstructorUsers.Count; i++)
+                        for (int i = 0; i < instructors.SIUusers.Count; i++)
                         {
-                            Instructor newInstructor = new Instructor();
-                            newInstructor.UserId = instructors.InstructorUsers[i].UserId;
-                            newInstructor.FirstName = instructors.InstructorUsers[i].FirstName;
-                            newInstructor.LastName = instructors.InstructorUsers[i].LastName;
-                            instructors.InstructorList.Add(newInstructor);
+                            SIUser newInstructor = new SIUser();
+                            newInstructor.UserId = instructors.SIUusers[i].UserId;
+                            newInstructor.FirstName = instructors.SIUusers[i].FirstName;
+                            newInstructor.LastName = instructors.SIUusers[i].LastName;
+                            instructors.SIUserList.Add(newInstructor);
                         }
 
                         //grab all courses
                         allCourses = new Courses
                         {
                             CourseList = _context.Courses.ToList(),
-                            CourseInstructors = instructors.InstructorList
+                            CourseInstructors = instructors.SIUserList
                         };
 
                         //save to session
@@ -639,26 +701,26 @@ namespace cs3750LMS.Controllers
                         };
 
                         //grab instructors
-                        Instructors instructors = new Instructors
+                        SIUsers instructors = new SIUsers
                         {
-                            InstructorUsers = _context.Users.Where(x => x.AccountType == 1).ToList(),
-                            InstructorList = new List<Instructor>()
+                            SIUusers = _context.Users.Where(x => x.AccountType == 1).ToList(),
+                            SIUserList = new List<SIUser>()
                         };
 
-                        for (int i = 0; i < instructors.InstructorUsers.Count; i++)
+                        for (int i = 0; i < instructors.SIUusers.Count; i++)
                         {
-                            Instructor newInstructor = new Instructor();
-                            newInstructor.UserId = instructors.InstructorUsers[i].UserId;
-                            newInstructor.FirstName = instructors.InstructorUsers[i].FirstName;
-                            newInstructor.LastName = instructors.InstructorUsers[i].LastName;
-                            instructors.InstructorList.Add(newInstructor);
+                            SIUser newInstructor = new SIUser();
+                            newInstructor.UserId = instructors.SIUusers[i].UserId;
+                            newInstructor.FirstName = instructors.SIUusers[i].FirstName;
+                            newInstructor.LastName = instructors.SIUusers[i].LastName;
+                            instructors.SIUserList.Add(newInstructor);
                         }
 
                         //grab all courses
                         allCourses = new Courses
                         {
                             CourseList = _context.Courses.ToList(),
-                            CourseInstructors = instructors.InstructorList
+                            CourseInstructors = instructors.SIUserList
                         };
 
                         //save to session
