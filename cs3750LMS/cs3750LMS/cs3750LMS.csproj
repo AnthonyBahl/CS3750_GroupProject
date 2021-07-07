@@ -37,7 +37,6 @@
   <ItemGroup>
     <Folder Include="UnitTests\" />
     <Folder Include="wwwroot\Images\" />
-    <Folder Include="wwwroot\Submissions\" />
   </ItemGroup>
 
 </Project>

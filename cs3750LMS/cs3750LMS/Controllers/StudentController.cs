@@ -175,7 +175,8 @@ namespace cs3750LMS.Controllers
                     SubmissionDate = DateTime.Now,
                     SubmissionType = 0,
                     Grade = -1,
-                    Contents = "/Submissions/" + submiting.AssignmentId + "/" + session.UserId + "/" + submiting.FileSubmission.FileName //save file path to database
+                    //Contents = "/Submissions/" + submiting.AssignmentId + "/" + session.UserId + "/" + submiting.FileSubmission.FileName //save file path to database
+                    Contents = submiting.FileSubmission.FileName
                 };
 
                 //save to database

@@ -19,9 +19,10 @@ namespace cs3750LMS.Controllers
     {
         private readonly cs3750Context _context;
         private IHostingEnvironment Environment;
-        public InstructorController(cs3750Context context)
+        public InstructorController(cs3750Context context, IHostingEnvironment _environment)
         {
             _context = context;
+            Environment = _environment;
         }
 
 
@@ -461,10 +462,7 @@ namespace cs3750LMS.Controllers
 
             if(submission.SubmissionType == 1)
             {
-                //file storage   stored in file assignment id directory first, and student id second, with the file inside                 
-                string wwwPath = this.Environment.WebRootPath;
-                string contentPath = this.Environment.ContentRootPath;
-                path = Path.Combine(this.Environment.WebRootPath, "Submissions/" + assignment.Selection.AssignmentID + "/" + student.UserId);
+                path = "https://localhost:44354/" + "/Submissions/" + assignment.Selection.AssignmentID + "/" + student.UserId + "/" + submission.Contents;
             }
 
             ViewData["Assignment"] = assignment;

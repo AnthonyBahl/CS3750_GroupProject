@@ -47,14 +47,15 @@
                 <label asp-for="Contents" class="control-label mb-0 text-sm-center text-lg-end">Submission</label>
             </div>
             <div class="col-sm-12 col-lg-10">
-                @if (submission.SubmissionType == 0)
+                @if (@submission.SubmissionType != 1)
                 {
                     <textarea class="form-control" type="text" maxlength="1000" rows="3" name="Contents" readonly>@submission.Contents</textarea>
                 }
                 else
-            {
-                    <a href=@file class="btn btn-success" download><i class="bi bi-download"></i> File Download</a>            }
-                <textarea class="form-control" type="text" maxlength="1000" rows="3" name="Contents" readonly>@submission.Contents</textarea>
+                {
+                    <span>@submission.Contents</span>
+                    <a href=@file class="btn btn-success" download><i class="bi bi-download"></i> File Download</a>            
+                }
             </div>
         </div>
 
