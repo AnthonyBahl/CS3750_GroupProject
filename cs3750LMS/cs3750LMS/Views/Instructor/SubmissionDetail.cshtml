@@ -1,9 +1,10 @@
 ﻿@model cs3750LMS.Models.validation.GradeValidation;
 @{
     UserSession user = (UserSession)ViewData["Message"];
-    cs3750LMS.Models.general.Student student = (cs3750LMS.Models.general.Student)ViewData["Student"];
+    cs3750LMS.Models.general.SIUser student = (cs3750LMS.Models.general.SIUser)ViewData["Student"];
     cs3750LMS.Models.general.SpecificAssignment assignment = (cs3750LMS.Models.general.SpecificAssignment)ViewData["Assignment"];
     Submission submission = (Submission)ViewData["Submission"];
+    string file = (string)ViewData["File"];
     ViewData["Title"] = "Courses";
 }
 @section Scripts{
@@ -46,7 +47,15 @@
                 <label asp-for="Contents" class="control-label mb-0 text-sm-center text-lg-end">Submission</label>
             </div>
             <div class="col-sm-12 col-lg-10">
-                <textarea class="form-control" type="text" maxlength="1000" rows="3" name="Contents" readonly>@submission.Contents</textarea>
+                @if (@submission.SubmissionType != 0)
+                {
+                    <textarea class="form-control" type="text" maxlength="1000" rows="3" name="Contents" readonly>@submission.Contents</textarea>
+                }
+                else
+                {
+                    <span>@submission.Contents</span>
+                    <a href=@file class="btn btn-success" download><i class="bi bi-download"></i> File Download</a>            
+                }
             </div>
         </div>
 
