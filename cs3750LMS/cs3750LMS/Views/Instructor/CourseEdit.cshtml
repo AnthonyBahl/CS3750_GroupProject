@@ -16,37 +16,34 @@
 @section Scripts{
 <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+<script type="text/javascript">
+    google.charts.load('current', { 'packages': ['corechart'] });
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        @*Temporary/Fake Data *@
+        var data = google.visualization.arrayToDataTable([
+            ['Grade Type', 'Weight'],
+            ['Graded Exercises', 15],
+            ['Programming Assignments', 25],
+            ['Assessments', 10],
+            ['Exams', 50]
+        ]);
+        @* Pie Chart Options *@
+        var options = {
+            title: 'Grade Weighting',
+            legend: { position: 'none' },
+            backgroundColor: { fill: 'transparent' }
+        };
+        var chart = new google.visualization.PieChart(document.getElementById('gradeWeightsPieChart')); @* Declare Pie Chart *@
+        chart.draw(data, options); @* Draw Pie Chart *@
+    }
+</script>
 }
 
 <div id="AssignmentView" class="container" style="display: @viewState">
     <h1 class="text-center">@course.Selection.ClassNumber - @course.Selection.ClassTitle</h1>
     <h2 class="text-center mt-3">Assignments</h2>
-
-    <script type="text/javascript">
-        google.charts.load('current', { 'packages': ['corechart'] });
-        google.charts.setOnLoadCallback(drawChart);
-
-        function drawChart() {
-
-            var data = google.visualization.arrayToDataTable([
-                ['Grade Type', 'Weight'],
-                ['Graded Exercises', 15],
-                ['Programming Assignments', 25],
-                ['Assessments', 10],
-                ['Exams', 50]
-            ]);
-
-            var options = {
-                title: 'Grade Weighting',
-                legend: { position: 'none' },
-                backgroundColor: { fill: 'transparent' }
-            };
-
-            var chart = new google.visualization.PieChart(document.getElementById('gradeWeightsPieChart'));
-
-            chart.draw(data, options);
-        }
-    </script>
     <div id="gradeWeightsPieChart" style="width: 400px; height: 400px; position: absolute; top: 60px; right: 0;"></div>
     <table class="table table-hover bg-white mt-5">
         <thead>
