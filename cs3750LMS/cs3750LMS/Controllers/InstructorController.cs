@@ -460,7 +460,7 @@ namespace cs3750LMS.Controllers
             assignment.ModeSetting = 1;
             string path = "";
 
-            if(submission.SubmissionType == 1)
+            if(submission.SubmissionType == 0)
             {
                 path = "https://localhost:44354/" + "/Submissions/" + assignment.Selection.AssignmentID + "/" + student.UserId + "/" + submission.Contents;
             }
