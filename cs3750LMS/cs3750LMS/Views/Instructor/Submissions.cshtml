@@ -7,14 +7,10 @@
 @section Scripts{
     <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
-}
-
-<div id="SubmissionView" class="container">
     <script type="text/javascript">
         google.charts.load("current", { packages: ["corechart"] });
         google.charts.setOnLoadCallback(drawChart);
-
-        //Creates a data array of student data.
+        @*Creates a data array of student data.*@
         function generate_Students() {
 
             let studentData = [
@@ -27,8 +23,7 @@
             }
             return studentData;
         }
-
-        // Creates the chart.
+        @*Creates the chart.*@
         function drawChart() {
             var data = google.visualization.arrayToDataTable(generate_Students());
             var options = {
@@ -40,6 +35,10 @@
             chart.draw(data, options);
         }
     </script>
+}
+
+<div id="SubmissionView" class="container">
+    
     <h1 class="text-center">@assignment.Selection.Title</h1>
     <div id="chart_div" style="width: 900px; height: 500px;"></div>
     <h2 class="text-center mt-3">Submissions</h2>
