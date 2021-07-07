@@ -30,7 +30,6 @@ namespace CS3750LMSTest
                 // Arrange
                 var instructor = db.Users.Find(2);
 
-                // var instructor = instructors.FindInstructor(1);
                 var instructorCourses = db.Courses.Count(c => c.InstructorID.Equals(instructor.UserId));
                 var expectedInstructorCourses = instructorCourses + 1;
 
