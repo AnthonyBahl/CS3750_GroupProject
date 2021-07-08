@@ -1,6 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using cs3750LMS.Controllers;
-using System.Collections.Generic;
 using System;
 using cs3750LMS.Models;
 using System.Transactions;
@@ -8,20 +7,21 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using cs3750LMS.DataAccess;
 
 namespace CS3750LMSTest
 {
     [TestClass]
     public class UnitTests
     {
-        private cs3750Context db = new cs3750Context();
-
+        // variables to access db and controller
         cs3750Context _context;
+
         private IHostingEnvironment Environment;
+
+        // constructor of what happens at every time this class is called
         public UnitTests()
         {
+            // connect to database
             var serviceProvider = new ServiceCollection()
            .AddEntityFrameworkSqlServer()
            .BuildServiceProvider();
@@ -32,34 +32,30 @@ namespace CS3750LMSTest
 
             _context = new cs3750Context(builder.Options);
             _context.Database.Migrate(); 
-            //Environment.EnvironmentName();
         }
 
         [TestMethod]
         public void InstructorCanCreateACourseTest()
         {
+            // in a transaction scope so it will not be run in the database
             using (new TransactionScope())
             {
-                //Start with known instructor id
-                //Find out how many courses instructor is teaching
-                //Call this sum N
-                //Run code to create a new course => from project
-                //Find out how many courses instructor is teaching
-                //Should now be N+1
-
-                // maybe use context
-
                 // Arrange
+                // start with a known instructor
                 var instructor = _context.Users.Find(1025);
 
+                // grab the instructor course count
                 var instructorCourses = _context.Courses.Count(c => c.InstructorID.Equals(instructor.UserId));
-                var expectedInstructorCourses = instructorCourses + 1;
+                var expectedInstructorCourses = instructorCourses + 1; // grab the expected result
 
+                // define time spans
                 TimeSpan startTime = new TimeSpan(21, 40, 50);
                 TimeSpan endTime = new TimeSpan(21, 50, 50); 
 
-               var controller = new InstructorController(_context, Environment);
+                // call instructor controller with the context and enviroment passed in
+                var controller = new InstructorController(_context, Environment);
 
+                // create a new class object
                 ClassValidationAdd newClass = new ClassValidationAdd();
 
                 // add fields
@@ -77,15 +73,16 @@ namespace CS3750LMSTest
                 newClass.Color = "#1ecbe1";
 
                 // Act
+                // add the class in the controller
                 controller.AddClassTodb(instructor.UserId, newClass);
+                // find out the count again
                 instructorCourses = _context.Courses.Count(c => c.InstructorID.Equals(instructor.UserId));
+               
                 // Assert
-
                 Assert.AreEqual(instructorCourses, expectedInstructorCourses);
        
             } // Dispose rolls back everything.
-
-           
         }
+
     }
 }

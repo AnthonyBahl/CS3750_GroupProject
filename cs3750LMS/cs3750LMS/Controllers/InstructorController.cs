@@ -213,6 +213,7 @@ namespace cs3750LMS.Controllers
             bool success = false;
             if (ModelState.IsValid)
             {
+                // new course is the add class method below
                 Course newCourse = AddClassTodb(session.UserId, newClass);
                 //update session saved courses
                 userCourses.CourseList.Add(newCourse);
@@ -257,6 +258,7 @@ namespace cs3750LMS.Controllers
             return View();
         }
 
+        // Function to add a class into to the database with the givin parameters
         public Course AddClassTodb(int UserId, ClassValidationAdd newClass)
         {
             Course newCourse = new Course
@@ -279,6 +281,7 @@ namespace cs3750LMS.Controllers
             _context.Courses.Add(newCourse);
             _context.SaveChanges();
 
+            // return the new course
             return newCourse;
         }
 
