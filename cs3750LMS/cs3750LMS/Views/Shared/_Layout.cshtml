@@ -71,11 +71,20 @@
                             </li>
 
                             <li class="nav-item">
+                                <!-- ******************************************************** UI CHANGE ************************************************************ -->
+                                <!-- Changing the class on the div below from dropright to dropdown will ensure that the notifications show up below the bell icon.  -->
+                                <!-- ******************************************************************************************************************************* -->
                                 <div class="dropright">
                                     @*TODO: When you use a for loop to create each of the items in the dropdown-menu. Make sure to pass the amount to the Itemscount variable in the javascript.
                                     *@
+                                    <!-- ******************************************************** UI CHANGE ************************************************************ -->
+                                    <!-- The a link below should have the following properties: href="#", id="navbarDropdown", role="button", and aria-expanded="false". -->
+                                    <!-- ******************************************************************************************************************************* -->
                                     <a class="nav-link" data-toggle="dropdown"> <i id="bellIcon" class="far fa-bell fa-lg"></i></a>
 
+                                    <!-- ******************************************************** UI CHANGE ************************************************************ -->
+                                    <!-- The ul element below should have the property aria-labelledby="navbarDropdown". -->
+                                    <!-- ******************************************************************************************************************************* -->
                                     <ul class="dropdown-menu">
                                         <li class="dropdown-item"><a href="#">Link 1</a><i class="far fa-window-close fa-sm float-right"></i></li>
                                         <li class="dropdown-item"><a href="#">Link 2</a><i class="far fa-window-close fa-sm float-right"></i></li>

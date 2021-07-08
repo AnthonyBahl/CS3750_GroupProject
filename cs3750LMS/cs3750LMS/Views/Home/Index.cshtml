@@ -20,11 +20,17 @@
                     {
                         @for (int i = 0; i < userCourses.CourseList.Count; i++)
                         {
+                            <!-- ******************************************************** UI CHANGE ******************************************************** -->
+                            <!-- Bootstrap operates on a 12 column model. The default class is col-x where x is some integer between 1 and 12.               -->
+                            <!-- Bootstrap also allows columns to be changed based on the size of the screen (i.e. col-xs-x, col-sm-x, col-md-x, col-lg-x)   -->
+                            <!-- When using col-x, you should take a mobile-first approach and use col-12, then change the size of the columns as the screen -->
+                            <!-- size increases. For example: class="col-12 col-md-6 col-lg-4"                                                               -->
+                            <!-- *************************************************************************************************************************** -->
                             <div class="col-6 mb-3 align-self-stretch">
                                 <a asp-controller="Student" asp-action="ViewCourse" asp-route-id="@userCourses.CourseList[i].CourseID" class="stretched-link" style="min-height: 100%">
                                     <div class="card" style="min-height: 100%">
                                         <div class="card-body" style="box-shadow: 5px 5px 20px grey">
-                                            <h5 class="card-title"  style="color:@userCourses.CourseList[i].Color;">@userCourses.CourseList[i].ClassTitle | @userCourses.CourseList[i].ClassNumber</h5>
+                                            <h5 class="card-title" style="color:@userCourses.CourseList[i].Color;">@userCourses.CourseList[i].ClassTitle | @userCourses.CourseList[i].ClassNumber</h5>
                                             <h6 class="card-subtitle mb-2 text-muted">@userCourses.ParseDays(i) @userCourses.CourseList[i].StartTime.ToString()-@userCourses.CourseList[i].EndTime.ToString()</h6>
                                             <p class="card-text">Location: @userCourses.CourseList[i].Location</p>
                                         </div>
@@ -80,10 +86,16 @@
 
                 @for (int i = 0; i < userCourses.CourseList.Count; i++)
                 {
+                    <!-- ******************************************************** UI CHANGE ******************************************************** -->
+                    <!-- Bootstrap operates on a 12 column model. The default class is col-x where x is some integer between 1 and 12.               -->
+                    <!-- Bootstrap also allows columns to be changed based on the size of the screen (i.e. col-xs-x, col-sm-x, col-md-x, col-lg-x)   -->
+                    <!-- When using col-x, you should take a mobile-first approach and use col-12, then change the size of the columns as the screen -->
+                    <!-- size increases. For example: class="col-12 col-md-6 col-lg-4"                                                               -->
+                    <!-- *************************************************************************************************************************** -->
                     <div class="col-4 mb-3 align-self-stretch">
                         <a asp-controller="Instructor" asp-action="CourseEdit" asp-route-id="@userCourses.CourseList[i].CourseID" class="stretched-link" style="min-height: 100%">
 
-                            <div class="card" style="min-height: 100%" >
+                            <div class="card" style="min-height: 100%">
                                 <div class="card-body" style="box-shadow: 5px 5px 20px grey;">
                                     <h5 class="card-title" style="color:@userCourses.CourseList[i].Color;">@userCourses.CourseList[i].ClassTitle | @userCourses.CourseList[i].ClassNumber</h5>
                                     <h6 class="card-subtitle mb-2 text-muted">@userCourses.ParseDays(i) @userCourses.CourseList[i].StartTime.ToString()-@userCourses.CourseList[i].EndTime.ToString()</h6>
