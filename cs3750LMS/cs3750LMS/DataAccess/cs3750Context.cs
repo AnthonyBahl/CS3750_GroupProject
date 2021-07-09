@@ -29,6 +29,7 @@ namespace cs3750LMS.Models
         public virtual DbSet<Assignment> Assignments { get; set; }
         public virtual DbSet<Submission> Submissions { get; set; }
         public virtual DbSet<Transaction> Transactions { get; set; }
+        public virtual DbSet<Notification> Notifications { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -250,6 +251,20 @@ namespace cs3750LMS.Models
                 IsUnicode(false).
                 HasMaxLength(1000).
                 HasColumnName("Contents");
+            });
+
+            modelBuilder.Entity<Notification>(entity => 
+            {
+                entity.Property(e => e.NotificationID).HasColumnName("NotificationID");
+                entity.Property(e => e.RecipientID).HasColumnName("RecipientID");
+                entity.Property(e => e.ReferenceID).HasColumnName("ReferenceID");
+                entity.Property(e => e.NotificationType)
+                .HasMaxLength(50)
+                .HasColumnName("NotificationType");
+                entity.Property(e => e.Message).HasColumnName("Message");
+                entity.Property(e => e.DateCreated).HasColumnName("DateCreated");
+                entity.Property(e => e.DateViewed).HasColumnName("DateViewed");
+
             });
 
             modelBuilder.Entity<Transaction>(entity =>

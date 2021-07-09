@@ -158,7 +158,7 @@ namespace cs3750LMS.Controllers
                     //set courses object for next pass
                     string serialCourse = HttpContext.Session.GetString("userCourses");
                     Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
-                    //reload timespans
+                    //reload time spans
                     string serialTimes = HttpContext.Session.GetString("courseTimes");
                     List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
                     userCourses.RefactorTimeSpans(times);
@@ -200,7 +200,7 @@ namespace cs3750LMS.Controllers
             //set courses object for next pass
             string serialCourse = HttpContext.Session.GetString("userCourses");
             Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
-            //reload timespans
+            //reload time spans
             string serialTimes = HttpContext.Session.GetString("courseTimes");
             List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
             userCourses.RefactorTimeSpans(times);
@@ -283,7 +283,7 @@ namespace cs3750LMS.Controllers
             string serialCourse = HttpContext.Session.GetString("userCourses");
             Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
 
-            //reload timespans
+            //reload times pans
             string serialTimes = HttpContext.Session.GetString("courseTimes");
             List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
             userCourses.RefactorTimeSpans(times);
@@ -364,7 +364,7 @@ namespace cs3750LMS.Controllers
             ViewData["Courses"] = userCourses;
             return View("AddClass");
         }
-
+        
         [HttpGet]
         public IActionResult Submissions(int id)
         {
@@ -475,6 +475,11 @@ namespace cs3750LMS.Controllers
             string serialStudents = HttpContext.Session.GetString("courseStudents");
             Students courseStudents = serialStudents == null ? null : JsonSerializer.Deserialize<Students>(serialStudents);
 
+            //--------------DELETE THIS COMMENT LATER ADDED NOTIFICATION DESERIALIZER OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+            string serialNotification = HttpContext.Session.GetString("userNotifications");
+            Notifications userNotifications = serialNotification == null ? null : JsonSerializer.Deserialize<Notifications>(serialNotification);
+
+
             Submission submission = new Submission();
             bool success = false;
             if (ModelState.IsValid)
@@ -487,6 +492,32 @@ namespace cs3750LMS.Controllers
 
                 success = true;
             }
+
+//OOOOOOOOOOOOOOOOOOOOOOOOOO --------- DELETE THIS COMMENT LATER ------------ OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+
+            //create notification for graded assignment. 
+            Notification message = new Notification
+            {
+                RecipientID = submission.StudentID,
+                ReferenceID = submission.AssignmentID,
+                NotificationType = "Assignment",
+                Message = " grade was changed.",
+                DateCreated = DateTime.Now,
+                DateViewed = DateTime.Now 
+            };
+
+            //Add to database
+            _context.Notifications.Add(message);  
+            _context.SaveChanges();
+
+            //update session saved Notifications
+            userNotifications.NotificationList.Add(message);        
+            HttpContext.Session.SetString("userNotifications", JsonSerializer.Serialize(userNotifications));
+
+ //OOOOOOOOOOOOOOOOOOOOOOOOOO --------- DELETE THIS COMMENT LATER ------------ OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+
+            
+
 
             SpecificAssignment assignment = new SpecificAssignment();
 
@@ -512,6 +543,9 @@ namespace cs3750LMS.Controllers
             ViewData["ClickedAssignment"] = assignment;
             ViewData["Students"] = courseStudents;
             ViewData["Message"] = session;
+            //OOOOOOOOOOOOOOOOOOOOOOOOOO --------- DELETE THIS COMMENT LATER ------------ OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+            ViewData["Notifications"] = userNotifications;
+            //OOOOOOOOOOOOOOOOOOOOOOOOOO --------- DELETE THIS COMMENT LATER ------------ OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
             return View("Submissions", assignment.Selection.AssignmentID);
         }
     }
