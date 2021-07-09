@@ -2,9 +2,14 @@
     UserSession user = (UserSession)ViewData["Message"];
     SpecificCourse course = (SpecificCourse)ViewData["ClickedCourse"];
     List<Submission> submission = (List<Submission>)ViewData["Submission"];
-    List<int> submissionIds = (submission != null)?submission.Select(x => x.AssignmentID).ToList():new List<int>();
+    List<int> submissionIds = (submission != null) ? submission.Select(x => x.AssignmentID).ToList() : new List<int>();
     ViewData["Title"] = course.Selection.ClassTitle;
 }
+
+<!-- ******************************************************** UI CHANGE ************************************************************ -->
+<!-- The h1 element below should be inside the div element directly below it. This will allow the h1 element to benefit from the     -->
+<!-- layout established by the div with its "container" class.-->
+<!-- ******************************************************************************************************************************* -->
 <h1>@course.Selection.ClassNumber - @course.Selection.ClassTitle</h1>
 <div id="AssignmentView" class="container">
     <h2 class="text-center mt-3">Assignments</h2>
@@ -20,33 +25,34 @@
         <tbody>
             @for (int i = 0; i < course.AssignmentList.Count; i++)
             {
-            <tr>
-                <th scope="row">@course.AssignmentList[i].Title</th>
-                <td scope="row">@course.AssignmentList[i].DueDate.ToString("MM/dd/yy")</td>
-                <td scope="row">@course.AssignmentList[i].DueDate.ToString("hh:mm tt")</td>
-                @if (submissionIds.Contains(course.AssignmentList[i].AssignmentID))
-                {
-                    Submission currentIteration = submission.Where(x => x.AssignmentID == course.AssignmentList[i].AssignmentID).Single();
-
-                    if (currentIteration.Grade == -1)
+                <tr>
+                    <th scope="row">@course.AssignmentList[i].Title</th>
+                    <td scope="row">@course.AssignmentList[i].DueDate.ToString("MM/dd/yy")</td>
+                    <td scope="row">@course.AssignmentList[i].DueDate.ToString("hh:mm tt")</td>
+                    @if (submissionIds.Contains(course.AssignmentList[i].AssignmentID))
                     {
-                    <td>
-                        Submitted
-                    </td>
+                        Submission currentIteration = submission.Where(x => x.AssignmentID == course.AssignmentList[i].AssignmentID).Single();
+
+                        if (currentIteration.Grade == -1)
+                        {
+                            <td>
+                                Submitted
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                Grade: @currentIteration.Grade
+                            </td>
+                        }
                     }
                     else
                     {
                         <td>
-                            Grade: @currentIteration.Grade
+                            <a type="button" asp-controller="Student" asp-action="SubmitAssignment" asp-route-id="@course.AssignmentList[i].AssignmentID" class="btn btn-success">Submit</a>
                         </td>
                     }
-                }
-                else {
-                <td>
-                    <a type="button" asp-controller="Student" asp-action="SubmitAssignment" asp-route-id="@course.AssignmentList[i].AssignmentID" class="btn btn-success">Submit</a>
-                </td>
-                }
-            </tr>
+                </tr>
             }
         </tbody>
     </table>

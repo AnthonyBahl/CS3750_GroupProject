@@ -8,7 +8,16 @@
 
 <div class="container-fluid hero flex-grow-1">
     <div class="container">
+        <!-- ******************************************************** UI CHANGE ************************************************************ -->
+        <!-- The h1 element below will default to being the largest header on the page. It does not need the "display-4" class. Additionally,-->
+        <!-- the h1 element would benefit from having a larger margin on both its top and bottom. The margin class can be changed to affect  -->
+        <!-- both the top and bottom of the element by changing the class "mt-3" to "my-3".-->
+        <!-- ******************************************************************************************************************************* -->
         <h1 class="display-4 text-center mt-3">@clickedAssignment.Title</h1>
+        <!-- ******************************************************** UI CHANGE ************************************************************ -->
+        <!-- The information in the two h2 tags below might look better if, instead of being wrapped in h2's, they were instead wrapped in p -->
+        <!-- tags and then b tags like so: <p><b>INFORMATION</b></p>-->
+        <!-- ******************************************************************************************************************************* -->
         <h2>Due: @clickedAssignment.DueDate.ToString("MM/dd/yy hh:mm tt")</h2>
         <h2>Max Points: @clickedAssignment.MaxPoints</h2>
         <p>@clickedAssignment.Description</p>
@@ -19,57 +28,60 @@
         <!--File-->
         @if (clickedAssignment.SubmissionType == 0)
         {
-    <form enctype="multipart/form-data" asp-action="FileSubmit" method="post" class="w-75 mx-auto mt-5">
-        <div asp-validation-summary="ModelOnly"></div> <!--ModelOnly mode allows errors to be show per input box-->
+            <form enctype="multipart/form-data" asp-action="FileSubmit" method="post" class="w-75 mx-auto mt-5">
+                <div asp-validation-summary="ModelOnly"></div> <!--ModelOnly mode allows errors to be show per input box-->
 
-        <div class="form-group row">
-            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
-                <label asp-for="FileSubmission" class="control-label mb-0 text-sm-center text-lg-end">Submission</label>
-            </div>
-            <div class="col-sm-12 col-lg-10">
-                <input type="file" asp-for="FileSubmission" class="form-control" required />
-            </div>
-            <div class="col-sm-12">
-                <span class="text-danger" asp-validation-for="FileSubmission"></span>
-            </div>
-        </div>
-        <input asp-for="CourseId" value="@currentCourse" hidden />
-        <input asp-for="AssignmentId" value="@clickedAssignment.AssignmentID"hidden/>
+                <div class="form-group row">
+                    <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                        <label asp-for="FileSubmission" class="control-label mb-0 text-sm-center text-lg-end">Submission</label>
+                    </div>
+                    <div class="col-sm-12 col-lg-10">
+                        <input type="file" asp-for="FileSubmission" class="form-control" required />
+                    </div>
+                    <div class="col-sm-12">
+                        <span class="text-danger" asp-validation-for="FileSubmission"></span>
+                    </div>
+                </div>
+                <input asp-for="CourseId" value="@currentCourse" hidden />
+                <input asp-for="AssignmentId" value="@clickedAssignment.AssignmentID" hidden />
 
-        <div class="form-group text-center mt-sm-3 mt-lg-1">
-            <button type="submit" value="Submit" class="btn btn-primary mx-2">Submit</button>
+                <div class="form-group text-center mt-sm-3 mt-lg-1">
+                    <button type="submit" value="Submit" class="btn btn-primary mx-2">Submit</button>
 
-        </div>
+                </div>
 
-    </form>
+            </form>
         }
         else //--Text-->
         {
-    <form asp-action="TextSubmit" method="post" class="w-75 mx-auto mt-5">
-        <div asp-validation-summary="ModelOnly"></div> <!--ModelOnly mode allows errors to be show per input box-->
+            <form asp-action="TextSubmit" method="post" class="w-75 mx-auto mt-5">
+                <div asp-validation-summary="ModelOnly"></div> <!--ModelOnly mode allows errors to be show per input box-->
+                <!-- ******************************************************** UI CHANGE ************************************************************ -->
+                <!-- The layout of this form and label is awkward on large screens. Remove the col-lg-2 class from the label and remove the col-lg-10-->
+                <!-- class from the input to rectify this. You will also have to remove the "text-lg-end" class from the label.-->
+                <!-- ******************************************************************************************************************************* -->
+                <div class="form-group row">
+                    <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
+                        <label asp-for="TextSubmission" class="control-label mb-0 text-sm-center text-lg-end">Submission</label>
+                    </div>
+                    <div class="col-sm-12 col-lg-10">
+                        <textarea class="form-control" typeof="text" maxlength="1000" rows="6" name="TextSubmission" required></textarea>
+                    </div>
+                    <div class="col-sm-12">
+                        <span class="text-danger" asp-validation-for="TextSubmission"></span>
+                    </div>
+                </div>
 
-        <div class="form-group row">
-            <div class="col-sm-12 col-lg-2 d-flex align-items-center justify-content-sm-center justify-content-lg-end mb-sm-3 mb-lg-0 p-0">
-                <label asp-for="TextSubmission" class="control-label mb-0 text-sm-center text-lg-end">Submission</label>
-            </div>
-            <div class="col-sm-12 col-lg-10">
-                <textarea class="form-control" typeof="text" maxlength="1000" rows="6" name="TextSubmission" required></textarea>
-            </div>
-            <div class="col-sm-12">
-                <span class="text-danger" asp-validation-for="TextSubmission"></span>
-            </div>
-        </div>
-
-        <input asp-for="CourseId" value="@currentCourse" hidden />
-        <input asp-for="AssignmentId" value="@clickedAssignment.AssignmentID" hidden />
+                <input asp-for="CourseId" value="@currentCourse" hidden />
+                <input asp-for="AssignmentId" value="@clickedAssignment.AssignmentID" hidden />
 
 
-        <div class="form-group text-center mt-sm-3 mt-lg-1">
-            <button type="submit" value="Submit" class="btn btn-primary mx-2">Submit</button>
+                <div class="form-group text-center mt-sm-3 mt-lg-1">
+                    <button type="submit" value="Submit" class="btn btn-primary mx-2">Submit</button>
 
-        </div>
+                </div>
 
-    </form>
+            </form>
         }
     </div>
 </div>
