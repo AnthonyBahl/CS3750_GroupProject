@@ -3,10 +3,12 @@ using cs3750LMS.Models;
 using cs3750LMS.Models.entites;
 using cs3750LMS.Models.general;
 using cs3750LMS.Models.validation;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -16,9 +18,11 @@ namespace cs3750LMS.Controllers
     public class InstructorController : Controller
     {
         private readonly cs3750Context _context;
-        public InstructorController(cs3750Context context)
+        private IHostingEnvironment Environment;
+        public InstructorController(cs3750Context context, IHostingEnvironment _environment)
         {
             _context = context;
+            Environment = _environment;
         }
 
 
@@ -401,19 +405,19 @@ namespace cs3750LMS.Controllers
                         join b in enrollment.EnrollmentList on a.UserId equals b.studentID
                         select a;
 
-            Students students = new Students
+            SIUsers students = new SIUsers
             {
-                StudentUsers = query.ToList(),
-                StudentList = new List<Student>()
+                SIUusers = query.ToList(),
+                SIUserList = new List<SIUser>()
             };
 
             foreach (var obj in query)
             {
-                Student newStudent = new Student();
+                SIUser newStudent = new SIUser();
                 newStudent.UserId = obj.UserId;
                 newStudent.FirstName = obj.FirstName;
                 newStudent.LastName = obj.LastName;
-                students.StudentList.Add(newStudent);
+                students.SIUserList.Add(newStudent);
             }
             HttpContext.Session.SetString("courseStudents", JsonSerializer.Serialize(students));
 
@@ -435,7 +439,7 @@ namespace cs3750LMS.Controllers
             Assignments courseAssignments = serialAssignments == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignments);
 
             string serialStudents = HttpContext.Session.GetString("courseStudents");
-            Students courseStudents = serialStudents == null ? null : JsonSerializer.Deserialize<Students>(serialStudents);
+            SIUsers courseStudents = serialStudents == null ? null : JsonSerializer.Deserialize<SIUsers>(serialStudents);
 
             Submission submission = new Submission();
             submission = _context.Submissions.Where(y => y.SubmissionID == id).Single();
@@ -451,13 +455,20 @@ namespace cs3750LMS.Controllers
                 assignment.Selection = _context.Assignments.Where(x => x.AssignmentID == submission.AssignmentID).Single();
             }
 
-            Student student = courseStudents.StudentList.Where(x => x.UserId == submission.StudentID).Single();
+            SIUser student = courseStudents.SIUserList.Where(x => x.UserId == submission.StudentID).Single();
 
             assignment.ModeSetting = 1;
+            string path = "";
+
+            if(submission.SubmissionType == 0)
+            {
+                path = "https://localhost:44354/" + "/Submissions/" + assignment.Selection.AssignmentID + "/" + student.UserId + "/" + submission.Contents;
+            }
 
             ViewData["Assignment"] = assignment;
             ViewData["Submission"] = submission;
             ViewData["Student"] = student;
+            ViewData["File"] = path;
             ViewData["Message"] = session;
             return View("~/Views/Instructor/SubmissionDetail.cshtml");
         }
@@ -473,7 +484,7 @@ namespace cs3750LMS.Controllers
             Assignments courseAssignments = serialAssignments == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignments);
 
             string serialStudents = HttpContext.Session.GetString("courseStudents");
-            Students courseStudents = serialStudents == null ? null : JsonSerializer.Deserialize<Students>(serialStudents);
+            SIUsers courseStudents = serialStudents == null ? null : JsonSerializer.Deserialize<SIUsers>(serialStudents);
 
             //--------------DELETE THIS COMMENT LATER ADDED NOTIFICATION DESERIALIZER OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
             string serialNotification = HttpContext.Session.GetString("userNotifications");

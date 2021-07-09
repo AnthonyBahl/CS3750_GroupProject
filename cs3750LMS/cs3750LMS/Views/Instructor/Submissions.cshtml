@@ -1,6 +1,6 @@
 ﻿@{
     UserSession user = (UserSession)ViewData["Message"];
-    cs3750LMS.Models.general.Students students = (cs3750LMS.Models.general.Students)ViewData["Students"];
+    cs3750LMS.Models.general.SIUsers students = (cs3750LMS.Models.general.SIUsers)ViewData["Students"];
     cs3750LMS.Models.general.SpecificAssignment assignment = (cs3750LMS.Models.general.SpecificAssignment)ViewData["ClickedAssignment"];
     ViewData["Title"] = "Courses";
 }
@@ -9,42 +9,8 @@
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
 }
 
-<div id="SubmissionView" class="container">
-    @*Begin Chart Data*@
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-        google.charts.load("current", { packages: ["corechart"] });
-        google.charts.setOnLoadCallback(drawChart);
-
-        //Creates a data array of student data.
-        function generate_Students() {
-
-            let studentData = [
-                ["Student Name", "Grade"]
-            ];
-
-            for (var i = 1; i < 31; i++) {
-                let tempArray = ["Student " + i, Math.floor(Math.random() * 101)];
-                studentData.push(tempArray);
-            }
-            return studentData;
-        }
-
-        // Creates the chart.
-        function drawChart() {
-            var data = google.visualization.arrayToDataTable(generate_Students());
-            var options = {
-                title: 'Student Grade distribution',
-                legend: { position: 'none' },
-                backgroundColor: { fill: 'transparent' }
-            };
-            var chart = new google.visualization.Histogram(document.getElementById('chart_div'));
-            chart.draw(data, options);
-        }
-    </script>
-    @*End Chart Data*@
+<div id="SubmissionView" class="container">    
     <h1 class="text-center">@assignment.Selection.Title</h1>
-    <div id="chart_div" style="width: 900px; height: 500px;"></div>
     <h2 class="text-center mt-3">Submissions</h2>
     <table class="table table-hover bg-white mt-5">
         <thead>
@@ -60,8 +26,8 @@
             {
 <tr>
     <th scope="row">
-        <span>@students.StudentList.Find(x => x.UserId == assignment.SubmissionList[i].StudentID).FirstName</span>
-        <span>@students.StudentList.Find(x => x.UserId == assignment.SubmissionList[i].StudentID).LastName</span>
+        <span>@students.SIUserList.Find(x => x.UserId == assignment.SubmissionList[i].StudentID).FirstName</span>
+        <span>@students.SIUserList.Find(x => x.UserId == assignment.SubmissionList[i].StudentID).LastName</span>
     </th>
     <td scope="row">@assignment.SubmissionList[i].SubmissionDate</td>
     <td scope="row">

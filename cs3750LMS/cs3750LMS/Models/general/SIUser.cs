@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace cs3750LMS.Models.general
 {
-    public class Instructor
+    public class SIUser
     {
         public int UserId { get; set; }
         public string FirstName { get; set; }

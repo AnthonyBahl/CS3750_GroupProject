@@ -214,6 +214,7 @@ namespace cs3750LMS.Controllers
                     Assignments userAssignments = new Assignments();
                     Notifications userNotifications = new Notifications();
                     List<int> assignmentIds = new List<int>();
+                    List<Submission> submissions = new List<Submission>();
 
                     //Student course list and submissions
                     if (session.AccountType == 0)
@@ -221,7 +222,13 @@ namespace cs3750LMS.Controllers
                         List<int> enrolled = _context.Enrollments.Where(y => y.studentID == userFound.UserId).Select(z => z.courseID).ToList();
                         userCourses.CourseList = _context.Courses.Where(x => enrolled.Contains(x.CourseID)).ToList();
                         userAssignments.AssignmentList = _context.Assignments.Where(x => enrolled.Contains(x.CourseID)).OrderBy(y => y.DueDate).ToList();
+                       
                         userNotifications.NotificationList = _context.Notifications.Where(k => k.RecipientID == userFound.UserId).ToList();
+
+                        //set submissions
+                        assignmentIds = userAssignments.AssignmentList.Select(x => x.AssignmentID).ToList();
+                        submissions = _context.Submissions.Where(x => assignmentIds.Contains(x.AssignmentID) && x.StudentID == userFound.UserId).ToList();
+                        HttpContext.Session.SetString("userSubmissions", JsonSerializer.Serialize(submissions));
                     }
                     //Instructor course list and submissions
                     if (session.AccountType == 1)
@@ -229,13 +236,15 @@ namespace cs3750LMS.Controllers
                         userCourses.CourseList = _context.Courses.Where(x => x.InstructorID == userFound.UserId).ToList();
                         List<int> teaching = userCourses.CourseList.Select(y => y.CourseID).ToList();
                         userAssignments.AssignmentList = _context.Assignments.Where(x => teaching.Contains(x.CourseID)).OrderBy(y => y.DueDate).ToList();
-                        userNotifications.NotificationList = _context.Notifications.Where(k => k.RecipientID == userFound.UserId).ToList();
+                        userNotifications.NotificationList = _context.Notifications.Where(k => k.RecipientID == userFound.UserId).ToList();                                          
+                    
+                        //set submissions
+                        assignmentIds = userAssignments.AssignmentList.Select(x => x.AssignmentID).ToList();
+                        submissions = _context.Submissions.Where(x => assignmentIds.Contains(x.AssignmentID)).ToList();
+                        HttpContext.Session.SetString("userSubmissions", JsonSerializer.Serialize(submissions));
                     }
 
-                    //set submissions
-                    assignmentIds = userAssignments.AssignmentList.Select(x => x.AssignmentID).ToList();
-                    List<Submission> submissions = _context.Submissions.Where(x => assignmentIds.Contains(x.AssignmentID)).ToList();
-                    HttpContext.Session.SetString("userSubmissions", JsonSerializer.Serialize(submissions));
+
 
                     //save the user courses in the session and pass to view
                     HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(userCourses));
