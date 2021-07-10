@@ -285,11 +285,14 @@ body {
 
 }
 
-#notificationXicon{
-    position: relative;
-    right:30px;
-}   
 
-nav-item .dropright .dropdown-menu .dropdown-item {
-    margin-right: 50px;
+#notificationXicon:hover{
+    color:orangered;
 }
+
+.icorrect{  
+    padding:0px;
+    margin-right:20px;
+}
+
+/*------------------------------------*/

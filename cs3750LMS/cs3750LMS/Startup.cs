@@ -1,5 +1,6 @@
 using cs3750LMS.DataAccess;
 using cs3750LMS.Models;
+using cs3750LMS.Models.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -42,6 +43,11 @@ namespace cs3750LMS
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+
+           //this one connects to database .AddScoped must be used for Database connection 
+            services.AddScoped<INotificationRepository, db_NotificationRepository>(); 
+            
+            
             
         }
 

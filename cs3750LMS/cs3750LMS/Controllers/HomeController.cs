@@ -2,6 +2,7 @@ using cs3750LMS.DataAccess;
 using cs3750LMS.Models;
 using cs3750LMS.Models.entites;
 using cs3750LMS.Models.general;
+using cs3750LMS.Models.Repository;
 using cs3750LMS.Models.validation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,11 +21,11 @@ namespace cs3750LMS.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly cs3750Context _context;
+        private readonly cs3750Context _context;        
         public HomeController(ILogger<HomeController> logger, cs3750Context context)
         {
             _logger = logger;
-            _context = context;
+            _context = context;         
         }
         public IActionResult Index()
         {
@@ -39,8 +40,6 @@ namespace cs3750LMS.Controllers
                 string serialAssignment = HttpContext.Session.GetString("userAssignments");
                 Assignments userAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
 
-                string serialNotification = HttpContext.Session.GetString("userNotifications");
-                Notifications userNotifications = serialNotification == null ? null : JsonSerializer.Deserialize<Notifications>(serialNotification);
 
                 //reload timespans
                 string serialTimes = HttpContext.Session.GetString("courseTimes");
@@ -50,7 +49,7 @@ namespace cs3750LMS.Controllers
                 ViewData["UserCourses"] = userCourses;
                 ViewData["Message"] = session;
                 ViewData["userAssignments"] = userAssignments;
-                ViewData["Notifications"] = userNotifications;
+           
 
                 return View();
             }
@@ -61,6 +60,7 @@ namespace cs3750LMS.Controllers
         {
             return View();
         }
+
 
         public IActionResult Logout()
         {
@@ -134,11 +134,6 @@ namespace cs3750LMS.Controllers
                     HttpContext.Session.SetString("userAssignments", JsonSerializer.Serialize(userAssignments));
                     ViewData["userAssignments"] = userAssignments;
 
-                    // set an empty set of user notifications and pass it into the view data
-                    Notifications userNotifications = new Notifications();
-                    userNotifications.NotificationList = new List<Notification>();
-                    HttpContext.Session.SetString("userNotifications", JsonSerializer.Serialize(userNotifications));
-                    ViewData["Notifications"] = userNotifications;
 
                     //save times
                     List<TimeStamp> times = new TimeStamp().ParseTimes(userCourses);
@@ -212,7 +207,7 @@ namespace cs3750LMS.Controllers
                     //grab user courses from database
                     Courses userCourses = new Courses();
                     Assignments userAssignments = new Assignments();
-                    Notifications userNotifications = new Notifications();
+                   
                     List<int> assignmentIds = new List<int>();
                     List<Submission> submissions = new List<Submission>();
 
@@ -223,7 +218,7 @@ namespace cs3750LMS.Controllers
                         userCourses.CourseList = _context.Courses.Where(x => enrolled.Contains(x.CourseID)).ToList();
                         userAssignments.AssignmentList = _context.Assignments.Where(x => enrolled.Contains(x.CourseID)).OrderBy(y => y.DueDate).ToList();
                        
-                        userNotifications.NotificationList = _context.Notifications.Where(k => k.RecipientID == userFound.UserId).ToList();
+                    
 
                         //set submissions
                         assignmentIds = userAssignments.AssignmentList.Select(x => x.AssignmentID).ToList();
@@ -236,7 +231,7 @@ namespace cs3750LMS.Controllers
                         userCourses.CourseList = _context.Courses.Where(x => x.InstructorID == userFound.UserId).ToList();
                         List<int> teaching = userCourses.CourseList.Select(y => y.CourseID).ToList();
                         userAssignments.AssignmentList = _context.Assignments.Where(x => teaching.Contains(x.CourseID)).OrderBy(y => y.DueDate).ToList();
-                        userNotifications.NotificationList = _context.Notifications.Where(k => k.RecipientID == userFound.UserId).ToList();                                          
+                     
                     
                         //set submissions
                         assignmentIds = userAssignments.AssignmentList.Select(x => x.AssignmentID).ToList();
@@ -258,9 +253,6 @@ namespace cs3750LMS.Controllers
                     HttpContext.Session.SetString("userAssignments", JsonSerializer.Serialize(userAssignments));
                     ViewData["userAssignments"] = userAssignments;
 
-                    // save the user notifications in the session and pass to the view. 
-                    HttpContext.Session.SetString("userNotifications", JsonSerializer.Serialize(userNotifications));
-                    ViewData["Notifications"] = userNotifications;
 
                     //grab transactions from database
                     //check if student account

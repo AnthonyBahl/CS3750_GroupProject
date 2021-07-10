@@ -2,6 +2,7 @@
 using cs3750LMS.Models;
 using cs3750LMS.Models.entites;
 using cs3750LMS.Models.general;
+using cs3750LMS.Models.Repository;
 using cs3750LMS.Models.validation;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -23,10 +24,12 @@ namespace cs3750LMS.Controllers
     {
         private readonly cs3750Context _context;
         private IHostingEnvironment Environment;
-        public StudentController(cs3750Context context, IHostingEnvironment _environment)
+        private readonly INotificationRepository _notification;
+        public StudentController(cs3750Context context, IHostingEnvironment _environment, INotificationRepository notification)
         {
             _context = context;
             Environment = _environment;
+            _notification = notification;
         }
 
         //--------------------------View Course logic/ submit assignment start
@@ -56,8 +59,6 @@ namespace cs3750LMS.Controllers
 
                 HttpContext.Session.SetString(courseKey, JsonSerializer.Serialize(course));
 
-                ViewData["userAssignments"] = userAssignments;
-                ViewData["UserCourses"] = userCourses;
             }
 
             //get user info from session
@@ -68,19 +69,12 @@ namespace cs3750LMS.Controllers
             string serialSubmissions = HttpContext.Session.GetString("userSubmissions");
             List<Submission> submissions = JsonSerializer.Deserialize<List<Submission>>(serialSubmissions);
 
-            //get Notifications
-            string serialNotification = HttpContext.Session.GetString("userNotifications");
-            Notifications userNotifications = serialNotification == null ? null : JsonSerializer.Deserialize<Notifications>(serialNotification);
 
-          
 
             ViewData["Submission"] = submissions;
             ViewData["ClickedCourse"] = course;
             ViewData["Message"] = session;
-            ViewData["Notifications"] = userNotifications;
             
-
-
 
             return View("~/Views/Student/ViewCourse.cshtml");
         }
@@ -101,16 +95,6 @@ namespace cs3750LMS.Controllers
             string serialAssignment = HttpContext.Session.GetString("userAssignments");
             Assignments userAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
 
-            //getCourses
-            string serialCourse = HttpContext.Session.GetString("userCourses");
-            Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
-
-            //get Notifications
-            string serialNotification = HttpContext.Session.GetString("userNotifications");
-            Notifications userNotifications = serialNotification == null ? null : JsonSerializer.Deserialize<Notifications>(serialNotification);
-
-
-
             Assignment clickedAssignment = userAssignments.AssignmentList.Where(x => x.AssignmentID == id).Single();
 
 
@@ -118,8 +102,7 @@ namespace cs3750LMS.Controllers
             ViewData["Submission"] = submissions;
             ViewData["ClickedAssignment"] = clickedAssignment;
             ViewData["Message"] = session;
-            ViewData["Notifications"] = userNotifications;
-            ViewData["UserCourses"] = userCourses;
+           
 
             return View("~/Views/Student/SubmitAssignment.cshtml");
         }
@@ -155,6 +138,37 @@ namespace cs3750LMS.Controllers
                 submissions.Add(newSubmission);
 
                 HttpContext.Session.SetString("userSubmissions", JsonSerializer.Serialize(submissions));
+
+
+
+                //getCourses for notification
+                string serialCourse = HttpContext.Session.GetString("userCourses");
+                Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+
+                //get Assignments for notification
+                string serialAssignment = HttpContext.Session.GetString("userAssignments");
+                Assignments courseAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
+
+
+                //Need these to create the message for the notification. 
+                int courseID = submiting.CourseId;
+                String CourseName = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(v => v.ClassTitle).FirstOrDefault();
+                String AssignmentName = courseAssignments.AssignmentList.Where(a => a.AssignmentID == submiting.AssignmentId).Select(x => x.Title).FirstOrDefault();
+                int InstructorID = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(i => i.InstructorID).FirstOrDefault();
+
+                //create notification for graded assignment. 
+                Notification message = new Notification
+                {
+                    RecipientID = InstructorID,  //send notification to the instructor
+                    ReferenceID = courseID,      //courseID so when the notification is clicked it can go to that course page
+                    NotificationType = "Assignment",
+                    Message = CourseName + " | " + AssignmentName + " was submitted.",
+                    DateCreated = DateTime.Now,
+                    DateViewed = DateTime.Now  //this errors if its not initialized.
+                };
+
+                //calls the repository function add which adds a notification to the database. 
+                this._notification.Add(message);
 
             }
             else //fail case
@@ -217,6 +231,38 @@ namespace cs3750LMS.Controllers
                 submissions.Add(newSubmission);
 
                 HttpContext.Session.SetString("userSubmissions", JsonSerializer.Serialize(submissions));
+
+
+                //getCourses for notification
+                string serialCourse = HttpContext.Session.GetString("userCourses");
+                Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+
+                //get Assignments for notification
+                string serialAssignment = HttpContext.Session.GetString("userAssignments");
+                Assignments courseAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
+
+
+                //Need these to create the message for the notification. 
+                int courseID = submiting.CourseId;
+                String CourseName = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(v => v.ClassTitle).FirstOrDefault();
+                String AssignmentName = courseAssignments.AssignmentList.Where(a => a.AssignmentID == submiting.AssignmentId).Select(x => x.Title).FirstOrDefault();
+                int InstructorID = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(i => i.InstructorID).FirstOrDefault();
+
+                //create notification for graded assignment. 
+                Notification message = new Notification
+                {
+                    RecipientID = InstructorID,  //send notification to the instructor
+                    ReferenceID = courseID,      //courseID so when the notification is clicked it can go to that course page
+                    NotificationType = "Assignment",
+                    Message = CourseName + " | " + AssignmentName + " was submitted.",
+                    DateCreated = DateTime.Now,
+                    DateViewed = DateTime.Now  //this errors if its not initialized.
+                };
+
+                //calls the repository function add which adds a notification to the database. 
+                this._notification.Add(message);
+
+
             }
             else //fail case
             {
@@ -358,15 +404,6 @@ namespace cs3750LMS.Controllers
                 string serialUser = HttpContext.Session.GetString("userInfo");
                 UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);       
 
-                //get Assignments
-                string serialAssignment = HttpContext.Session.GetString("userAssignments");
-                Assignments userAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
-
-                //get Notifications
-                string serialNotification = HttpContext.Session.GetString("userNotifications");
-                Notifications userNotifications = serialNotification == null ? null : JsonSerializer.Deserialize<Notifications>(serialNotification);
-
-
                 if (session.AccountType == 0)
                 {
                     //grab session vars for registration
@@ -452,9 +489,6 @@ namespace cs3750LMS.Controllers
                     ViewData["Message"] = session;
                     ViewData["Courses"] = allCourses;
                     ViewData["StudentCourses"] = studentCourses;
-                    ViewData["userAssignments"] = userAssignments;
-                    ViewData["Notifications"] = userNotifications;
-                    ViewData["UserCourses"] = studentCourses;
                     return View();
                 }
             }

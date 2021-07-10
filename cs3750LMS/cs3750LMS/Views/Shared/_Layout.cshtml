@@ -1,10 +1,8 @@
 ﻿@{
     UserSession show = (UserSession)ViewData["Message"];
-    Courses userCourses = (Courses)ViewData["UserCourses"];
-    Notifications userNotifications = (Notifications)ViewData["Notifications"];
-    Assignments assignments = (Assignments)ViewData["userAssignments"];
-
 }   
+
+@inject cs3750LMS.Models.Repository.INotificationRepository _notification
 
 <!DOCTYPE html>
 <html lang="en">
@@ -16,7 +14,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/site.css" />
     <script src="https://kit.fontawesome.com/96bd72d7d0.js" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> @*Google Graphs*@
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> @*Google Graphs*@   
 
 </head>
 <body class="d-flex flex-column">
@@ -75,43 +73,39 @@
                             </li>
 
                             <li class="nav-item">
-                                <div class="dropright">                              
+                                <div class="dropright">
                                     <a class="nav-link" data-toggle="dropdown"> <i id="bellIcon" class="far fa-bell fa-lg"></i></a>
 
                                     <ul class="dropdown-menu">
 
-                                        @if (userNotifications.NotificationList != null)
-                                        {
-                                            var notiCount = 0;
-
-                                            for (int i = 0; i < userNotifications.NotificationList.Count; i++)
-                                            {
-                                                Notification noti = userNotifications.NotificationList[i];
-                                                if (noti.RecipientID == show.UserId && noti.DateCreated == noti.DateViewed) //if both dates are == then it means that the notification has not been seen yet.
-                                                {
-                                                    notiCount++;
-                                                    var nCourseId = assignments.AssignmentList.Where(k => k.AssignmentID == noti.ReferenceID).Select(w => w.CourseID).FirstOrDefault();
-                                                    var nCourseTitle = userCourses.CourseList.Where(c => c.CourseID == nCourseId).Select(d => d.ClassTitle).FirstOrDefault();
-                                                    var nAssignmentName = assignments.AssignmentList.Where(a => a.AssignmentID == noti.ReferenceID).Select(b => b.Title).FirstOrDefault();
-
-                                                    <li class="dropdown-item">
-                                                        <a asp-controller="Student" asp-action="ViewCourse" asp-route-id=@nCourseId>
-                                                            <p id="p-notification">
-                                                                <b>@nCourseTitle</b><br />
-                                                                @nAssignmentName @noti.Message
-                                                            </p>
-                                                        </a>
-                                                        <i id="notificationXicon" class="far fa-window-close fa-lg" onclick="removeNotificationItem()"></i>
-                                                    </li>
-                                                    
-
-                                                }
-
-                                            }
-                                            <input type="hidden" id="PassingNotificationCountToJavaScript" value=@notiCount>
+                                        @{var notiCount = 0;
                                         }
 
-                                    </ul>                                       
+                                        @foreach (var noti in _notification.GetAllUserNotifications(show.UserId))
+                                        {
+                                            notiCount++;
+
+                                            if (show.AccountType == 0)  //student
+                                            {
+                                                <li class="dropdown-item">
+                                                    <i id="notificationXicon" class="far fa-window-close fa-med icorrect" onclick="removeNotificationItem()"></i>
+                                                    <a asp-controller="Student" asp-action="ViewCourse" asp-route-id=@noti.ReferenceID>
+                                                        @noti.Message
+                                                    </a>
+                                                </li>
+                                            }
+                                            else
+                                            {
+                                                <li class="dropdown-item">
+                                                    <i id="notificationXicon" class="far fa-window-close fa-med icorrect" onclick="removeNotificationItem()"></i>
+                                                    <a asp-controller="Instructor" asp-action="CourseEdit" asp-route-id="@noti.ReferenceID">
+                                                        @noti.Message
+                                                    </a>
+                                                </li>
+                                            }
+                                        }
+                                    </ul>
+                                    <input type="hidden" id="PassingNotificationCountToJavaScript" value=@notiCount>
                                 </div>
                             </li>
                         }
