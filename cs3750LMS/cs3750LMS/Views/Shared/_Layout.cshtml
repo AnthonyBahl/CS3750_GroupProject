@@ -1,8 +1,9 @@
 ﻿@{
     UserSession show = (UserSession)ViewData["Message"];
     Courses userCourses = (Courses)ViewData["UserCourses"];
+    Notifications userNotifications = (Notifications)ViewData["Notifications"];
+    Assignments assignments = (Assignments)ViewData["userAssignments"];
 
-    
 }   
 
 <!DOCTYPE html>
@@ -74,21 +75,43 @@
                             </li>
 
                             <li class="nav-item">
-                                <div class="dropright">
-                                    @*TODO: When you use a for loop to create each of the items in the dropdown-menu. Make sure to pass the amount to the Itemscount variable in the javascript.
-                                    *@
+                                <div class="dropright">                              
                                     <a class="nav-link" data-toggle="dropdown"> <i id="bellIcon" class="far fa-bell fa-lg"></i></a>
 
-                                    @*TODO: LEFT OFF AT DECIDEING BETWEEN TWO BOOLEANS OR A MODEL DEPENDS ON NOTIFICATION TYPES. *@
+                                    <ul class="dropdown-menu">
 
-                                    @*<ul class="dropdown-menu">
-                                        <li class="dropdown-item"><a href="#">Link 1</a><i class="far fa-window-close fa-sm float-right"></i></li>
-                                        <li class="dropdown-item"><a href="#">Link 2</a><i class="far fa-window-close fa-sm float-right"></i></li>
-                                        <li class="dropdown-item"><a href="#" id="test1">Link 3</a><i class="far fa-window-close fa-sm float-right" onclick="removeNotificationItem()"></i></li>
-                                        <li class="dropdown-item"><a href="#" id="test1">Link 4</a><i class="far fa-window-close fa-sm float-right" onclick="removeNotificationItem()"></i></li>
-                                        <li class="dropdown-item"><a href="#" id="test1">Link 5</a><i class="far fa-window-close fa-sm float-right" onclick="removeNotificationItem()"></i></li>
-                                    </ul>*@
+                                        @if (userNotifications.NotificationList != null)
+                                        {
+                                            var notiCount = 0;
 
+                                            for (int i = 0; i < userNotifications.NotificationList.Count; i++)
+                                            {
+                                                Notification noti = userNotifications.NotificationList[i];
+                                                if (noti.RecipientID == show.UserId && noti.DateCreated == noti.DateViewed) //if both dates are == then it means that the notification has not been seen yet.
+                                                {
+                                                    notiCount++;
+                                                    var nCourseId = assignments.AssignmentList.Where(k => k.AssignmentID == noti.ReferenceID).Select(w => w.CourseID).FirstOrDefault();
+                                                    var nCourseTitle = userCourses.CourseList.Where(c => c.CourseID == nCourseId).Select(d => d.ClassTitle).FirstOrDefault();
+                                                    var nAssignmentName = assignments.AssignmentList.Where(a => a.AssignmentID == noti.ReferenceID).Select(b => b.Title).FirstOrDefault();
+
+                                                    <li class="dropdown-item">
+                                                        <a asp-controller="Student" asp-action="ViewCourse" asp-route-id=@nCourseId>
+                                                            <p id="p-notification">
+                                                                <b>@nCourseTitle</b><br />
+                                                                @nAssignmentName @noti.Message
+                                                            </p>
+                                                        </a>
+                                                        <i id="notificationXicon" class="far fa-window-close fa-lg" onclick="removeNotificationItem()"></i>
+                                                    </li>
+                                                    
+
+                                                }
+
+                                            }
+                                            <input type="hidden" id="PassingNotificationCountToJavaScript" value=@notiCount>
+                                        }
+
+                                    </ul>                                       
                                 </div>
                             </li>
                         }

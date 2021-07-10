@@ -5,7 +5,7 @@
 //-------------------------------------------
 const bellIcon = document.getElementById("bellIcon");
 
-let ItemsCount = 3; // we need to get the amount of items passed into the notifications list and store it here. 
+let ItemsCount = document.getElementById("PassingNotificationCountToJavaScript").value; 
 
 if (ItemsCount > 0) {
 
@@ -19,7 +19,8 @@ if (ItemsCount > 0) {
     }
 
 function removeNotificationItem() {
-   //TODO: THIS METHOD IS FOR WHEN THE [X] ICON IS CLICKED. 
+    alert("Notification has been seen");
+    //set the DateViewed in the assignment to DateTime.Now
 }
 
 

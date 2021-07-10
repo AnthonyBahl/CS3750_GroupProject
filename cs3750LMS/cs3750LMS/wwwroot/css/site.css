@@ -284,3 +284,12 @@ body {
   100% { transform: rotate(0deg); }
 
 }
+
+#notificationXicon{
+    position: relative;
+    right:30px;
+}   
+
+nav-item .dropright .dropdown-menu .dropdown-item {
+    margin-right: 50px;
+}

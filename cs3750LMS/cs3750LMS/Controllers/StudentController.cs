@@ -55,6 +55,9 @@ namespace cs3750LMS.Controllers
                 course.AssignmentList = userAssignments.AssignmentList.Where(y => y.CourseID == id).ToList();
 
                 HttpContext.Session.SetString(courseKey, JsonSerializer.Serialize(course));
+
+                ViewData["userAssignments"] = userAssignments;
+                ViewData["UserCourses"] = userCourses;
             }
 
             //get user info from session
@@ -65,9 +68,19 @@ namespace cs3750LMS.Controllers
             string serialSubmissions = HttpContext.Session.GetString("userSubmissions");
             List<Submission> submissions = JsonSerializer.Deserialize<List<Submission>>(serialSubmissions);
 
+            //get Notifications
+            string serialNotification = HttpContext.Session.GetString("userNotifications");
+            Notifications userNotifications = serialNotification == null ? null : JsonSerializer.Deserialize<Notifications>(serialNotification);
+
+          
+
             ViewData["Submission"] = submissions;
             ViewData["ClickedCourse"] = course;
             ViewData["Message"] = session;
+            ViewData["Notifications"] = userNotifications;
+            
+
+
 
             return View("~/Views/Student/ViewCourse.cshtml");
         }
@@ -88,6 +101,16 @@ namespace cs3750LMS.Controllers
             string serialAssignment = HttpContext.Session.GetString("userAssignments");
             Assignments userAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
 
+            //getCourses
+            string serialCourse = HttpContext.Session.GetString("userCourses");
+            Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+
+            //get Notifications
+            string serialNotification = HttpContext.Session.GetString("userNotifications");
+            Notifications userNotifications = serialNotification == null ? null : JsonSerializer.Deserialize<Notifications>(serialNotification);
+
+
+
             Assignment clickedAssignment = userAssignments.AssignmentList.Where(x => x.AssignmentID == id).Single();
 
 
@@ -95,9 +118,12 @@ namespace cs3750LMS.Controllers
             ViewData["Submission"] = submissions;
             ViewData["ClickedAssignment"] = clickedAssignment;
             ViewData["Message"] = session;
+            ViewData["Notifications"] = userNotifications;
+            ViewData["UserCourses"] = userCourses;
 
             return View("~/Views/Student/SubmitAssignment.cshtml");
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult TextSubmit([Bind("TextSubmission, CourseId, AssignmentId")] SubmitAssignmentValidation submiting)
@@ -330,7 +356,16 @@ namespace cs3750LMS.Controllers
             {
                 //get user info from session
                 string serialUser = HttpContext.Session.GetString("userInfo");
-                UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
+                UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);       
+
+                //get Assignments
+                string serialAssignment = HttpContext.Session.GetString("userAssignments");
+                Assignments userAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
+
+                //get Notifications
+                string serialNotification = HttpContext.Session.GetString("userNotifications");
+                Notifications userNotifications = serialNotification == null ? null : JsonSerializer.Deserialize<Notifications>(serialNotification);
+
 
                 if (session.AccountType == 0)
                 {
@@ -346,7 +381,7 @@ namespace cs3750LMS.Controllers
                     {
                         allCourses = JsonSerializer.Deserialize<Courses>(serialAllCourses);
                         enrollment = JsonSerializer.Deserialize<Enrollments>(serialEnrollment);
-                        //reload timespans
+                        //reload time spans
 
                         List<TimeStamp> timesAll = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimesAll);
                         allCourses.RefactorTimeSpans(timesAll);
@@ -394,7 +429,7 @@ namespace cs3750LMS.Controllers
                     //get student courses from session
                     string serialCourse = HttpContext.Session.GetString("userCourses");
                     Courses studentCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
-                    //reload timespans
+                    //reload time spans
                     string serialTimes = HttpContext.Session.GetString("courseTimes");
                     List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
                     studentCourses.RefactorTimeSpans(times);
@@ -417,6 +452,9 @@ namespace cs3750LMS.Controllers
                     ViewData["Message"] = session;
                     ViewData["Courses"] = allCourses;
                     ViewData["StudentCourses"] = studentCourses;
+                    ViewData["userAssignments"] = userAssignments;
+                    ViewData["Notifications"] = userNotifications;
+                    ViewData["UserCourses"] = studentCourses;
                     return View();
                 }
             }

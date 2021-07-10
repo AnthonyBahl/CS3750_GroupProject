@@ -489,7 +489,7 @@ namespace cs3750LMS.Controllers
             //--------------DELETE THIS COMMENT LATER ADDED NOTIFICATION DESERIALIZER OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
             string serialNotification = HttpContext.Session.GetString("userNotifications");
             Notifications userNotifications = serialNotification == null ? null : JsonSerializer.Deserialize<Notifications>(serialNotification);
-
+            //--------------DELETE THIS COMMENT LATER ADDED NOTIFICATION DESERIALIZER OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 
             Submission submission = new Submission();
             bool success = false;
@@ -517,7 +517,7 @@ namespace cs3750LMS.Controllers
                 DateViewed = DateTime.Now 
             };
 
-            //Add to database
+            //Add to database            
             _context.Notifications.Add(message);  
             _context.SaveChanges();
 
