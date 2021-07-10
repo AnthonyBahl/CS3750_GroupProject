@@ -44,6 +44,11 @@
 <div id="AssignmentView" class="container" style="display: @viewState">
     <h1 class="text-center">@course.Selection.ClassNumber - @course.Selection.ClassTitle</h1>
     <h2 class="text-center mt-3">Assignments</h2>
+    <!-- ******************************************************** UI CHANGE ************************************************************ -->
+    <!-- The chart below is breaking Bootstrap's flow because its position is set to absolute, and it has a top style and a right style. -->
+    <!-- Removing the inline styles for position, top, and right and then adding a Bootstrap class (mx-auto) will ensure that the graph  -->
+    <!-- is centered on the screen.-->
+    <!-- ******************************************************************************************************************************* -->
     <div id="gradeWeightsPieChart" style="width: 400px; height: 400px; position: absolute; top: 60px; right: 0;"></div>
     <table class="table table-hover bg-white mt-5">
         <thead>
@@ -59,21 +64,21 @@
         <tbody>
             @for (int i = 0; i < course.AssignmentList.Count; i++)
             {
-<tr>
-    <th scope="row">@course.AssignmentList[i].Title</th>
-    <td scope="row">@course.AssignmentList[i].DueDate.ToString("MM/dd/yy")</td>
-    <td scope="row">@course.AssignmentList[i].DueDate.ToString("hh:mm tt")</td>
-    <td>
-        <button type="button" onclick="ToggleView(2,@course.AssignmentList[i].AssignmentID)" class="btn btn-success">Edit</button>
-    </td>
-    <td>
-        <button type="button" class="btn btn-danger">Delete</button>
-    </td>
-    <td>
-        <a type="button" asp-controller="Instructor" asp-action="Submissions" asp-route-id="@course.AssignmentList[i].AssignmentID" class="btn btn-success">Submissions</a>
-    </td>
-</tr>
-       }
+                <tr>
+                    <th scope="row">@course.AssignmentList[i].Title</th>
+                    <td scope="row">@course.AssignmentList[i].DueDate.ToString("MM/dd/yy")</td>
+                    <td scope="row">@course.AssignmentList[i].DueDate.ToString("hh:mm tt")</td>
+                    <td>
+                        <button type="button" onclick="ToggleView(2,@course.AssignmentList[i].AssignmentID)" class="btn btn-success">Edit</button>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger">Delete</button>
+                    </td>
+                    <td>
+                        <a type="button" asp-controller="Instructor" asp-action="Submissions" asp-route-id="@course.AssignmentList[i].AssignmentID" class="btn btn-success">Submissions</a>
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
     <br />
@@ -158,6 +163,11 @@
                 <label asp-for="SubmitType" class="control-label mb-0 text-sm-center text-lg-end">Submission Type</label>
             </div>
             <div class="col-sm-12 col-lg-10">
+                <!-- ******************************************************** UI CHANGE ******************************************************** -->
+                <!-- For a more standard radio button layout, each pair of radio buttons and their respective labels should be wrapped in a div  -->
+                <!-- with the class "form-check". The class "form-check-input" and "form-check-label" should be added to each input and label,   -->
+                <!-- respectively. Finally, each input should come before each label so that the button is on the left side of the label.        -->
+                <!-- *************************************************************************************************************************** -->
                 <label for="SubmitFileAdd">File</label>
                 <input id="SubmitFileAdd" type="radio" asp-for="SubmitType" name="SubmitType" class="form-control AddField" value="0" checked />
 
@@ -179,10 +189,6 @@
     </form>
 </div>
 
-
-<!--hERE IS HWERE i AM WORKING BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-    BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB   
-    -->
 
 <div id="AssignmentEdit" style="display:@editState">
     <h1 class="display-4 text-center">Update Assignment</h1>
@@ -261,6 +267,11 @@
                 <label asp-for="SubmitType" class="control-label mb-0 text-sm-center text-lg-end">Submission Type</label>
             </div>
             <div class="col-sm-12 col-lg-10">
+                <!-- ******************************************************** UI CHANGE ******************************************************** -->
+                <!-- For a more standard radio button layout, each pair of radio buttons and their respective labels should be wrapped in a div  -->
+                <!-- with the class "form-check". The class "form-check-input" and "form-check-label" should be added to each input and label,   -->
+                <!-- respectively. Finally, each input should come before each label so that the button is on the left side of the label.        -->
+                <!-- *************************************************************************************************************************** -->
                 <label for="SubmitFileAdd">File</label>
                 <input id="editSubmitFile" type="radio" asp-for="SubmitType" name="SubmitType" class="form-control AddField" value="0" checked />
 
