@@ -85,7 +85,8 @@
                                         {
                                             notiCount++;
 
-                                            if (show.AccountType == 0)  //student
+                                            //Each Account Type and Notification Type combination will have a different <a></a> link when clicked. 
+                                            if (show.AccountType == 0 && noti.NotificationType == "Assignment")  //student
                                             {
                                                 <li class="dropdown-item">
                                                     <i id="notificationXicon" class="far fa-window-close fa-med icorrect" onclick="removeNotificationItem()"></i>
@@ -94,7 +95,7 @@
                                                     </a>
                                                 </li>
                                             }
-                                            else
+                                            else if(show.AccountType == 1 && noti.NotificationType == "Assignment") //teacher
                                             {
                                                 <li class="dropdown-item">
                                                     <i id="notificationXicon" class="far fa-window-close fa-med icorrect" onclick="removeNotificationItem()"></i>
