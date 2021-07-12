@@ -54,7 +54,7 @@ namespace CS3750LMSTest
                 TimeSpan startTime = new TimeSpan(21, 40, 50);
                 TimeSpan endTime = new TimeSpan(21, 50, 50);
 
-                // call instructor controller with the context and enviroment passed in
+                // call instructor controller with the context and environment passed in
                 var controller = new InstructorController(_context, Environment, _notification);
 
                 // create a new class object
@@ -129,6 +129,77 @@ namespace CS3750LMSTest
                 // Determine if everything is working.
                 Assert.AreEqual(updatedAssignmentCount, currentAssignmentCount + 1);
 
+            }
+        }
+
+
+
+        /// <summary>
+        /// This method tests to make sure that the submit a text assignment functionality does not break.
+        /// </summary>
+        [TestMethod]
+        public void StudentCanSubmitAssignmentTest()
+        {
+            // Set up Transaction Scope so that nothing is added to the database
+            using (new TransactionScope())
+            {
+                // Grab user 1026 who is a test student in the database
+                var student = _context.Users.Find(1026);
+
+                // Grab user 1025 who is a test instructor in the database
+                var instructor = _context.Users.Find(1025);
+
+                // Grab the courses in which the student is enrolled in. 
+                var studentCourses = _context.Enrollments.Where(sc => sc.studentID == student.UserId).ToList();
+
+                // Get latest course
+                var latestCourse = studentCourses.Last();
+
+                //select existing assignment
+                var CourseAssignments = _context.Assignments.Where(a => a.CourseID == latestCourse.courseID).ToList();
+
+                //get latest assignment. 
+                var latestAssignment = CourseAssignments.Last();
+
+                //get submission Count
+                var preSubmissionCount = _context.Submissions.Count(n => n.AssignmentID == latestAssignment.AssignmentID);
+
+                //get notification Count
+                var preNotificationCount = _context.Notifications.Count(i => i.RecipientID == instructor.UserId);
+
+                //create new submission
+                SubmitAssignmentValidation newSubmission = new SubmitAssignmentValidation();           
+
+                //Populate fields
+                newSubmission.AssignmentId = latestAssignment.AssignmentID;
+                newSubmission.CourseId = latestCourse.courseID;
+                newSubmission.TextSubmission = "[Unit Test] assignment Text Submission.";
+                
+
+                //get student controller instance
+                StudentController controller = new StudentController(_context, Environment, _notification);
+                
+                //submit new TEXT submission to controller probably will need to do integration testing to test the file-submissions not unit testing. 
+                controller.TextSubmit(newSubmission);
+
+                //get Post submission Count
+                var postSubmissionCount = _context.Submissions.Count(n => n.AssignmentID == latestAssignment.AssignmentID);
+
+                //get Post notification Count
+                var postNotificationCount = _context.Notifications.Count(i => i.RecipientID == instructor.UserId);
+
+                //get post Submission Assignment
+                var postSubmission = _context.Submissions.Last();
+              
+                // Determine if everything is working.
+                Assert.AreEqual(postSubmissionCount, preSubmissionCount + 1);
+                Assert.AreEqual(postNotificationCount, preNotificationCount + 1);
+                Assert.AreEqual(postSubmission.Grade, -1);
+                Assert.AreEqual(postSubmission.SubmissionType, 1);
+                Assert.IsNotNull(postSubmission.Contents);
+                Assert.IsNotNull(postSubmission.SubmissionDate);
+                Assert.AreEqual(postSubmission.AssignmentID, newSubmission.AssignmentId);
+                
             }
         }
 
