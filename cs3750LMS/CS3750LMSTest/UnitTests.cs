@@ -23,8 +23,8 @@ namespace CS3750LMSTest
         {
             // connect to database
             var serviceProvider = new ServiceCollection()
-           .AddEntityFrameworkSqlServer()
-           .BuildServiceProvider();
+                .AddEntityFrameworkSqlServer()
+                .BuildServiceProvider();
 
             var builder = new DbContextOptionsBuilder<cs3750Context>();
             builder.UseSqlServer($"Data Source=titan.cs.weber.edu,10433;Initial Catalog=LMSBinEnt;USER ID=LMSBinEnt;Password=8!N4Ry3n7")
