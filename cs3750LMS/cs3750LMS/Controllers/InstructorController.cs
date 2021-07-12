@@ -21,6 +21,11 @@ namespace cs3750LMS.Controllers
         private readonly cs3750Context _context;
         private IHostingEnvironment Environment;
         private readonly INotificationRepository _notification;
+        public InstructorController(cs3750Context context, IHostingEnvironment _environment)
+        {
+            _context = context;
+            Environment = _environment;
+        }
         public InstructorController(cs3750Context context, IHostingEnvironment _environment, INotificationRepository _notification)
         {
             _context = context;
@@ -52,7 +57,7 @@ namespace cs3750LMS.Controllers
                 course.Selection = userCourses.CourseList.Where(x => x.CourseID == id).Single();
                 course.AssignmentList = _context.Assignments.Where(y => y.CourseID == id).ToList();
 
-                HttpContext.Session.SetString(courseKey,JsonSerializer.Serialize(course));
+                HttpContext.Session.SetString(courseKey, JsonSerializer.Serialize(course));
             }
 
             course.ModeSetting = 1;
@@ -65,22 +70,11 @@ namespace cs3750LMS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddAssignment([Bind("CourseID,Title,Description,MaxPoints,DueDate,DueTime,SubmitType")] AssignmentValidationAdd assignment){
+        public IActionResult AddAssignment([Bind("CourseID,Title,Description,MaxPoints,DueDate,DueTime,SubmitType")] AssignmentValidationAdd assignment)
+        {
             if (ModelState.IsValid)
             {
-                Assignment newA = new Assignment
-                {
-                    CourseID = assignment.CourseID,
-                    Title = assignment.Title,
-                    Description = assignment.Description,
-                    MaxPoints = assignment.MaxPoints,
-                    DueDate = assignment.DueDate + assignment.DueTime,
-                    SubmissionType = assignment.SubmitType
-                };
-
-                //Add to database
-                _context.Assignments.Add(newA);
-                _context.SaveChanges();
+                Assignment newA = AddAssignmentTodb(assignment);
 
                 string courseKey = "course" + assignment.CourseID;
                 string serialSelected = HttpContext.Session.GetString(courseKey);
@@ -108,7 +102,7 @@ namespace cs3750LMS.Controllers
             if (ModelState.IsValid)
             {
                 //get the assignment from the database
-                _assignment = _context.Assignments.Where(x =>x.AssignmentID == editAssignment.AssignmentID).Single();                                                            
+                _assignment = _context.Assignments.Where(x => x.AssignmentID == editAssignment.AssignmentID).Single();
 
                 //update database assignment with edited form assignment fields
                 _assignment.CourseID = editAssignment.CourseID;
@@ -117,11 +111,11 @@ namespace cs3750LMS.Controllers
                 _assignment.MaxPoints = editAssignment.MaxPoints;
                 _assignment.DueDate = editAssignment.DueDate + editAssignment.DueTime;
                 _assignment.SubmissionType = editAssignment.SubmitType;
-        
-                  //Update the database to save the changes. 
-                 _context.SaveChanges();
 
-                 //Update the Session
+                //Update the database to save the changes. 
+                _context.SaveChanges();
+
+                //Update the Session
                 string courseKey = "course" + editAssignment.CourseID;
                 string serialSelected = HttpContext.Session.GetString(courseKey);
                 SpecificCourse course = JsonSerializer.Deserialize<SpecificCourse>(serialSelected);
@@ -143,7 +137,7 @@ namespace cs3750LMS.Controllers
 
                 //save the session
                 HttpContext.Session.SetString(courseKey, JsonSerializer.Serialize(course));
-      
+
             }
             return CourseEdit(editAssignment.CourseID);
         }
@@ -173,7 +167,7 @@ namespace cs3750LMS.Controllers
                     //if departments were grabbed before are saved in session else put in session
                     string serialDepts = HttpContext.Session.GetString("Departments");
                     Departments depts;
-                    if(serialDepts != null)
+                    if (serialDepts != null)
                     {
                         depts = JsonSerializer.Deserialize<Departments>(serialDepts);
                     }
@@ -185,7 +179,7 @@ namespace cs3750LMS.Controllers
                         };
                         HttpContext.Session.SetString("Departments", JsonSerializer.Serialize(depts));
                     }
-                  
+
                     //pass data to view
                     ViewData["DepartmentData"] = depts;
                     ViewData["Message"] = session;
@@ -288,6 +282,27 @@ namespace cs3750LMS.Controllers
             return newCourse;
         }
 
+        // Function to add a class into to the database with the givin parameters
+        public Assignment AddAssignmentTodb(AssignmentValidationAdd _Assignment)
+        {
+            Assignment newA = new Assignment
+            {
+                CourseID = _Assignment.CourseID,
+                Title = _Assignment.Title,
+                Description = _Assignment.Description,
+                MaxPoints = _Assignment.MaxPoints,
+                DueDate = _Assignment.DueDate + _Assignment.DueTime,
+                SubmissionType = _Assignment.SubmitType
+            };
+
+            //Add to database
+            _context.Assignments.Add(newA);
+            _context.SaveChanges();
+
+            // return the new course
+            return newA;
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditClassAsync([Bind("Instructor,Department,ClassNumber,ClassTitle,Description,Location,Credits,Capacity,MeetDays,StartTime,EndTime,Color,CourseID")] ClassValidationAdd updatedClass)
@@ -381,7 +396,7 @@ namespace cs3750LMS.Controllers
             ViewData["Courses"] = userCourses;
             return View("AddClass");
         }
-        
+
         [HttpGet]
         public IActionResult Submissions(int id)
         {
@@ -394,7 +409,7 @@ namespace cs3750LMS.Controllers
 
             SpecificAssignment assignment = new SpecificAssignment();
 
-            if(courseAssignments.AssignmentList.Any(x => x.AssignmentID == id))
+            if (courseAssignments.AssignmentList.Any(x => x.AssignmentID == id))
             {
                 assignment.Selection = courseAssignments.AssignmentList.Where(x => x.AssignmentID == id).Single();
             }
@@ -473,7 +488,7 @@ namespace cs3750LMS.Controllers
             assignment.ModeSetting = 1;
             string path = "";
 
-            if(submission.SubmissionType == 0)
+            if (submission.SubmissionType == 0)
             {
                 path = "https://localhost:44354/" + "/Submissions/" + assignment.Selection.AssignmentID + "/" + student.UserId + "/" + submission.Contents;
             }
@@ -512,7 +527,7 @@ namespace cs3750LMS.Controllers
                 success = true;
             }
 
-            
+
             //getCourses for notification
             string serialCourse = HttpContext.Session.GetString("userCourses");
             Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
@@ -535,10 +550,10 @@ namespace cs3750LMS.Controllers
             };
 
             //calls the repository function add which adds a notification to the database. 
-            this._notification.Add(message);  
+            this._notification.Add(message);
 
-          
-            
+
+
 
 
             SpecificAssignment assignment = new SpecificAssignment();
