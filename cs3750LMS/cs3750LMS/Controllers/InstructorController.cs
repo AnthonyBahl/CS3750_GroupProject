@@ -21,11 +21,6 @@ namespace cs3750LMS.Controllers
         private readonly cs3750Context _context;
         private IHostingEnvironment Environment;
         private readonly INotificationRepository _notification;
-        public InstructorController(cs3750Context context, IHostingEnvironment _environment)
-        {
-            _context = context;
-            Environment = _environment;
-        }
         public InstructorController(cs3750Context context, IHostingEnvironment _environment, INotificationRepository _notification)
         {
             _context = context;

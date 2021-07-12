@@ -18,6 +18,7 @@ namespace CS3750LMSTest
         cs3750Context _context;
 
         private IHostingEnvironment Environment;
+        private INotificationRepository _notification;
 
         // constructor of what happens at every time this class is called
         public UnitTests()
@@ -54,7 +55,7 @@ namespace CS3750LMSTest
                 TimeSpan endTime = new TimeSpan(21, 50, 50);
 
                 // call instructor controller with the context and enviroment passed in
-                var controller = new InstructorController(_context, Environment);
+                var controller = new InstructorController(_context, Environment, _notification);
 
                 // create a new class object
                 ClassValidationAdd newClass = new ClassValidationAdd();
@@ -117,7 +118,7 @@ namespace CS3750LMSTest
                 newAssignment.SubmitType = 1;
 
                 // Create an instance of the Instructor controller
-                InstructorController controller = new InstructorController(_context, Environment);
+                InstructorController controller = new InstructorController(_context, Environment, _notification);
 
                 // Add the Assignment in the controller
                 controller.AddAssignmentTodb(newAssignment);
