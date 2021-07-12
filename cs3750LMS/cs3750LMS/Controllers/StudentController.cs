@@ -96,8 +96,14 @@ namespace cs3750LMS.Controllers
             Assignments userAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
 
             Assignment clickedAssignment = userAssignments.AssignmentList.Where(x => x.AssignmentID == id).Single();
-
-
+            if (submissions.Count(x=>x.AssignmentID == clickedAssignment.AssignmentID) >0 )
+            {
+                ViewData["AlreadySubmitted"] = true;
+            }
+            else
+            {
+                ViewData["AlreadySubmitted"] = false;
+            }
             ViewData["currentCourse"] = clickedAssignment.CourseID;
             ViewData["Submission"] = submissions;
             ViewData["ClickedAssignment"] = clickedAssignment;
