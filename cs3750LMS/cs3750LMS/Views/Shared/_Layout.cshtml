@@ -1,6 +1,8 @@
 ﻿@{
     UserSession show = (UserSession)ViewData["Message"];
-}
+}   
+
+@inject cs3750LMS.Models.Repository.INotificationRepository _notification
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,7 +14,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/site.css" />
     <script src="https://kit.fontawesome.com/96bd72d7d0.js" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> @*Google Graphs*@
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> @*Google Graphs*@   
 
 </head>
 <body class="d-flex flex-column">
@@ -71,28 +73,40 @@
                             </li>
 
                             <li class="nav-item">
-                                <!-- ******************************************************** UI CHANGE ************************************************************ -->
-                                <!-- Changing the class on the div below from dropright to dropdown will ensure that the notifications show up below the bell icon.  -->
-                                <!-- ******************************************************************************************************************************* -->
                                 <div class="dropright">
-                                    @*TODO: When you use a for loop to create each of the items in the dropdown-menu. Make sure to pass the amount to the Itemscount variable in the javascript.
-                                    *@
-                                    <!-- ******************************************************** UI CHANGE ************************************************************ -->
-                                    <!-- The a link below should have the following properties: href="#", id="navbarDropdown", role="button", and aria-expanded="false". -->
-                                    <!-- ******************************************************************************************************************************* -->
                                     <a class="nav-link" data-toggle="dropdown"> <i id="bellIcon" class="far fa-bell fa-lg"></i></a>
 
-                                    <!-- ******************************************************** UI CHANGE ************************************************************ -->
-                                    <!-- The ul element below should have the property aria-labelledby="navbarDropdown". -->
-                                    <!-- ******************************************************************************************************************************* -->
                                     <ul class="dropdown-menu">
-                                        <li class="dropdown-item"><a href="#">Link 1</a><i class="far fa-window-close fa-sm float-right"></i></li>
-                                        <li class="dropdown-item"><a href="#">Link 2</a><i class="far fa-window-close fa-sm float-right"></i></li>
-                                        <li class="dropdown-item"><a href="#" id="test1">Link 3</a><i class="far fa-window-close fa-sm float-right" onclick="removeNotificationItem()"></i></li>
-                                        <li class="dropdown-item"><a href="#" id="test1">Link 4</a><i class="far fa-window-close fa-sm float-right" onclick="removeNotificationItem()"></i></li>
-                                        <li class="dropdown-item"><a href="#" id="test1">Link 5</a><i class="far fa-window-close fa-sm float-right" onclick="removeNotificationItem()"></i></li>
-                                    </ul>
 
+                                        @{var notiCount = 0;
+                                        }
+
+                                        @foreach (var noti in _notification.GetAllUserNotifications(show.UserId))
+                                        {
+                                            notiCount++;
+
+                                            //Each Account Type and Notification Type combination will have a different <a></a> link when clicked. 
+                                            if (show.AccountType == 0 && noti.NotificationType == "Assignment")  //student
+                                            {
+                                                <li class="dropdown-item">
+                                                    <i id="notificationXicon" class="far fa-window-close fa-med icorrect" onclick="removeNotificationItem()"></i>
+                                                    <a asp-controller="Student" asp-action="ViewCourse" asp-route-id=@noti.ReferenceID>
+                                                        @noti.Message
+                                                    </a>
+                                                </li>
+                                            }
+                                            else if(show.AccountType == 1 && noti.NotificationType == "Assignment") //teacher
+                                            {
+                                                <li class="dropdown-item">
+                                                    <i id="notificationXicon" class="far fa-window-close fa-med icorrect" onclick="removeNotificationItem()"></i>
+                                                    <a asp-controller="Instructor" asp-action="CourseEdit" asp-route-id="@noti.ReferenceID">
+                                                        @noti.Message
+                                                    </a>
+                                                </li>
+                                            }
+                                        }
+                                    </ul>
+                                    <input type="hidden" id="PassingNotificationCountToJavaScript" value=@notiCount>
                                 </div>
                             </li>
                         }

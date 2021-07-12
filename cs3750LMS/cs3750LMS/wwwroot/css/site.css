@@ -284,3 +284,15 @@ body {
   100% { transform: rotate(0deg); }
 
 }
+
+
+#notificationXicon:hover{
+    color:orangered;
+}
+
+.icorrect{  
+    padding:0px;
+    margin-right:20px;
+}
+
+/*------------------------------------*/

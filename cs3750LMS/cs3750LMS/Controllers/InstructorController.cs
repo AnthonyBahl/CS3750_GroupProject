@@ -2,6 +2,7 @@
 using cs3750LMS.Models;
 using cs3750LMS.Models.entites;
 using cs3750LMS.Models.general;
+using cs3750LMS.Models.Repository;
 using cs3750LMS.Models.validation;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -19,10 +20,12 @@ namespace cs3750LMS.Controllers
     {
         private readonly cs3750Context _context;
         private IHostingEnvironment Environment;
-        public InstructorController(cs3750Context context, IHostingEnvironment _environment)
+        private readonly INotificationRepository _notification;
+        public InstructorController(cs3750Context context, IHostingEnvironment _environment, INotificationRepository _notification)
         {
             _context = context;
             Environment = _environment;
+            this._notification = _notification;
         }
 
 
@@ -162,7 +165,7 @@ namespace cs3750LMS.Controllers
                     //set courses object for next pass
                     string serialCourse = HttpContext.Session.GetString("userCourses");
                     Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
-                    //reload timespans
+                    //reload time spans
                     string serialTimes = HttpContext.Session.GetString("courseTimes");
                     List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
                     userCourses.RefactorTimeSpans(times);
@@ -204,7 +207,7 @@ namespace cs3750LMS.Controllers
             //set courses object for next pass
             string serialCourse = HttpContext.Session.GetString("userCourses");
             Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
-            //reload timespans
+            //reload time spans
             string serialTimes = HttpContext.Session.GetString("courseTimes");
             List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
             userCourses.RefactorTimeSpans(times);
@@ -297,7 +300,7 @@ namespace cs3750LMS.Controllers
             string serialCourse = HttpContext.Session.GetString("userCourses");
             Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
 
-            //reload timespans
+            //reload times pans
             string serialTimes = HttpContext.Session.GetString("courseTimes");
             List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
             userCourses.RefactorTimeSpans(times);
@@ -378,7 +381,7 @@ namespace cs3750LMS.Controllers
             ViewData["Courses"] = userCourses;
             return View("AddClass");
         }
-
+        
         [HttpGet]
         public IActionResult Submissions(int id)
         {
@@ -509,6 +512,35 @@ namespace cs3750LMS.Controllers
                 success = true;
             }
 
+            
+            //getCourses for notification
+            string serialCourse = HttpContext.Session.GetString("userCourses");
+            Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+
+            //Need these to create the message for the notification. 
+            int courseID = courseAssignments.AssignmentList.Where(a => a.AssignmentID == updatedGrade.AssignmentID).Select(x => x.CourseID).FirstOrDefault();
+            String CourseName = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(v => v.ClassTitle).FirstOrDefault();
+            String AssignmentName = courseAssignments.AssignmentList.Where(a => a.AssignmentID == updatedGrade.AssignmentID).Select(x => x.Title).FirstOrDefault();
+
+
+            //create notification for graded assignment. 
+            Notification message = new Notification
+            {
+                RecipientID = submission.StudentID,  //this will send it to the student
+                ReferenceID = courseID,         //this makes it so when the student clicks on the notification, it takes them to the course page. 
+                NotificationType = "Assignment",
+                Message = CourseName + " | " + AssignmentName + " grade was changed",
+                DateCreated = DateTime.Now,
+                DateViewed = DateTime.Now //had to put this in because it would error if it wasn't initalized. 
+            };
+
+            //calls the repository function add which adds a notification to the database. 
+            this._notification.Add(message);  
+
+          
+            
+
+
             SpecificAssignment assignment = new SpecificAssignment();
 
             if (courseAssignments.AssignmentList.Any(x => x.AssignmentID == submission.AssignmentID))
@@ -533,7 +565,11 @@ namespace cs3750LMS.Controllers
             ViewData["ClickedAssignment"] = assignment;
             ViewData["Students"] = courseStudents;
             ViewData["Message"] = session;
+            //OOOOOOOOOOOOOOOOOOOOOOOOOO --------- DELETE THIS COMMENT LATER ------------ OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+            //ViewData["Notifications"] = userNotifications;
+            //OOOOOOOOOOOOOOOOOOOOOOOOOO --------- DELETE THIS COMMENT LATER ------------ OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
             return View("Submissions", assignment.Selection.AssignmentID);
         }
+
     }
 }
