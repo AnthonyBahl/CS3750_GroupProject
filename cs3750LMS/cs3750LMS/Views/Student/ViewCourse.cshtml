@@ -20,6 +20,7 @@
                 <th scope="col">Due Date</th>
                 <th scope="col">Due Time</th>
                 <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -31,20 +32,15 @@
                     <td scope="row">@course.AssignmentList[i].DueDate.ToString("hh:mm tt")</td>
                     @if (submissionIds.Contains(course.AssignmentList[i].AssignmentID))
                     {
-                        Submission currentIteration = submission.Where(x => x.AssignmentID == course.AssignmentList[i].AssignmentID).Single();
+                        
+                        <td>
+                            Submitted
+                        </td>
+                        <td>
+                            <a type="button" asp-controller="Student" asp-action="SubmitAssignment" asp-route-id="@course.AssignmentList[i].AssignmentID" class="btn btn-success">Details</a>
+                        </td>
+                        
 
-                        if (currentIteration.Grade == -1)
-                        {
-                            <td>
-                                Submitted
-                            </td>
-                        }
-                        else
-                        {
-                            <td>
-                                Grade: @currentIteration.Grade
-                            </td>
-                        }
                     }
                     else
                     {
