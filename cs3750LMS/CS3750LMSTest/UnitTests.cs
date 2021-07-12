@@ -7,6 +7,7 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
+using cs3750LMS.Models.Repository;
 
 namespace CS3750LMSTest
 {
@@ -82,6 +83,51 @@ namespace CS3750LMSTest
                 Assert.AreEqual(instructorCourses, expectedInstructorCourses);
        
             } // Dispose rolls back everything.
+        }
+
+        /// <summary>
+        /// This method tests to make sure that the create assignment functionality does not break.
+        /// </summary>
+        [TestMethod]
+        public void InstructorCanCreateAnAssignmentTest() {
+            // Set up Transaction Scope so that nothing is added to the database
+            using (new TransactionScope())
+            {
+                // Grab user 1025 who is a test instructor in the database
+                var instructor = _context.Users.Find(1025);
+
+                // grab list of courses
+                var instructorCourses = _context.Courses.Where(c => c.InstructorID.Equals(instructor.UserId)).ToList();
+                // Get latest course
+                var latestCourse = instructorCourses.Last();
+                // Get assignment count
+                int currentAssignmentCount = _context.Assignments.Count(a => a.CourseID.Equals(latestCourse.CourseID));
+
+                // Create new assignment
+                AssignmentValidationAdd newAssignment = new AssignmentValidationAdd();
+
+                // Assign values to each field
+                newAssignment.CourseID = latestCourse.CourseID;
+                newAssignment.Title = "Test Assignment";
+                newAssignment.Description = "This is just a test";
+                newAssignment.MaxPoints = 100;
+                newAssignment.DueDate = DateTime.Now.AddDays(5);
+                newAssignment.DueTime = new TimeSpan(21, 40, 50);
+                newAssignment.SubmitType = 1;
+
+                // Create an instance of the Instructor controller
+                InstructorController controller = new InstructorController(_context, Environment);
+
+                // Add the Assignment in the controller
+                controller.AddAssignmentTodb(newAssignment);
+
+                // Check assignment count again
+                var updatedAssignmentCount = _context.Assignments.Count(a => a.CourseID.Equals(latestCourse.CourseID));
+
+                // Determine if everything is working.
+                Assert.AreEqual(updatedAssignmentCount, currentAssignmentCount + 1);
+
+            }
         }
 
     }

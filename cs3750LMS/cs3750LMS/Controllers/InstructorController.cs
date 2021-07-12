@@ -21,6 +21,11 @@ namespace cs3750LMS.Controllers
         private readonly cs3750Context _context;
         private IHostingEnvironment Environment;
         private readonly INotificationRepository _notification;
+        public InstructorController(cs3750Context context, IHostingEnvironment _environment)
+        {
+            _context = context;
+            Environment = _environment;
+        }
         public InstructorController(cs3750Context context, IHostingEnvironment _environment, INotificationRepository _notification)
         {
             _context = context;
@@ -68,19 +73,7 @@ namespace cs3750LMS.Controllers
         public IActionResult AddAssignment([Bind("CourseID,Title,Description,MaxPoints,DueDate,DueTime,SubmitType")] AssignmentValidationAdd assignment){
             if (ModelState.IsValid)
             {
-                Assignment newA = new Assignment
-                {
-                    CourseID = assignment.CourseID,
-                    Title = assignment.Title,
-                    Description = assignment.Description,
-                    MaxPoints = assignment.MaxPoints,
-                    DueDate = assignment.DueDate + assignment.DueTime,
-                    SubmissionType = assignment.SubmitType
-                };
-
-                //Add to database
-                _context.Assignments.Add(newA);
-                _context.SaveChanges();
+                Assignment newA = AddAssignmentTodb(assignment);
 
                 string courseKey = "course" + assignment.CourseID;
                 string serialSelected = HttpContext.Session.GetString(courseKey);
@@ -286,6 +279,27 @@ namespace cs3750LMS.Controllers
 
             // return the new course
             return newCourse;
+        }
+
+        // Function to add a class into to the database with the givin parameters
+        public Assignment AddAssignmentTodb(AssignmentValidationAdd _Assignment)
+        {
+            Assignment newA = new Assignment
+            {
+                CourseID = _Assignment.CourseID,
+                Title = _Assignment.Title,
+                Description = _Assignment.Description,
+                MaxPoints = _Assignment.MaxPoints,
+                DueDate = _Assignment.DueDate + _Assignment.DueTime,
+                SubmissionType = _Assignment.SubmitType
+            };
+
+            //Add to database
+            _context.Assignments.Add(newA);
+            _context.SaveChanges();
+
+            // return the new course
+            return newA;
         }
 
         [HttpPost]
