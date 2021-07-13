@@ -20,7 +20,6 @@ namespace CS3750LMSTest
 
         private IHostingEnvironment Environment;
         private INotificationRepository _notification;
-        private ILogger<HomeController> _logger;
 
         // constructor of what happens at every time this class is called
         public UnitTests()
