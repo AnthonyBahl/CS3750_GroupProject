@@ -137,7 +137,7 @@ namespace CS3750LMSTest
         /* Start login Testing */
 
         [TestMethod]
-        public void UserFoundExists()
+        public void UserFoundExistsTest()
         {
             /////////////////Prep tests
             //Student Email should exists
@@ -177,7 +177,7 @@ namespace CS3750LMSTest
         }
 
         [TestMethod]
-        public void UserFoundPasswordsAreMatching() 
+        public void UserFoundPasswordsAreMatchingTest() 
         {
             //////////////////Prep Tests
             ///Student info
