@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
 using cs3750LMS.Models.Repository;
+using Microsoft.Extensions.Logging;
 
 namespace CS3750LMSTest
 {
@@ -19,6 +20,7 @@ namespace CS3750LMSTest
 
         private IHostingEnvironment Environment;
         private INotificationRepository _notification;
+        private ILogger<HomeController> _logger;
 
         // constructor of what happens at every time this class is called
         public UnitTests()
@@ -131,6 +133,101 @@ namespace CS3750LMSTest
 
             }
         }
+
+        /* Start login Testing */
+
+        [TestMethod]
+        public void UserFoundExists()
+        {
+            /////////////////Prep tests
+            //Student Email should exists
+            string email = "student@mail.com";
+            User emailResult;
+
+            //non-email should not-exist
+            string nonEmail = "nomail";
+            User nonEmailResult;
+
+            //empty should not-exist
+            string emptyMail = "";
+            User emptyMailResult;
+
+            //HomeController loginControl = new HomeController(_logger, _context);
+
+            /////////////////////////Tests
+            //test Student Email should not exist
+            emailResult = HomeController.FindUserByEmail(email, _context);
+
+            //test non-email should not-exist
+            nonEmailResult = HomeController.FindUserByEmail(nonEmail, _context);
+
+            //empty should not-exist
+            emptyMailResult = HomeController.FindUserByEmail(emptyMail, _context);
+
+            /////////////////////////Test Results
+            //test student email result
+            Assert.AreEqual(emailResult.Email, email);
+
+            //test non-email result
+            Assert.AreEqual(nonEmailResult, null);
+
+            //test empty-email result
+            Assert.AreEqual(emptyMailResult, null);
+
+        }
+
+        [TestMethod]
+        public void UserFoundPasswordsAreMatching() 
+        {
+            //////////////////Prep Tests
+            ///Student info
+            User student = HomeController.FindUserByEmail("student@mail.com", _context);
+
+            //Test correct password
+            string passwordStudent = "password";
+            bool correctInfoResult;
+
+            //Test wrong case
+            string passwordUpperCase = "PASSWORD";
+            bool upperCaseResult;
+
+            //Test empty password
+            string passwordEmpty = "";
+            bool emptyResult;
+
+            //Test wrong password same length
+            string wrongPassword = "12345678";
+            bool wrongPasswordResult;
+
+            ////////////////////Tests
+            //Test correct password
+            correctInfoResult = HomeController.ComparePasswords(student.Password, passwordStudent);
+
+            //Test wrong case
+            upperCaseResult = HomeController.ComparePasswords(student.Password, passwordUpperCase);
+
+            //Test empty password
+            emptyResult = HomeController.ComparePasswords(student.Password, passwordEmpty);
+
+            //Test wrong password same length
+            wrongPasswordResult = HomeController.ComparePasswords(student.Password, wrongPassword);
+
+            //////////////////Test Results
+            //Test correct password
+            Assert.IsTrue(correctInfoResult);
+
+            //Test wrong case
+            Assert.IsFalse(upperCaseResult);
+
+            //Test empty password
+            Assert.IsFalse(emptyResult);
+
+            //Test wrong password same length
+            Assert.IsFalse(wrongPasswordResult);
+
+        }
+
+        /* end Login Testing */
 
     }
 }
