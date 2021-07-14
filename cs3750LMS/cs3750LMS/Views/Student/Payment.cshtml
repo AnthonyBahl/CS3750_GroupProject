@@ -31,21 +31,24 @@
                                 {
                                     @for (int i = 0; i < studentCourses.CourseList.Count; i++)
                                     {
-                                    <tr>
-                                        <td class="col-md-9"><em>@studentCourses.CourseList[i].ClassTitle | @studentCourses.CourseList[i].ClassNumber</em></td>
-                                        <td class="col-md-1 text-center">$@(studentCourses.CourseList[i].Credits * 100)</td>
-                                        @{ grandTotal += studentCourses.CourseList[i].Credits * 100; }
-                                    </tr>
+                                        <tr>
+                                            <td class="col-md-9"><em>@studentCourses.CourseList[i].ClassTitle | @studentCourses.CourseList[i].ClassNumber</em></td>
+                                            <td class="col-md-1 text-center">$@(studentCourses.CourseList[i].Credits * 100)</td>
+                                            @{ grandTotal += studentCourses.CourseList[i].Credits * 100; }
+                                        </tr>
                                     }
-                                 }
-                                 @for (int i = 0; i < studentTransactions.TransactionList.Count; i++)
-                                 {
-                                    <tr style="color: green">
-                                        <td class="col-md-9"><em>Payment on @studentTransactions.TransactionList[i].Date.ToString()</em></td>
-                                        <td class="col-md-1 text-center">-$@(studentTransactions.TransactionList[i].amount / 100)</td>
-                                        @{ grandTotal -= studentTransactions.TransactionList[i].amount / 100; }
-                                    </tr>
-                                 }
+                                }
+                                @if (studentTransactions != null)
+                                {
+                                    @for (int i = 0; i < studentTransactions.TransactionList.Count; i++)
+                                    {
+                                        <tr style="color: green">
+                                            <td class="col-md-9"><em>Payment on @studentTransactions.TransactionList[i].Date.ToString()</em></td>
+                                            <td class="col-md-1 text-center">-$@(studentTransactions.TransactionList[i].amount / 100)</td>
+                                            @{ grandTotal -= studentTransactions.TransactionList[i].amount / 100; }
+                                        </tr>
+                                    }
+                                }
                                 <tr>
                                     <td class="text-right"><h4><strong>Total: </strong></h4></td>
                                     <td class="text-center text-danger"><h4><strong>$@grandTotal</strong></h4></td>
