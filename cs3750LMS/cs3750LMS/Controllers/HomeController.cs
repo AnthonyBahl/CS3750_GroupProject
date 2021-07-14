@@ -83,19 +83,7 @@ namespace cs3750LMS.Controllers
                 if (_context.Users.Count(e => e.Email == testUser.Email) == 0)
                 {
                     //create the new user
-                    User users = new Models.User
-                    {
-                        Email = testUser.Email,
-                        FirstName = testUser.FirstName,
-                        LastName = testUser.LastName,
-                        Birthday = testUser.Birthday,
-                        Password = Sha256(testUser.Password),
-                        AccountType = testUser.AccountType
-                    };
-
-                    //add the new user to the database and save changes
-                    _context.Add(users);
-                    await _context.SaveChangesAsync();
+                    User users = AddUserToDB(testUser);
 
                     //set user email in session, and various info as a session object in session
                     HttpContext.Session.Set<string>("user", users.Email);
@@ -150,6 +138,28 @@ namespace cs3750LMS.Controllers
 
             //on failure route to sign-up
             return View();
+        }
+
+        // Function to add a user into to the database with the givin parameters
+        public User AddUserToDB(UserValidationSignUp newUser)
+        {
+            //create the new user
+            User users = new Models.User
+            {
+                Email = newUser.Email,
+                FirstName = newUser.FirstName,
+                LastName = newUser.LastName,
+                Birthday = newUser.Birthday,
+                Password = Sha256(newUser.Password),
+                AccountType = newUser.AccountType
+            };
+
+            //add the new user to the database and save changes
+            _context.Add(users);
+            _context.SaveChanges();
+
+            // return the new user
+            return users;
         }
 
         [HttpPost]

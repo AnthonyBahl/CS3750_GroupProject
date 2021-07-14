@@ -20,6 +20,7 @@ namespace CS3750LMSTest
 
         private IHostingEnvironment Environment;
         private INotificationRepository _notification;
+        ILogger<HomeController> _logger;
 
         // constructor of what happens at every time this class is called
         public UnitTests()
@@ -37,6 +38,9 @@ namespace CS3750LMSTest
             _context.Database.Migrate();
         }
 
+        /// <summary>
+        /// This method tests to make sure that the instructor can create a course
+        /// </summary>
         [TestMethod]
         public void InstructorCanCreateACourseTest()
         {
@@ -227,6 +231,47 @@ namespace CS3750LMSTest
         }
 
         /* end Login Testing */
+
+        /// <summary>
+        /// This method tests to make sure that the application can register users
+        /// </summary>
+        [TestMethod]
+        public void RegisterUserTest()
+        {
+            // in a transaction scope so it will not be run in the database
+            using (new TransactionScope())
+            {
+                // call home controller with the context and logger passed in
+                var controller = new HomeController(_logger, _context);
+
+                // grab the users count
+                var allUsers = _context.Users.Count();
+                var expectedUsers = allUsers + 1; // grab the expected result
+
+                // create a new class object
+                UserValidationSignUp newUser = new UserValidationSignUp();
+
+                // add fields
+                newUser.Email = "testing@test.com";
+                newUser.FirstName = "test";
+                newUser.LastName = "testing";
+                newUser.Birthday = DateTime.Now.AddDays(7300);
+                newUser.Password = "password";
+                newUser.ConfirmPassword = "password";
+                newUser.AccountType = 1;
+
+                // Act
+                // add the class in the controller
+                controller.AddUserToDB(newUser);
+
+                // find out the count again
+                allUsers = _context.Users.Count();
+
+                // Assert
+                Assert.AreEqual(allUsers, expectedUsers);
+
+            } // Dispose rolls back everything.
+        }
 
     }
 }
