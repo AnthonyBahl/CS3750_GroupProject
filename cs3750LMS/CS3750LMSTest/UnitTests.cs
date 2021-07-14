@@ -236,12 +236,12 @@ namespace CS3750LMSTest
         /// This method tests to make sure that the application can register users
         /// </summary>
         [TestMethod]
-        public void RegisterUser()
+        public void RegisterUserTest()
         {
             // in a transaction scope so it will not be run in the database
             using (new TransactionScope())
             {
-                // call instructor controller with the context and logger passed in
+                // call home controller with the context and logger passed in
                 var controller = new HomeController(_logger, _context);
 
                 // grab the users count
