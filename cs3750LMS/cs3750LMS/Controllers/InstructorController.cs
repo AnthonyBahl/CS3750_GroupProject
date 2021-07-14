@@ -513,13 +513,7 @@ namespace cs3750LMS.Controllers
             bool success = false;
             if (ModelState.IsValid)
             {
-                // Create connection to the database
-                submission = _context.Submissions.Where(x => x.SubmissionID == updatedGrade.SubmissionID).Single();
-                submission.Grade = updatedGrade.Grade;
-                // Update Database
-                await _context.SaveChangesAsync();
-
-                success = true;
+                success = UpdateGrade(updatedGrade, _context);
             }
 
 
@@ -547,10 +541,6 @@ namespace cs3750LMS.Controllers
             //calls the repository function add which adds a notification to the database. 
             this._notification.Add(message);
 
-
-
-
-
             SpecificAssignment assignment = new SpecificAssignment();
 
             if (courseAssignments.AssignmentList.Any(x => x.AssignmentID == submission.AssignmentID))
@@ -575,11 +565,23 @@ namespace cs3750LMS.Controllers
             ViewData["ClickedAssignment"] = assignment;
             ViewData["Students"] = courseStudents;
             ViewData["Message"] = session;
-            //OOOOOOOOOOOOOOOOOOOOOOOOOO --------- DELETE THIS COMMENT LATER ------------ OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
-            //ViewData["Notifications"] = userNotifications;
-            //OOOOOOOOOOOOOOOOOOOOOOOOOO --------- DELETE THIS COMMENT LATER ------------ OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
             return View("Submissions", assignment.Selection.AssignmentID);
         }
 
+        public bool UpdateGrade(GradeValidation grade, cs3750Context _context)
+        {
+            if(grade == null || grade.Grade < 0)
+            {
+                return false;
+            }
+            Submission submission = new Submission();
+            // Create connection to the database
+            submission = _context.Submissions.Where(x => x.SubmissionID == grade.SubmissionID).Single();
+            submission.Grade = grade.Grade;
+            // Update Database
+            _context.SaveChanges();
+
+            return true;
+        }
     }
 }

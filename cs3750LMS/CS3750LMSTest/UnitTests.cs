@@ -9,6 +9,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
 using cs3750LMS.Models.Repository;
 using Microsoft.Extensions.Logging;
+using cs3750LMS.Models.entites;
+using System.Collections.Generic;
+using cs3750LMS.Models.validation;
 
 namespace CS3750LMSTest
 {
@@ -232,6 +235,74 @@ namespace CS3750LMSTest
 
         /* end Login Testing */
 
+        /* Begin Grade Update Testing */
+
+        /// <summary>
+        /// This method tests to make sure that grades can be updated.
+        /// </summary>
+        [TestMethod]
+        public void InstructorCanUpdateGradeTest()
+        {
+            // Set up Transaction Scope so that nothing is added to the database
+            using (new TransactionScope())
+            {
+                // Grab list of submissions
+                List<Submission> submissions = _context.Submissions.ToList();
+                // Get last submission
+                Submission lastSubmission = submissions.Last();
+
+                GradeValidation grade = new GradeValidation();
+
+                grade.SubmissionID = lastSubmission.SubmissionID;
+                grade.AssignmentID = lastSubmission.AssignmentID;
+                grade.StudentID = lastSubmission.StudentID;
+                grade.SubmissionDate = lastSubmission.SubmissionDate;
+                grade.SubmissionType = lastSubmission.SubmissionType;
+                grade.Grade = lastSubmission.Grade;
+                grade.Contents = lastSubmission.Contents;
+
+                // Create an instance of the Instructor controller
+                InstructorController controller = new InstructorController(_context, Environment, _notification);
+
+                // Test positive grade
+                int gradePos = 96;
+                bool positiveGrade;
+
+                // Test negative grade
+                int gradeNeg = -3;
+                bool negativeGrade;
+
+                // Test 0 grade
+                int gradeZero = 0;
+                bool zeroGrade;
+
+                ////////////////////Tests
+                // Test positive grade
+                grade.Grade = gradePos;
+                positiveGrade = controller.UpdateGrade(grade, _context);
+
+                // Test negative grade
+                grade.Grade = gradeNeg;
+                negativeGrade = controller.UpdateGrade(grade, _context);
+
+                // Test 0 grade
+                grade.Grade = gradeZero;
+                zeroGrade = controller.UpdateGrade(grade, _context);
+
+                //////////////////Test Results
+                //Test correct password
+                Assert.IsTrue(positiveGrade);
+
+                //Test wrong case
+                Assert.IsFalse(negativeGrade);
+
+                //Test empty password
+                Assert.IsTrue(zeroGrade);
+
+            }
+            /* End Grade Update Testing */
+        }
+      
         /// <summary>
         /// This method tests to make sure that the application can register users
         /// </summary>
