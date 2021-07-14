@@ -8,6 +8,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
 using cs3750LMS.Models.Repository;
+using Microsoft.Extensions.Logging;
+using cs3750LMS.Models.entites;
+using System.Collections.Generic;
+using cs3750LMS.Models.validation;
 
 namespace CS3750LMSTest
 {
@@ -19,6 +23,7 @@ namespace CS3750LMSTest
 
         private IHostingEnvironment Environment;
         private INotificationRepository _notification;
+        ILogger<HomeController> _logger;
 
         // constructor of what happens at every time this class is called
         public UnitTests()
@@ -36,6 +41,9 @@ namespace CS3750LMSTest
             _context.Database.Migrate();
         }
 
+        /// <summary>
+        /// This method tests to make sure that the instructor can create a course
+        /// </summary>
         [TestMethod]
         public void InstructorCanCreateACourseTest()
         {
@@ -130,6 +138,210 @@ namespace CS3750LMSTest
                 Assert.AreEqual(updatedAssignmentCount, currentAssignmentCount + 1);
 
             }
+        }
+
+        /* Start login Testing */
+
+        [TestMethod]
+        public void UserFoundExistsTest()
+        {
+            /////////////////Prep tests
+            //Student Email should exists
+            string email = "student@mail.com";
+            User emailResult;
+
+            //non-email should not-exist
+            string nonEmail = "nomail";
+            User nonEmailResult;
+
+            //empty should not-exist
+            string emptyMail = "";
+            User emptyMailResult;
+
+            //HomeController loginControl = new HomeController(_logger, _context);
+
+            /////////////////////////Tests
+            //test Student Email should not exist
+            emailResult = HomeController.FindUserByEmail(email, _context);
+
+            //test non-email should not-exist
+            nonEmailResult = HomeController.FindUserByEmail(nonEmail, _context);
+
+            //empty should not-exist
+            emptyMailResult = HomeController.FindUserByEmail(emptyMail, _context);
+
+            /////////////////////////Test Results
+            //test student email result
+            Assert.AreEqual(emailResult.Email, email);
+
+            //test non-email result
+            Assert.AreEqual(nonEmailResult, null);
+
+            //test empty-email result
+            Assert.AreEqual(emptyMailResult, null);
+
+        }
+
+        [TestMethod]
+        public void UserFoundPasswordsAreMatchingTest() 
+        {
+            //////////////////Prep Tests
+            ///Student info
+            User student = HomeController.FindUserByEmail("student@mail.com", _context);
+
+            //Test correct password
+            string passwordStudent = "password";
+            bool correctInfoResult;
+
+            //Test wrong case
+            string passwordUpperCase = "PASSWORD";
+            bool upperCaseResult;
+
+            //Test empty password
+            string passwordEmpty = "";
+            bool emptyResult;
+
+            //Test wrong password same length
+            string wrongPassword = "12345678";
+            bool wrongPasswordResult;
+
+            ////////////////////Tests
+            //Test correct password
+            correctInfoResult = HomeController.ComparePasswords(student.Password, passwordStudent);
+
+            //Test wrong case
+            upperCaseResult = HomeController.ComparePasswords(student.Password, passwordUpperCase);
+
+            //Test empty password
+            emptyResult = HomeController.ComparePasswords(student.Password, passwordEmpty);
+
+            //Test wrong password same length
+            wrongPasswordResult = HomeController.ComparePasswords(student.Password, wrongPassword);
+
+            //////////////////Test Results
+            //Test correct password
+            Assert.IsTrue(correctInfoResult);
+
+            //Test wrong case
+            Assert.IsFalse(upperCaseResult);
+
+            //Test empty password
+            Assert.IsFalse(emptyResult);
+
+            //Test wrong password same length
+            Assert.IsFalse(wrongPasswordResult);
+
+        }
+
+        /* end Login Testing */
+
+        /* Begin Grade Update Testing */
+
+        /// <summary>
+        /// This method tests to make sure that grades can be updated.
+        /// </summary>
+        [TestMethod]
+        public void InstructorCanUpdateGradeTest()
+        {
+            // Set up Transaction Scope so that nothing is added to the database
+            using (new TransactionScope())
+            {
+                // Grab list of submissions
+                List<Submission> submissions = _context.Submissions.ToList();
+                // Get last submission
+                Submission lastSubmission = submissions.Last();
+
+                GradeValidation grade = new GradeValidation();
+
+                grade.SubmissionID = lastSubmission.SubmissionID;
+                grade.AssignmentID = lastSubmission.AssignmentID;
+                grade.StudentID = lastSubmission.StudentID;
+                grade.SubmissionDate = lastSubmission.SubmissionDate;
+                grade.SubmissionType = lastSubmission.SubmissionType;
+                grade.Grade = lastSubmission.Grade;
+                grade.Contents = lastSubmission.Contents;
+
+                // Create an instance of the Instructor controller
+                InstructorController controller = new InstructorController(_context, Environment, _notification);
+
+                // Test positive grade
+                int gradePos = 96;
+                bool positiveGrade;
+
+                // Test negative grade
+                int gradeNeg = -3;
+                bool negativeGrade;
+
+                // Test 0 grade
+                int gradeZero = 0;
+                bool zeroGrade;
+
+                ////////////////////Tests
+                // Test positive grade
+                grade.Grade = gradePos;
+                positiveGrade = controller.UpdateGrade(grade, _context);
+
+                // Test negative grade
+                grade.Grade = gradeNeg;
+                negativeGrade = controller.UpdateGrade(grade, _context);
+
+                // Test 0 grade
+                grade.Grade = gradeZero;
+                zeroGrade = controller.UpdateGrade(grade, _context);
+
+                //////////////////Test Results
+                //Test correct password
+                Assert.IsTrue(positiveGrade);
+
+                //Test wrong case
+                Assert.IsFalse(negativeGrade);
+
+                //Test empty password
+                Assert.IsTrue(zeroGrade);
+
+            }
+            /* End Grade Update Testing */
+        }
+      
+        /// <summary>
+        /// This method tests to make sure that the application can register users
+        /// </summary>
+        [TestMethod]
+        public void RegisterUserTest()
+        {
+            // in a transaction scope so it will not be run in the database
+            using (new TransactionScope())
+            {
+                // call home controller with the context and logger passed in
+                var controller = new HomeController(_logger, _context);
+
+                // grab the users count
+                var allUsers = _context.Users.Count();
+                var expectedUsers = allUsers + 1; // grab the expected result
+
+                // create a new class object
+                UserValidationSignUp newUser = new UserValidationSignUp();
+
+                // add fields
+                newUser.Email = "testing@test.com";
+                newUser.FirstName = "test";
+                newUser.LastName = "testing";
+                newUser.Birthday = DateTime.Now.AddDays(7300);
+                newUser.Password = "password";
+                newUser.ConfirmPassword = "password";
+                newUser.AccountType = 1;
+
+                // Act
+                // add the class in the controller
+                controller.AddUserToDB(newUser);
+
+                // find out the count again
+                allUsers = _context.Users.Count();
+
+                // Assert
+                Assert.AreEqual(allUsers, expectedUsers);
+
+            } // Dispose rolls back everything.
         }
 
 

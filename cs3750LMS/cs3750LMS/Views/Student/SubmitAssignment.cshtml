@@ -5,41 +5,114 @@
     List<Submission> submissions = (List<Submission>)ViewData["Submission"];
     bool submitted = (bool)ViewData["AlreadySubmitted"];
     Submission submissionAlready = new Submission();
+    ViewBag.submitted = Newtonsoft.Json.JsonConvert.SerializeObject(submitted); ;
     if (submitted)
     {
         submissionAlready = submissions.Where(x => x.AssignmentID == clickedAssignment.AssignmentID).Single();
+        cs3750LMS.Models.general.AssignmentStats stats = (cs3750LMS.Models.general.AssignmentStats)ViewData["AssignmentStats"];
+        double studentPercentage = ((double)submissionAlready.Grade / clickedAssignment.MaxPoints) * 100;
+
+        ViewBag.stats = Newtonsoft.Json.JsonConvert.SerializeObject(stats);
+        ViewBag.studentPercentage = Newtonsoft.Json.JsonConvert.SerializeObject(studentPercentage);
     }
 }
 @model SubmitAssignmentValidation
+@section Scripts{
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    <script type="text/javascript">
+        let submitted = @Html.Raw(ViewBag.submitted).ToString();
+        if (submitted) {
+            var _stats = @Html.Raw(ViewBag.stats);
+            console.log(_stats.GradeDistribution);
+            var _studentPercentage = @Html.Raw(ViewBag.studentPercentage);
+            google.charts.load("current", { packages: ['corechart'] });
+            google.charts.setOnLoadCallback(drawChart);
+            function drawChart() {
+                var data1 = new google.visualization.DataTable();
+                data1.addColumn('string', 'Grade');
+                data1.addColumn('number', 'Count');
+                data1.addRows([
+                    ["A", _stats.GradeDistribution[0]],
+                    ["B", _stats.GradeDistribution[1]],
+                    ["C", _stats.GradeDistribution[2]],
+                    ["D", _stats.GradeDistribution[3]],
+                    ["F", _stats.GradeDistribution[4]]
+                ]);
+                var data2 = google.visualization.arrayToDataTable([
+                    ["Grade", "Score", { role: 'style' }, { role: 'annotation' }],
+                    ["Max", _stats.Max, '#20804B', _stats.Max],
+                    ["Average", _stats.Avg, '#04738C', _stats.Avg],
+                    ["Min", _stats.Min, '#F5CF47', _stats.Min],
+                    ["Your Grade", _studentPercentage, '#D94B2B', _studentPercentage]
+                ]);
+
+                var view1 = new google.visualization.DataView(data1);
+                var view2 = new google.visualization.DataView(data2);
+                view2.setColumns([0, 1,
+                    {
+                        calc: "stringify",
+                        sourceColumn: 1,
+                        type: "string",
+                        role: "annotation"
+                    },
+                    2]);
+
+                var chart1_options = {
+                    title: "Grade Distribution",
+                    width: 500,
+                    height: 400,
+                };
+                var chart2_options = {
+                    title: "Grade Comparison",
+                    width: 500,
+                    height: 400,
+                    bar: { groupWidth: "95%" },
+                    legend: 'none'
+                };
+                var chart1 = new google.visualization.PieChart(document.getElementById('gradeDistribution'));
+                chart1.draw(view1, chart1_options);
+                var chart2 = new google.visualization.ColumnChart(document.getElementById('gradeComparison'));
+                chart2.draw(view2, chart2_options);
+            }
+        }
+    </script>
+}
 <div class="container-fluid hero flex-grow-1">
     <div class="container">
         <h1 class="text-center my-3">@clickedAssignment.Title</h1>
         @if (submitted)
         {
-           <p><b>Submitted: @submissionAlready.SubmissionDate.ToString("MM/dd/yy hh:mm tt")</b></p>
+            <div class="row my-5">
+                <div class="col-12 col-md-6 mx-0 text-center">
+                    <div id="gradeDistribution" style="width: 500px; height: 400px;" class="col-12 col-md-6 mx-0"></div>
+                </div>
+                <div class="col-12 col-md-6 mx-0 text-center">
+                    <div id="gradeComparison" style="width: 500px; height: 400px;" class="col-12 col-md-6 mx-0"></div>
+                </div>
+            </div>
+            <p><b>Submitted: @submissionAlready.SubmissionDate.ToString("MM/dd/yy hh:mm tt")</b></p>
         }
         else
         {
-        <p><b>Due: @clickedAssignment.DueDate.ToString("MM/dd/yy hh:mm tt")</b></p>
+            <p><b>Due: @clickedAssignment.DueDate.ToString("MM/dd/yy hh:mm tt")</b></p>
         }
 
         <!--if submitted show grad infromation-->
         @if (submitted)
-        {<p><b>
-                Grade: @if (submissionAlready.Grade >= 0)
-                {<span>@submissionAlready.Grade / @clickedAssignment.MaxPoints</span>}
-            else
-            { <span>Not Yet graded / @clickedAssignment.MaxPoints</span>}
-            </b></p>}
+        {<p>
+                <b>
+                    Grade: @if (submissionAlready.Grade >= 0)
+                    {<span>@submissionAlready.Grade / @clickedAssignment.MaxPoints</span>}
+                else
+                { <span>Not Yet graded / @clickedAssignment.MaxPoints</span>}
+                </b>
+            </p>}
         else
         {
             <h2>Max Points: @clickedAssignment.MaxPoints</h2>
         }
         <p>@clickedAssignment.Description</p>
-        @section Scripts{
-            <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
-            <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
-        }
         <!--File-->
         @if (clickedAssignment.SubmissionType == 0)
         {

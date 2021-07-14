@@ -83,19 +83,7 @@ namespace cs3750LMS.Controllers
                 if (_context.Users.Count(e => e.Email == testUser.Email) == 0)
                 {
                     //create the new user
-                    User users = new Models.User
-                    {
-                        Email = testUser.Email,
-                        FirstName = testUser.FirstName,
-                        LastName = testUser.LastName,
-                        Birthday = testUser.Birthday,
-                        Password = Sha256(testUser.Password),
-                        AccountType = testUser.AccountType
-                    };
-
-                    //add the new user to the database and save changes
-                    _context.Add(users);
-                    await _context.SaveChangesAsync();
+                    User users = AddUserToDB(testUser);
 
                     //set user email in session, and various info as a session object in session
                     HttpContext.Session.Set<string>("user", users.Email);
@@ -152,6 +140,28 @@ namespace cs3750LMS.Controllers
             return View();
         }
 
+        // Function to add a user into to the database with the givin parameters
+        public User AddUserToDB(UserValidationSignUp newUser)
+        {
+            //create the new user
+            User users = new Models.User
+            {
+                Email = newUser.Email,
+                FirstName = newUser.FirstName,
+                LastName = newUser.LastName,
+                Birthday = newUser.Birthday,
+                Password = Sha256(newUser.Password),
+                AccountType = newUser.AccountType
+            };
+
+            //add the new user to the database and save changes
+            _context.Add(users);
+            _context.SaveChanges();
+
+            // return the new user
+            return users;
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Login([Bind("Email,Password")] UserValidationLogin testLogin)
@@ -160,11 +170,8 @@ namespace cs3750LMS.Controllers
             {
                 //grab the user from the database
                 User userFound;
-                if (_context.Users.Count(y => y.Email == testLogin.Email) == 1)
-                {
-                    userFound = _context.Users.Where(e => e.Email == testLogin.Email).Single();
-                }
-                else
+                userFound = FindUserByEmail(testLogin.Email, _context);
+                if(userFound == null)
                 {
                     // user not found send failure
                     Errors failLogin = new Errors
@@ -177,7 +184,7 @@ namespace cs3750LMS.Controllers
                 }
 
                 //check password to entered password
-                if (userFound.Password == Sha256(testLogin.Password))
+                if (ComparePasswords(userFound.Password,testLogin.Password))
                 {
                     //store user email and info in session
                     HttpContext.Session.Set<string>("user", userFound.Email);
@@ -285,6 +292,28 @@ namespace cs3750LMS.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+
+        //find user by email, and takes in the context
+        public static User FindUserByEmail(string email, cs3750Context context)
+        {
+            User userFound;
+            if (context.Users.Count(y => y.Email == email) == 1)
+            {
+                userFound = context.Users.Where(e => e.Email == email).Single();
+            }
+            else
+            {
+                userFound = null;
+            }
+            return userFound;
+        }
+
+        //compares passwords
+        public static bool ComparePasswords(string pass, string compare)
+        {
+            return (pass == Sha256(compare));
         }
 
         public static String Sha256(String value)

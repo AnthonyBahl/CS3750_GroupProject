@@ -99,6 +99,7 @@ namespace cs3750LMS.Controllers
             if (submissions.Count(x=>x.AssignmentID == clickedAssignment.AssignmentID) >0 )
             {
                 ViewData["AlreadySubmitted"] = true;
+                ViewData["AssignmentStats"] = GetAssignmentStats(clickedAssignment);
             }
             else
             {
@@ -930,6 +931,52 @@ namespace cs3750LMS.Controllers
                 }
             }
             return View("~/Views/Home/Login.cshtml");
+        }
+
+        private AssignmentStats GetAssignmentStats(Assignment assignment)
+        {
+            AssignmentStats stats = new AssignmentStats();
+            stats.Assignment = assignment;
+            // Get Max
+            List<Submission> submissions = _context.Submissions.Where(x => x.AssignmentID == assignment.AssignmentID).ToList();
+            stats.SubmissionList = submissions.Where(x => x.Grade > -1).ToList();
+            var query = from a in submissions
+                        where a.Grade > -1
+                        select a.Grade;
+
+            stats.Max = query.Max();
+            // Get Min
+            stats.Min = query.Min();
+            // Get Avg
+            stats.Avg = query.Average();
+            stats.GradeDistribution = new List<int> { 0, 0, 0, 0, 0};
+            foreach(int item in query)
+            {
+                double percent = ((double)item / assignment.MaxPoints) * 100;
+
+                if(percent >= 90)
+                {
+                    stats.GradeDistribution[0]++;
+                } 
+                else if (percent <= 89 && percent >= 80)
+                {
+                    stats.GradeDistribution[1]++;
+                } 
+                else if (percent <= 79 && percent >= 70)
+                {
+                    stats.GradeDistribution[2]++;
+                }
+                else if (percent <= 69 && percent >= 60)
+                {
+                    stats.GradeDistribution[3]++;
+                }
+                else if (percent <= 59 && percent > 0)
+                {
+                    stats.GradeDistribution[4]++;
+                }
+            }
+
+            return stats;
         }
     }
 }
