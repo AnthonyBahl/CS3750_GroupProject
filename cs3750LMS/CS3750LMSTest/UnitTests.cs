@@ -355,62 +355,34 @@ namespace CS3750LMSTest
             // Set up Transaction Scope so that nothing is added to the database
             using (new TransactionScope())
             {
-                // Grab user 1026 who is a test student in the database
-                var student = _context.Users.Find(1026);
+                //get student
+                User student = _context.Users.Find(3);
 
-                // Grab user 1025 who is a test instructor in the database
-                var instructor = _context.Users.Find(1025);
+                  //get assignments
+                List<Assignment> assignments = _context.Assignments.ToList();
+                   //get last assignment
+                Assignment lastAssignmetn = assignments.Last();
 
-                // Grab the courses in which the student is enrolled in. 
-                var studentCourses = _context.Enrollments.Where(sc => sc.studentID == student.UserId).ToList();
-
-                // Get latest course
-                var latestCourse = studentCourses.Last();
-
-                //select existing assignment
-                var CourseAssignments = _context.Assignments.Where(a => a.CourseID == latestCourse.courseID).ToList();
-
-                //get latest assignment. 
-                var latestAssignment = CourseAssignments.Last();
-
-                //get submission Count
-                var preSubmissionCount = _context.Submissions.Count(n => n.AssignmentID == latestAssignment.AssignmentID);
-
-                //get notification Count
-                var preNotificationCount = _context.Notifications.Count(i => i.RecipientID == instructor.UserId);
+                //get count of submissions. 
+                var preSubmissionCount = _context.Submissions.Count(n => n.AssignmentID == lastAssignmetn.AssignmentID);
 
                 //create new submission
                 SubmitAssignmentValidation newSubmission = new SubmitAssignmentValidation();           
 
                 //Populate fields
-                newSubmission.AssignmentId = latestAssignment.AssignmentID;
-                newSubmission.CourseId = latestCourse.courseID;
+                newSubmission.AssignmentId = lastAssignmetn.AssignmentID;
+                newSubmission.CourseId = lastAssignmetn.CourseID;
                 newSubmission.TextSubmission = "[Unit Test] assignment Text Submission.";
-                
 
                 //get student controller instance
-                StudentController controller = new StudentController(_context, Environment, _notification);
-                
-                //submit new TEXT submission to controller probably will need to do integration testing to test the file-submissions not unit testing. 
-                controller.TextSubmit(newSubmission);
+                StudentController.StudentsubmitAssignment(newSubmission,student, _context);
 
                 //get Post submission Count
-                var postSubmissionCount = _context.Submissions.Count(n => n.AssignmentID == latestAssignment.AssignmentID);
+                var postSubmissionCount = _context.Submissions.Count(n => n.AssignmentID == lastAssignmetn.AssignmentID);             
 
-                //get Post notification Count
-                var postNotificationCount = _context.Notifications.Count(i => i.RecipientID == instructor.UserId);
-
-                //get post Submission Assignment
-                var postSubmission = _context.Submissions.Last();
-              
-                // Determine if everything is working.
-                Assert.AreEqual(postSubmissionCount, preSubmissionCount + 1);
-                Assert.AreEqual(postNotificationCount, preNotificationCount + 1);
-                Assert.AreEqual(postSubmission.Grade, -1);
-                Assert.AreEqual(postSubmission.SubmissionType, 1);
-                Assert.IsNotNull(postSubmission.Contents);
-                Assert.IsNotNull(postSubmission.SubmissionDate);
-                Assert.AreEqual(postSubmission.AssignmentID, newSubmission.AssignmentId);
+                // Determine if everything is working.                
+                Assert.AreEqual(postSubmissionCount, preSubmissionCount+1);
+          
                 
             }
         }

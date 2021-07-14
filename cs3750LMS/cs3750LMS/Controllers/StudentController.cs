@@ -978,5 +978,29 @@ namespace cs3750LMS.Controllers
 
             return stats;
         }
+
+
+
+        public static bool StudentsubmitAssignment(SubmitAssignmentValidation submiting, User student, cs3750Context _context)
+        {
+
+            Submission sub = new Submission();
+
+            Submission newSubmission = new Submission
+            {
+                AssignmentID = submiting.AssignmentId,
+                StudentID = student.UserId,
+                SubmissionDate = DateTime.Now,
+                SubmissionType = 1,
+                Grade = -1,
+                Contents = submiting.TextSubmission
+            };
+
+
+            _context.Submissions.Add(newSubmission);
+            _context.SaveChanges();
+
+            return true;
+        }
     }
 }
