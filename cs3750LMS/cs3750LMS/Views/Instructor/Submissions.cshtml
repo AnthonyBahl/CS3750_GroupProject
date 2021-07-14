@@ -3,15 +3,59 @@
     cs3750LMS.Models.general.SIUsers students = (cs3750LMS.Models.general.SIUsers)ViewData["Students"];
     cs3750LMS.Models.general.SpecificAssignment assignment = (cs3750LMS.Models.general.SpecificAssignment)ViewData["ClickedAssignment"];
     ViewData["Title"] = "Courses";
+    ViewBag.assignment = Newtonsoft.Json.JsonConvert.SerializeObject(assignment);
+    ViewBag.students = Newtonsoft.Json.JsonConvert.SerializeObject(students);
 }
 @section Scripts{
     <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    <script type="text/javascript">
+        var _assignment = @Html.Raw(ViewBag.assignment);
+        var _students = @Html.Raw(ViewBag.students);
+        var graphData = [['Student Name', 'Grade']];
+        // Populate graphData
+        for (var i = 0; i < _assignment.SubmissionList.length; i++) {
+            // Check if assignment has been graded
+            if (_assignment.SubmissionList[i].Grade != -1) {
+                var studentGrade = _assignment.SubmissionList[i].Grade;
+                var studentName;
+
+                // Find Student Name
+                for (var j = 0; j < _students.SIUserList.length; j++) {
+                    if (_students.SIUserList[j].UserId == _assignment.SubmissionList[i].StudentID) {
+                        studentName = _students.SIUserList[j].FirstName + " " + _students.SIUserList[j].LastName;
+                        break;
+                    }
+                }
+
+                // Package
+                var packagedStudent = [studentName, studentGrade];
+                // Add to graph data
+                graphData.push(packagedStudent);
+            }
+        }
+        // Create graph
+        google.charts.load("current", { packages: ["corechart"] });
+        google.charts.setOnLoadCallback(drawChart);
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable(graphData);
+
+            var options = {
+                title: 'Grade distributions',
+                legend: { position: 'none' },
+                backgroundColor: { fill: 'transparent' }
+            };
+
+            var chart = new google.visualization.Histogram(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+    </script>
 }
 
-<div id="SubmissionView" class="container">    
+<div id="SubmissionView" class="container">
     <h1 class="text-center">@assignment.Selection.Title</h1>
     <h2 class="text-center mt-3">Submissions</h2>
+    <div id="chart_div" style="width: 400px; height: 400px; position: absolute; top: 60px; right: 0;"></div>
     <table class="table table-hover bg-white mt-5">
         <thead>
             <tr>
@@ -42,7 +86,7 @@ else
         <a type="button" asp-controller="Instructor" asp-action="SubmissionDetail" asp-route-id="@assignment.SubmissionList[i].SubmissionID" class="btn btn-success">Details</a>
     </td>
 </tr>
-       }
+}
         </tbody>
     </table>
     <br />
