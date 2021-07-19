@@ -6,6 +6,7 @@
     ViewBag.userCourses = Newtonsoft.Json.JsonConvert.SerializeObject(userCourses);
     Assignments userAssignments = (Assignments)ViewData["UserAssignments"];
     ViewBag.userAssignments = Newtonsoft.Json.JsonConvert.SerializeObject(userAssignments);
+}
 <head>
     <link rel='stylesheet' href='~/css/fullcalenar.css' />
     <script src='~/js/fullcalendar.js'></script>
