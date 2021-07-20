@@ -937,7 +937,7 @@ namespace cs3750LMS.Controllers
 
             // add the new transaction to the database and save changes
             context.Add(newTransaction);
-            context.SaveChangesAsync();
+            context.SaveChanges();
 
             // return the transaction
             return newTransaction;

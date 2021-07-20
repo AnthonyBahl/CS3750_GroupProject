@@ -344,5 +344,41 @@ namespace CS3750LMSTest
             } // Dispose rolls back everything.
         }
 
+        /// <summary>
+        /// This method tests to make sure that the application can register users
+        /// </summary>
+        [TestMethod]
+        public void CreateTransactionTest()
+        {
+            // in a transaction scope so it will not be run in the database
+            using (new TransactionScope())
+            {
+                // create a new class object
+                UserSession session = new UserSession();
+
+                // add fields
+                session.UserId = 1;
+                int iChargeAmount = 10;
+
+                // grab the Transaction count
+                var allTransactions = _context.Transactions.Count();
+                var expectedTranactions = allTransactions + 1; // grab the expected result
+
+                // Act
+                // add the class in the controller
+                cs3750LMS.Models.entites.Transaction newTransaction = StudentController.SaveTransactionInDB(iChargeAmount, session, _context);
+
+                // find out the count again
+                allTransactions = _context.Transactions.Count();
+
+                // Assert
+                // sees if the tractioins created
+                Assert.AreEqual(allTransactions, expectedTranactions);
+
+                // make sure the charge amount is equal
+                Assert.AreEqual(newTransaction.amount, iChargeAmount);
+
+            } // Dispose rolls back everything.
+        }
     }
 }
