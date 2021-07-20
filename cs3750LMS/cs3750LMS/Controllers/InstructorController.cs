@@ -530,7 +530,7 @@ namespace cs3750LMS.Controllers
             //create notification for graded assignment. 
             Notification message = new Notification
             {
-                RecipientID = submission.StudentID,  //this will send it to the student
+                RecipientID = updatedGrade.StudentID,  //this will send it to the student
                 ReferenceID = courseID,         //this makes it so when the student clicks on the notification, it takes them to the course page. 
                 NotificationType = "Assignment",
                 Message = CourseName + " | " + AssignmentName + " grade was changed",

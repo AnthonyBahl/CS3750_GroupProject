@@ -16,30 +16,25 @@ if (ItemsCount > 0) {
 
     bellIcon.style.color = "#495057";  //set color to nav-link gray. 
     bellIcon.classList.remove("ringAnimation"); //remove animation
-    }
-
-function removeNotificationItem(id) {
-    alert("Notification has not been deleted yet.");
-
-    //this was my attempt to delete the notifications using ajax to call a repository function in the home controller 
-
-    //$.post("/HomeController/RemoveNotification", id, function (data, status) {
-    //    alert("Data:" + data + " Status" + status);
-    //});
-
-
-    //This was the code in the home controller but has now been removed.
-    //        public ActionResult RemoveNotification(int id)
-    //{
-    //    _notification.DeleteNotification(id);   //calling the repository object _notification.DeleteNotification(id) pass in the notification id to be deleted. 
-    //    return View();
-    //}
-
-    //My resource for this method is https://stackoverflow.com/questions/20766306/calling-a-c-sharp-function-by-a-html-button
-    // and https://www.w3schools.com/jquery/jquery_ajax_get_post.asp
-    //Maybe you can figure it out. 
-
 }
+
+document.querySelectorAll('.noti').forEach(item => item.addEventListener('mousedown', function (e) {
+    console.log(e)
+    console.log(e.target)
+    e.target.parentNode.parentNode.parentNode.style.display = "none";
+}));
+
+document.getElementById('notiDropdown').addEventListener('click', function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+    console.log("WTF");
+    if (document.getElementById('notiMenu').style.display === "none") {
+        document.getElementById('notiMenu').style.display = "block";
+    } else {
+        document.getElementById('notiMenu').style.display = "none";
+    }
+});
+
 
 
 //END --------------  Notification Bell In Navbar

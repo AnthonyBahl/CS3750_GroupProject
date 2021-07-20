@@ -8,7 +8,7 @@ namespace cs3750LMS.Models.Repository
 {
     public class db_NotificationRepository : INotificationRepository
     {
-        private readonly cs3750Context context;
+        private cs3750Context context;
 
         public db_NotificationRepository(cs3750Context context)
         {
@@ -22,15 +22,15 @@ namespace cs3750LMS.Models.Repository
             return notification;
         }
 
-        public Notification DeleteNotification(int id)
+        public bool DeleteNotification(Notification notification)
         {
-            Notification notification = context.Notifications.Find(id);
-            if(notification != null)
+            if (notification != null)
             {
                 context.Notifications.Remove(notification);
                 context.SaveChanges();
+                return true;
             }
-            return notification;
+            return false;
         }
 
         public IEnumerable<Notification> GetAllNotification()
@@ -40,7 +40,8 @@ namespace cs3750LMS.Models.Repository
 
         public IEnumerable<Notification> GetAllUserNotifications(int userID)
         {
-          return context.Notifications.Where(n => n.RecipientID == userID);
+            IEnumerable<Notification> notifications = context.Notifications.Where(n => n.RecipientID == userID);
+            return notifications;
 
         }
 

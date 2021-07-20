@@ -1,5 +1,10 @@
 ﻿@{
     UserSession show = (UserSession)ViewData["Message"];
+    IEnumerable<Notification> notifications = null;
+    if (show != null)
+    {
+        notifications = _notification.GetAllUserNotifications(show.UserId);
+    }
 }   
 
 @inject cs3750LMS.Models.Repository.INotificationRepository _notification
@@ -73,41 +78,50 @@
                             </li>
 
                             <li class="nav-item">
-                                <div class="dropright">
-                                    <a class="nav-link" data-toggle="dropdown"> <i id="bellIcon" class="far fa-bell fa-lg"></i></a>
-
-                                    <ul class="dropdown-menu">
-
-                                        @{var notiCount = 0;
-                                        }
-
-                                        @foreach (var noti in _notification.GetAllUserNotifications(show.UserId))
+                                <div class="nav-link" id="notiDropdown" aria-haspopup="true" aria-expanded="false"> <i id="bellIcon" class="far fa-bell fa-lg"></i></div>
+                                @if (notifications.Count() > 0)
+                                {
+                                    <div class="dropdown-menu" id="notiMenu">
+                                        @for (int i = 0; i < notifications.Count(); i++)
                                         {
-                                            notiCount++;
 
-                                            //Each Account Type and Notification Type combination will have a different <a></a> link when clicked. 
-                                            if (show.AccountType == 0 && noti.NotificationType == "Assignment")  //student
+                                            //Each Account Type and Notification Type combination will have a different <a></a> link when clicked.
+                                            if (show.AccountType == 0 && notifications.ElementAt(i).NotificationType == "Assignment")  //student
                                             {
-                                                <li class="dropdown-item">
-                                                    <i id="notificationXicon" class="far fa-window-close fa-med icorrect" onclick="removeNotificationItem()"></i>
-                                                    <a asp-controller="Student" asp-action="ViewCourse" asp-route-id=@noti.ReferenceID>
-                                                        @noti.Message
-                                                    </a>
-                                                </li>
+                                                <div class="dropdown-item">
+                                                    <div class="row">
+                                                        <div class="col-10">
+                                                            <a asp-controller="Student" asp-action="ViewCourse" asp-route-id=@notifications.ElementAt(i).ReferenceID>
+                                                                @notifications.ElementAt(i).Message
+                                                            </a>
+                                                        </div>
+                                                        <div class="col-1">
+                                                            <a href="#"  class="noti" onclick="() => {if(event.type =="click"){@_notification.DeleteNotification(notifications.ElementAt(i)); }}">
+                                                                <i id="notificationXicon" class="far fa-window-close fa-med icorrect"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             }
-                                            else if(show.AccountType == 1 && noti.NotificationType == "Assignment") //teacher
+                                            else if (show.AccountType == 1 && notifications.ElementAt(i).NotificationType == "Assignment") //teacher
                                             {
-                                                <li class="dropdown-item">
-                                                    <i id="notificationXicon" class="far fa-window-close fa-med icorrect" onclick="removeNotificationItem()"></i>
-                                                    <a asp-controller="Instructor" asp-action="CourseEdit" asp-route-id="@noti.ReferenceID">
-                                                        @noti.Message
-                                                    </a>
-                                                </li>
+                                                <div class="dropdown-item">
+                                                    <div class="row">
+                                                        <div class="col-10">
+                                                            <a asp-controller="Instructor" asp-action="CourseEdit" asp-route-id=@notifications.ElementAt(i).ReferenceID>
+                                                                @notifications.ElementAt(i).Message
+                                                            </a>
+                                                        </div>
+                                                        <div class="col-1">
+                                                            <i id="notificationXicon" class="far fa-window-close fa-med icorrect noti" onclick="() => {if(event.type =="click"){@_notification.DeleteNotification(notifications.ElementAt(i));}}"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             }
                                         }
-                                    </ul>
-                                    <input type="hidden" id="PassingNotificationCountToJavaScript" value=@notiCount>
-                                </div>
+                                    </div>
+                                    <input id="PassingNotificationCountToJavaScript" hidden value=@notifications.Count()>
+                                }
                             </li>
                         }
                     </ul>
