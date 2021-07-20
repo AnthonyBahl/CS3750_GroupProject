@@ -27,7 +27,75 @@ namespace cs3750LMS.Controllers
             Environment = _environment;
             this._notification = _notification;
         }
-        //(begin)Deletions of Course and an Assignment Logics(begin)-----------------------
+        //(begin)Deletions of a Course Logics(begin)----------------------------
+        [HttpGet]
+        public IActionResult DeleteCourse(int id)
+        {
+            //set courses object for next pass
+            string serialCourse = HttpContext.Session.GetString("userCourses");
+            Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+            //make sure course exists, if not send to index
+            if (userCourses.CourseList.Count(x=>x.CourseID == id)<1)
+            {
+                string serialUser = HttpContext.Session.GetString("userInfo");
+                UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
+
+                string serialCourseb = HttpContext.Session.GetString("userCourses");
+                Courses userCoursesb = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourseb);
+
+                string serialAssignment2 = HttpContext.Session.GetString("userAssignments");
+                Assignments userAssignments3 = serialAssignment2 == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment2);
+
+
+                //reload timespans
+                string serialTimes = HttpContext.Session.GetString("courseTimes");
+                List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
+                userCourses.RefactorTimeSpans(times);
+
+                ViewData["UserCourses"] = userCourses;
+                ViewData["Message"] = session;
+                ViewData["userAssignments"] = userAssignments3;
+                return View("~/Views/Home/Index.cshtml");
+            }
+
+            //get assignments, and selected assignment
+            string serialAssignment = HttpContext.Session.GetString("userAssignments");
+            Assignments userAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
+
+            List<Assignment> selectedAssignments = new List<Assignment>();
+
+            if (userAssignments.AssignmentList.Count(x => x.CourseID == id) == 1)
+            {
+                selectedAssignments = userAssignments.AssignmentList.Where(x => x.CourseID == id).ToList();
+            }
+
+
+            SpecificCourse dummy = new SpecificCourse()
+            {
+                AssignmentList = new List<Assignment>()
+            };
+
+            //perform Delete
+            bool result = DeleteXAssignmentHelper(_context, userAssignments, dummy, selectedAssignments, Environment);
+
+            List<Enrollment> courseEnrollments = _context.Enrollments.Where(x => x.courseID == id).ToList();
+            foreach(Enrollment e in courseEnrollments)
+            {
+                _context.Enrollments.Remove(e);
+            }
+            Course selectedCourse = userCourses.CourseList.Where(x => x.CourseID == id).Single();
+            _context.Courses.Remove(selectedCourse);
+            _context.SaveChanges();
+            userCourses.CourseList.Remove(selectedCourse);
+
+            //update session saved courses
+            HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(userCourses));
+            HttpContext.Session.SetString("userAssignments", JsonSerializer.Serialize(userAssignments));
+            return AddClass();
+        }
+        //(end)Deletions of a course Logics(end)-------------------------------
+
+        //(begin)Deletions of an Assignment Logics(begin)-----------------------
         [HttpGet]
         public IActionResult DeleteAssignment(int idAssignment)
         {
@@ -48,7 +116,7 @@ namespace cs3750LMS.Controllers
                 Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
 
                 string serialAssignment2 = HttpContext.Session.GetString("userAssignments");
-                Assignments userAssignments3 = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment2);
+                Assignments userAssignments3 = serialAssignment2 == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment2);
 
 
                 //reload timespans
@@ -119,7 +187,7 @@ namespace cs3750LMS.Controllers
         }
 
 
-        //(end)Deletions of Course and an Assignment Logic (end) ----------------------
+        //(end)Deletions of an Assignment Logic (end) ----------------------
 
         //-------------------------------Specific Course Edit logic Begin--------------
         [HttpGet]
@@ -271,7 +339,7 @@ namespace cs3750LMS.Controllers
                     ViewData["DepartmentData"] = depts;
                     ViewData["Message"] = session;
                     ViewData["Courses"] = userCourses;
-                    return View();
+                    return View("~/Views/Instructor/AddClass.cshtml");
                 }
             }
             return View("~/Views/Home/Login.cshtml");
