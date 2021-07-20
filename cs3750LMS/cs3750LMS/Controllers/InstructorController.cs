@@ -34,9 +34,34 @@ namespace cs3750LMS.Controllers
             //get assignments, and selected assignment
             string serialAssignment = HttpContext.Session.GetString("userAssignments");
             Assignments userAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
-            Assignment selectedAssignment = userAssignments.AssignmentList.Where(x => x.AssignmentID == idAssignment).Single();
-             
+            Assignment selectedAssignment = new Assignment();
+            if (userAssignments.AssignmentList.Count(x => x.AssignmentID == idAssignment) == 1)
+            {
+                selectedAssignment = userAssignments.AssignmentList.Where(x => x.AssignmentID == idAssignment).Single();
+            }
+            else
+            {
+                string serialUser = HttpContext.Session.GetString("userInfo");
+                UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
 
+                string serialCourse = HttpContext.Session.GetString("userCourses");
+                Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+
+                string serialAssignment2 = HttpContext.Session.GetString("userAssignments");
+                Assignments userAssignments3 = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment2);
+
+
+                //reload timespans
+                string serialTimes = HttpContext.Session.GetString("courseTimes");
+                List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
+                userCourses.RefactorTimeSpans(times);
+
+                ViewData["UserCourses"] = userCourses;
+                ViewData["Message"] = session;
+                ViewData["userAssignments"] = userAssignments3;
+                return View("~/Views/Home/Index.cshtml");
+            }
+             
             //get course
             string courseKey = "course" + selectedAssignment.CourseID;
             string serialSelected = HttpContext.Session.GetString(courseKey);
@@ -44,18 +69,21 @@ namespace cs3750LMS.Controllers
 
             List<Assignment> selectedAssignments = new List<Assignment>();
             selectedAssignments.Add(selectedAssignment);
+
             //perform Delete
-            bool result = DeleteXAssignmentHelper(_context, userAssignments.AssignmentList, course.AssignmentList, selectedAssignments);
+            bool result = DeleteXAssignmentHelper(_context, userAssignments, course, selectedAssignments, Environment);
 
             //update session saved courses
             HttpContext.Session.SetString("userAssignments", JsonSerializer.Serialize(userAssignments));
             HttpContext.Session.SetString(courseKey, JsonSerializer.Serialize(course));
+            
+            
 
             return CourseEdit(selectedAssignment.CourseID);
         }
 
         //Helper functions for Deletion(s)//
-        public static bool DeleteXAssignmentHelper(cs3750Context _context, List<Assignment> list1, List<Assignment> list2, List<Assignment> selectedAssignments)
+        public static bool DeleteXAssignmentHelper(cs3750Context _context, Assignments userAssignments, SpecificCourse course, List<Assignment> selectedAssignments, IHostingEnvironment Environment)
         {
             try
             {
@@ -63,8 +91,8 @@ namespace cs3750LMS.Controllers
                 {
                     //remove assignment from lists and db
                     _context.Assignments.Remove(selectedAssignment);
-                    list1.Remove(selectedAssignment);
-                    list2.Remove(selectedAssignment);
+                    userAssignments.AssignmentList.Remove(userAssignments.AssignmentList.Where(x=>x.AssignmentID==selectedAssignment.AssignmentID).Single());
+                    course.AssignmentList.Remove(course.AssignmentList.Where(x=>x.AssignmentID==selectedAssignment.AssignmentID).Single());
 
                     //remove submissions
                     List<Submission> submissionsForDelete = _context.Submissions.Where(x => x.AssignmentID == selectedAssignment.AssignmentID).ToList();
@@ -72,9 +100,9 @@ namespace cs3750LMS.Controllers
                     {
                         _context.Submissions.Remove(s);
                     }
-
-                    string path = "~/wwwroot/Submissions/" + selectedAssignment.AssignmentID;
-                    if (!Directory.Exists(path))
+                    
+                    string path = Path.Combine(Environment.WebRootPath,"Submissions/" + selectedAssignment.AssignmentID);
+                    if (Directory.Exists(path))
                     {
                         Directory.Delete(path, true);
                     }
