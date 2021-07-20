@@ -343,6 +343,13 @@ namespace CS3750LMSTest
 
             } // Dispose rolls back everything.
         }
+        [TestMethod]
+        public void RegisterForCourseAddsEnrollmentTest()
+        {
+            //prep tests
+            //perform operations
+            //test results
+        }
 
     }
 }
