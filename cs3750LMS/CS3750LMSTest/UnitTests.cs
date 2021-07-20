@@ -375,7 +375,7 @@ namespace CS3750LMSTest
                 newSubmission.TextSubmission = "[Unit Test] assignment Text Submission.";
 
                 //get student controller instance
-                StudentController.StudentsubmitAssignment(newSubmission,student, _context);
+                StudentController.StudentSubmitAssignment(newSubmission, student.UserId, _context);
 
                 //get Post submission Count
                 var postSubmissionCount = _context.Submissions.Count(n => n.AssignmentID == lastAssignmetn.AssignmentID);             

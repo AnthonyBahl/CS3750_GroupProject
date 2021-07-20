@@ -134,9 +134,10 @@ namespace cs3750LMS.Controllers
                     Contents = submiting.TextSubmission
                 };
 
-                //save to database
-                _context.Submissions.Add(newSubmission);
-                _context.SaveChanges();
+
+                //add to database using method. 
+                StudentSubmitAssignment(submiting, session.UserId, _context);
+              
 
                 //get submissions, add new, and save to session
                 string serialSubmissions = HttpContext.Session.GetString("userSubmissions");
@@ -981,7 +982,7 @@ namespace cs3750LMS.Controllers
 
 
 
-        public static bool StudentsubmitAssignment(SubmitAssignmentValidation submiting, User student, cs3750Context _context)
+        public static bool StudentSubmitAssignment(SubmitAssignmentValidation submiting, int studentID, cs3750Context _context)
         {
 
             Submission sub = new Submission();
@@ -989,7 +990,7 @@ namespace cs3750LMS.Controllers
             Submission newSubmission = new Submission
             {
                 AssignmentID = submiting.AssignmentId,
-                StudentID = student.UserId,
+                StudentID = studentID,
                 SubmissionDate = DateTime.Now,
                 SubmissionType = 1,
                 Grade = -1,
@@ -1004,3 +1005,4 @@ namespace cs3750LMS.Controllers
         }
     }
 }
+
