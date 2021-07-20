@@ -27,7 +27,71 @@ namespace cs3750LMS.Controllers
             Environment = _environment;
             this._notification = _notification;
         }
+        //(begin)Deletions of Course and an Assignment Logics(begin)-----------------------
+        [HttpGet]
+        public IActionResult DeleteAssignment(int idAssignment)
+        {
+            //get assignments, and selected assignment
+            string serialAssignment = HttpContext.Session.GetString("userAssignments");
+            Assignments userAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
+            Assignment selectedAssignment = userAssignments.AssignmentList.Where(x => x.AssignmentID == idAssignment).Single();
+             
 
+            //get course
+            string courseKey = "course" + selectedAssignment.CourseID;
+            string serialSelected = HttpContext.Session.GetString(courseKey);
+            SpecificCourse course = JsonSerializer.Deserialize<SpecificCourse>(serialSelected);
+
+            List<Assignment> selectedAssignments = new List<Assignment>();
+            selectedAssignments.Add(selectedAssignment);
+            //perform Delete
+            bool result = DeleteXAssignmentHelper(_context, userAssignments.AssignmentList, course.AssignmentList, selectedAssignments);
+
+            //update session saved courses
+            HttpContext.Session.SetString("userAssignments", JsonSerializer.Serialize(userAssignments));
+            HttpContext.Session.SetString(courseKey, JsonSerializer.Serialize(course));
+
+            return CourseEdit(selectedAssignment.CourseID);
+        }
+
+        //Helper functions for Deletion(s)//
+        public static bool DeleteXAssignmentHelper(cs3750Context _context, List<Assignment> list1, List<Assignment> list2, List<Assignment> selectedAssignments)
+        {
+            try
+            {
+                foreach (Assignment selectedAssignment in selectedAssignments)
+                {
+                    //remove assignment from lists and db
+                    _context.Assignments.Remove(selectedAssignment);
+                    list1.Remove(selectedAssignment);
+                    list2.Remove(selectedAssignment);
+
+                    //remove submissions
+                    List<Submission> submissionsForDelete = _context.Submissions.Where(x => x.AssignmentID == selectedAssignment.AssignmentID).ToList();
+                    foreach (Submission s in submissionsForDelete)
+                    {
+                        _context.Submissions.Remove(s);
+                    }
+
+                    string path = "~/wwwroot/Submissions/" + selectedAssignment.AssignmentID;
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.Delete(path, true);
+                    }
+                    //end remove submissions
+                }
+                //save database ane return affirmation
+                _context.SaveChanges();
+                return true;
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+        }
+
+
+        //(end)Deletions of Course and an Assignment Logic (end) ----------------------
 
         //-------------------------------Specific Course Edit logic Begin--------------
         [HttpGet]

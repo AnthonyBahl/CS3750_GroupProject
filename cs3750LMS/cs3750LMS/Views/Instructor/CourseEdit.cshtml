@@ -72,7 +72,7 @@
                         <button type="button" onclick="ToggleView(2,@course.AssignmentList[i].AssignmentID)" class="btn btn-success">Edit</button>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-danger">Delete</button>
+                        <a type="button" asp-controller="Instructor" asp-action="DeleteAssignment" asp-route-id="@course.AssignmentList[i].AssignmentID"class="btn btn-danger">Delete</a>
                     </td>
                     <td>
                         <a type="button" asp-controller="Instructor" asp-action="Submissions" asp-route-id="@course.AssignmentList[i].AssignmentID" class="btn btn-success">Submissions</a>
