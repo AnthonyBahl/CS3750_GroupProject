@@ -7,13 +7,6 @@
     Assignments userAssignments = (Assignments)ViewData["UserAssignments"];
     ViewBag.userAssignments = Newtonsoft.Json.JsonConvert.SerializeObject(userAssignments);
 }
-@*
-    Things to do:
-        - Set events up to work with classes
-        - Set up to do different colored tasks based on classes
-        - Modify the colors to match our color scheme
-            - Background should not be transparent
-*@ 
 <head>
     <link rel='stylesheet' href='~/css/fullcalenar.css' />
     <script src='~/js/fullcalendar.js'></script>
@@ -80,12 +73,6 @@
     </script>
 </head>
 <body>
-    <!-- ******************************************************** UI CHANGE ************************************************************ -->
-    <!-- Background color can be added to the calendar using Bootstrap background classes. Adding the class "bg-white" to the div element-->
-    <!-- below will change the calendar background to white. Additionally, padding may be added around the calendar to make it more      -->
-    <!-- more spacious by adding the class "p-x" to the div below, where x is an integer between 1 and 5 (the larger the value for x, the-->
-    <!-- more padding will be added).-->
-    <!-- ******************************************************************************************************************************* -->
-    <div id='calendar' class="container"></div>
+    <div id='calendar' class="container bg-light"></div>
 
 </body>
