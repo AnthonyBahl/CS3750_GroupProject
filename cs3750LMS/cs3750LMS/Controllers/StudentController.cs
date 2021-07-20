@@ -887,17 +887,7 @@ namespace cs3750LMS.Controllers
                             int.TryParse(chargesRoot.GetProperty("amount").ToString(), out iChargeAmount);
 
                             // Create transaction object
-                            Transaction newTransaction = new Transaction
-                            {
-                                Date = DateTime.Now,
-                                userID = session.UserId,
-                                amount = iChargeAmount,
-                                status = "Settled"
-                            };
-
-                            //add the new transaction to the database and save changes
-                            _context.Add(newTransaction);
-                            await _context.SaveChangesAsync();
+                            Transaction newTransaction = SaveTransactionInDB(iChargeAmount, session, _context);
 
                             // Update Session
                             Transactions newUserTransactions = new Transactions();
@@ -931,6 +921,26 @@ namespace cs3750LMS.Controllers
                 }
             }
             return View("~/Views/Home/Login.cshtml");
+        }
+
+        // abtract out the creation of the transaction into the database
+        public static Transaction SaveTransactionInDB(int iChargeAmount, UserSession session, cs3750Context context)
+        {
+            // creates new transaction
+            Transaction newTransaction = new Transaction
+            {
+                Date = DateTime.Now,
+                userID = session.UserId,
+                amount = iChargeAmount,
+                status = "Settled"
+            };
+
+            // add the new transaction to the database and save changes
+            context.Add(newTransaction);
+            context.SaveChangesAsync();
+
+            // return the transaction
+            return newTransaction;
         }
 
         private AssignmentStats GetAssignmentStats(Assignment assignment)
