@@ -39,17 +39,44 @@
                     ["D", _stats.GradeDistribution[3]],
                     ["F", _stats.GradeDistribution[4]]
                 ]);
-                var data2 = google.visualization.arrayToDataTable([
+@*                var data2 = google.visualization.arrayToDataTable([
                     ["Grade", "Score", { role: 'style' }, { role: 'annotation' }],
                     ["Max", _stats.Max, '#20804B', _stats.Max],
                     ["Average", _stats.Avg, '#04738C', _stats.Avg],
                     ["Min", _stats.Min, '#F5CF47', _stats.Min],
                     ["Your Grade", _studentPercentage, '#D94B2B', _studentPercentage]
-                ]);
+                ]);*@
+@*                var graphData = [['Grade Range', 'Count'],
+                    [95, _stats.GradeDistribution[0]],
+                    [85, _stats.GradeDistribution[1]],
+                    [75, _stats.GradeDistribution[2]],
+                    [65, _stats.GradeDistribution[3]],
+                    [55, _stats.GradeDistribution[4]]];*@
+                var graphData = [['Grade Range', 'Score', { role: 'style' }, { type: 'string', role: 'tooltip'}]];
+                for (let i = 0; i < _stats.GradeDistribution.length; i++) {
+                    if (_stats.IndividualGrades[i] >= 90) {
+                        graphData.push([_stats.IndividualGrades[i], _stats.IndividualGrades[i], '#04738C', 'Student Score']);
+                    }
+                    else if (_stats.IndividualGrades[i] <= 89 && _stats.IndividualGrades[i]  >= 80) {
+                        graphData.push([_stats.IndividualGrades[i], _stats.IndividualGrades[i], '#04738C', 'Student Score']);
+                    }
+                    else if (_stats.IndividualGrades[i] <= 79 && _stats.IndividualGrades[i]  >= 70) {
+                        graphData.push(_[_stats.IndividualGrades[i], _stats.IndividualGrades[i], '#04738C', 'Student Score']);
+                    }
+                    else if (_stats.IndividualGrades[i] <= 69 && _stats.IndividualGrades[i]  >= 60) {
+                        graphData.push([_stats.IndividualGrades[i], _stats.IndividualGrades[i], '#04738C', 'Student Score']);
+                    }
+                    else if (_stats.IndividualGrades[i] <= 59 && _stats.IndividualGrades[i]  > 0) {
+                        graphData.push([_stats.IndividualGrades[i], _stats.IndividualGrades[i], '#04738C', 'Student Score']);
+                    }
+                }
+                graphData.push([_studentPercentage, _studentPercentage, '#D94B2B', 'Your Score'])
+
+                var data2 = google.visualization.arrayToDataTable(graphData)
 
                 var view1 = new google.visualization.DataView(data1);
                 var view2 = new google.visualization.DataView(data2);
-                view2.setColumns([0, 1,
+                view2.setColumns([0,1,
                     {
                         calc: "stringify",
                         sourceColumn: 1,
@@ -63,16 +90,24 @@
                     width: 500,
                     height: 400,
                 };
-                var chart2_options = {
+@*                var chart2_options = {
                     title: "Grade Comparison",
                     width: 500,
                     height: 400,
                     bar: { groupWidth: "95%" },
                     legend: 'none'
-                };
+                };*@
+                var chart2_options = {
+                    title: "Grade Comparison",
+                    width: 500,
+                    height: 400,
+                    hAxis: { title: 'Grade Range', gridlines: { count: 5 }, minValue: 0, maxValue: _stats.maxValue + 5 },
+                    vAxis: { title: 'Score', minValue: 0, maxValue: _stats.IndividualGrades.length },
+                    legend: 'none'
+                }
                 var chart1 = new google.visualization.PieChart(document.getElementById('gradeDistribution'));
                 chart1.draw(view1, chart1_options);
-                var chart2 = new google.visualization.ColumnChart(document.getElementById('gradeComparison'));
+                var chart2 = new google.visualization.ScatterChart(document.getElementById('gradeComparison'));
                 chart2.draw(view2, chart2_options);
             }
         }

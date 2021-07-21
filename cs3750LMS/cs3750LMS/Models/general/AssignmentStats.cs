@@ -15,5 +15,6 @@ namespace cs3750LMS.Models.general
         public int Min { get; set; }
         public double Avg { get; set; }
         public List<int> GradeDistribution { get; set; }
+        public List<int> IndividualGrades { get; set; }
     }
 }

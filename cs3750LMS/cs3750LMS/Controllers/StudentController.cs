@@ -961,7 +961,7 @@ namespace cs3750LMS.Controllers
             var query = from a in submissions
                         where a.Grade > -1
                         select a.Grade;
-
+            stats.IndividualGrades = query.ToList();
             stats.Max = query.Max();
             // Get Min
             stats.Min = query.Min();
