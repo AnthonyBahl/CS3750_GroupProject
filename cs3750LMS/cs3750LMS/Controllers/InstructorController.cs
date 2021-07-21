@@ -59,6 +59,7 @@ namespace cs3750LMS.Controllers
 
             ViewData["ClickedCourse"] = course;
             ViewData["Message"] = session;
+            ViewData["url"] = "~Views/Instructor/CourseEdit.cshtml";
             return View("~/Views/Instructor/CourseEdit.cshtml");
         }
         //-------------------------------Course Edit Logic End----------------
@@ -179,6 +180,7 @@ namespace cs3750LMS.Controllers
                     ViewData["DepartmentData"] = depts;
                     ViewData["Message"] = session;
                     ViewData["Courses"] = userCourses;
+                    ViewData["url"] = "~Views/Instructor/AddClass.cshtml";
                     return View();
                 }
             }
@@ -247,6 +249,7 @@ namespace cs3750LMS.Controllers
             ViewData["DepartmentData"] = depts;
             ViewData["Message"] = session;
             ViewData["Courses"] = userCourses;
+            ViewData["url"] = "~Views/Instructor/AddClass.cshtml";
             return View();
         }
 
@@ -389,6 +392,7 @@ namespace cs3750LMS.Controllers
             ViewData["DepartmentData"] = depts;
             ViewData["Message"] = session;
             ViewData["Courses"] = userCourses;
+            ViewData["url"] = "~Views/Instructor/AddClass.cshtml";
             return View("AddClass");
         }
 
@@ -449,6 +453,7 @@ namespace cs3750LMS.Controllers
             ViewData["ClickedAssignment"] = assignment;
             ViewData["Students"] = students;
             ViewData["Message"] = session;
+            ViewData["url"] = "~/Views/Instructor/Submissions.cshtml";
             return View("~/Views/Instructor/Submissions.cshtml");
         }
 
@@ -493,6 +498,7 @@ namespace cs3750LMS.Controllers
             ViewData["Student"] = student;
             ViewData["File"] = path;
             ViewData["Message"] = session;
+            ViewData["url"] = "~/Views/Instructor/SubmissionDetail.cshtml";
             return View("~/Views/Instructor/SubmissionDetail.cshtml");
         }
 
@@ -565,6 +571,7 @@ namespace cs3750LMS.Controllers
             ViewData["ClickedAssignment"] = assignment;
             ViewData["Students"] = courseStudents;
             ViewData["Message"] = session;
+            ViewData["url"] = "~/Views/Instructor/Submissions.cshtml";
             return View("Submissions", assignment.Selection.AssignmentID);
         }
 

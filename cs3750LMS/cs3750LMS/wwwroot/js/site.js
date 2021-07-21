@@ -18,23 +18,6 @@ if (ItemsCount > 0) {
     bellIcon.classList.remove("ringAnimation"); //remove animation
 }
 
-document.querySelectorAll('.noti').forEach(item => item.addEventListener('mousedown', function (e) {
-    console.log(e)
-    console.log(e.target)
-    e.target.parentNode.parentNode.parentNode.style.display = "none";
-}));
-
-document.getElementById('notiDropdown').addEventListener('click', function (e) {
-    e.stopPropagation();
-    e.preventDefault();
-    console.log("WTF");
-    if (document.getElementById('notiMenu').style.display === "none") {
-        document.getElementById('notiMenu').style.display = "block";
-    } else {
-        document.getElementById('notiMenu').style.display = "none";
-    }
-});
-
 
 
 //END --------------  Notification Bell In Navbar

@@ -5,6 +5,7 @@
     {
         notifications = _notification.GetAllUserNotifications(show.UserId);
     }
+    string url = (string)ViewData["url"];
 }   
 
 @inject cs3750LMS.Models.Repository.INotificationRepository _notification
@@ -77,8 +78,8 @@
                                 <a class="nav-link" asp-area="" asp-controller="Home" asp-action="LogOut"><i class="bi bi-door-open"></i> Log Out</a>
                             </li>
 
-                            <li class="nav-item">
-                                <div class="nav-link" id="notiDropdown" aria-haspopup="true" aria-expanded="false"> <i id="bellIcon" class="far fa-bell fa-lg"></i></div>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link" id="notiDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i id="bellIcon" class="far fa-bell fa-lg"></i></a>
                                 @if (notifications.Count() > 0)
                                 {
                                     <div class="dropdown-menu" id="notiMenu">
@@ -96,8 +97,8 @@
                                                             </a>
                                                         </div>
                                                         <div class="col-1">
-                                                            <a href="#"  class="noti" onclick="() => {if(event.type =="click"){@_notification.DeleteNotification(notifications.ElementAt(i)); }}">
-                                                                <i id="notificationXicon" class="far fa-window-close fa-med icorrect"></i>
+                                                            <a asp-controller="Home" asp-action="DeleteNotification" asp-route-id=@notifications.ElementAt(i).NotificationID>
+                                                                <i id="notificationXicon" class="far fa-window-close fa-med icorrect noti"></i>
                                                             </a>
                                                         </div>
                                                     </div>
@@ -113,7 +114,9 @@
                                                             </a>
                                                         </div>
                                                         <div class="col-1">
-                                                            <i id="notificationXicon" class="far fa-window-close fa-med icorrect noti" onclick="() => {if(event.type =="click"){@_notification.DeleteNotification(notifications.ElementAt(i));}}"></i>
+                                                            <a asp-controller="Home" asp-action="DeleteNotification" asp-route-id=@notifications.ElementAt(i).NotificationID>
+                                                                <i id="notificationXicon" class="far fa-window-close fa-med icorrect noti"></i>
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 </div>
