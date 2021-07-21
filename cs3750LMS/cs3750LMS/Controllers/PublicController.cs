@@ -3,6 +3,7 @@ using cs3750LMS.Models;
 using cs3750LMS.Models.entites;
 using cs3750LMS.Models.general;
 using cs3750LMS.Models.validation;
+using cs3750LMS.Models.Repository;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,10 +22,12 @@ namespace cs3750LMS.Controllers
     {
         private readonly cs3750Context _context;
         private IHostingEnvironment Environment;
-        public PublicController(cs3750Context context, IHostingEnvironment _enrionment)
+        private readonly INotificationRepository _notification;
+        public PublicController(cs3750Context context, IHostingEnvironment _enrionment, INotificationRepository _notification)
         {
             _context = context;
             Environment = _enrionment;
+            this._notification = _notification;
         }
 
 
@@ -117,7 +120,7 @@ namespace cs3750LMS.Controllers
 
                         string dbPath = Path.GetFileName(testUser.ProfileImage.FileName);                   //name of file, could save to db as well
                         string FullPath = Path.Combine(path, dbPath);                               //save to database for later reference
-                        
+
 
                         //delete from files
                         if (System.IO.File.Exists(users.ProfileImage))
@@ -129,10 +132,10 @@ namespace cs3750LMS.Controllers
                         {
                             testUser.ProfileImage.CopyTo(stream);
                         }
-                        users.ProfileImage = "/Images/"+testUser.ProfileImage.FileName;
+                        users.ProfileImage = "/Images/" + testUser.ProfileImage.FileName;
                     }
 
-                   
+
                     //////////////////////////end pic logic
                     users.Address1 = testUser.Address1;
                     users.Address2 = testUser.Address2;
@@ -168,7 +171,7 @@ namespace cs3750LMS.Controllers
                     Zip = users.Zip,
                     Phone = users.Phone,
                     LinkedIn = users.LinkedIn,
-                    Github =users.Github,
+                    Github = users.Github,
                     Twitter = users.Twitter,
                     Bio = users.Bio
                 };
@@ -215,9 +218,24 @@ namespace cs3750LMS.Controllers
             return hash.ToString();
         }
 
-        
+        public bool CreateNotification(int recipientId, int referenceId, string type, string message) { 
+           //create notification for graded assignment. 
+            Notification noti = new Notification
+            {
+                RecipientID = recipientId,  //this is the ID of the person receiving the Notification. 
+                ReferenceID = referenceId,         //this makes it so when the student clicks on the notification, it takes them to the course page or when the teacher clicks on it, it takes them to the submission page. 
+                NotificationType = type,   //type of notifications "Assignment"
+                Message = message,        //Notification Message
+                DateCreated = DateTime.Now,
+                DateViewed = DateTime.Now //had to put this in because it would error if it wasn't initialized. 
+            };
 
 
+            //calls the repository function add which adds a notification to the database.                 
+            this._notification.Add(noti);
+
+            return true;
+         }
 
     }
 }

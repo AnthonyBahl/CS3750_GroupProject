@@ -21,8 +21,9 @@ namespace CS3750LMSTest
         // variables to access db and controller
         cs3750Context _context;
 
+       private INotificationRepository _notification;
         private IHostingEnvironment Environment;
-        private INotificationRepository _notification;
+        
         ILogger<HomeController> _logger;
 
         // constructor of what happens at every time this class is called
@@ -39,6 +40,10 @@ namespace CS3750LMSTest
 
             _context = new cs3750Context(builder.Options);
             _context.Database.Migrate();
+
+         
+            //TODO: need to initialize _notification here. 
+      
         }
 
         /// <summary>
@@ -340,6 +345,36 @@ namespace CS3750LMSTest
 
                 // Assert
                 Assert.AreEqual(allUsers, expectedUsers);
+
+            } // Dispose rolls back everything.
+        }
+
+
+        /// <summary>
+        /// This method tests to make sure that notifications can be created
+        /// </summary>
+        [TestMethod]
+        public void CreateNotificationTest()
+        {
+            // in a transaction scope so it will not be run in the database
+            using (new TransactionScope())
+            {
+                PublicController controller = new PublicController(_context, Environment, _notification);
+
+                var instructor = _context.Users.Find(1025);
+
+                int PreNotiCount = _context.Notifications.Count(n => n.RecipientID == instructor.UserId);
+
+                bool success = false;
+
+                 success = controller.CreateNotification(instructor.UserId, 0000, "Test", "This is a Unit Test");
+
+                int PostNotiCount = _context.Notifications.Count(n => n.RecipientID == instructor.UserId);
+
+                Assert.IsTrue(success);
+                Assert.AreEqual(PreNotiCount + 1, PostNotiCount);
+
+
 
             } // Dispose rolls back everything.
         }
