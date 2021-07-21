@@ -423,5 +423,67 @@ namespace CS3750LMSTest
 
             } // Dispose rolls back everything.
         }
+
+        [TestMethod]
+        public void RegisterForCourseAddsEnrollmentTest()
+        {
+            //////////////////////////////////////prep tests
+            //Normal Enrollment(test case user and course)
+            Enrollment testValidCase = new Enrollment
+            {
+                studentID = -1,
+                courseID = -1
+            };
+            bool testValidCaseResult;
+
+            //student value missing
+            Enrollment testNoStudent = new Enrollment
+            {
+                courseID = -1
+            };
+            bool testNoStudentResult;
+
+            //course value missing
+            Enrollment testNoCourse = new Enrollment
+            {
+                studentID = -1
+            };
+            bool testNoCourseResult;
+
+            //Neither student nor course
+            Enrollment testEmptyCase = new Enrollment();
+            bool testEmptyCaseResult;
+
+            ///////////////////////////////perform operations
+            //Normal Enrollment(test case user and course)
+            testValidCaseResult = StudentController.AddEnrollment(testValidCase, _context);
+
+            //student value missing
+            testNoStudentResult = StudentController.AddEnrollment(testNoStudent, _context);
+
+            //course value missing
+            testNoCourseResult = StudentController.AddEnrollment(testNoCourse, _context);
+
+            //Neither student nor course
+            testEmptyCaseResult = StudentController.AddEnrollment(testEmptyCase, _context);
+
+            //////////////////////////////test results
+            //Normal Enrollment(test case user and course)
+            Assert.IsTrue(testValidCaseResult);
+
+            //student value missing
+            Assert.IsFalse(testNoStudentResult);
+
+            //course value missing
+            Assert.IsFalse(testNoCourseResult);
+
+            //Neither student nor course
+            Assert.IsFalse(testEmptyCaseResult);
+
+            //Clean Up Tests from database
+            _context.Enrollments.RemoveRange(_context.Enrollments.Where(x => x.studentID <= 0 || x.courseID <= 0));
+            _context.SaveChanges();
+        }
+
     }
 }
