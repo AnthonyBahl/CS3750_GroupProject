@@ -533,7 +533,7 @@ namespace CS3750LMSTest
             using (new TransactionScope())
             {
                 // Create an instance of the Instructor controller
-                PublicController controller = new PublicController(_context, Environment);
+                PublicController controller = new PublicController(_context, Environment, _notification);
 
                 // Grab list of submissions
                 List<User> users = _context.Users.ToList();
