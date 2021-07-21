@@ -1,4 +1,4 @@
-﻿using cs3750LMS.DataAccess;
+using cs3750LMS.DataAccess;
 using cs3750LMS.Models;
 using cs3750LMS.Models.entites;
 using cs3750LMS.Models.general;
@@ -997,7 +997,23 @@ namespace cs3750LMS.Controllers
             return stats;
         }
 
-
+        //AddEnrollment adds a new enrollment for when a student registers for a course
+        public static bool AddEnrollment(Enrollment addEnrollment, cs3750Context _context){
+            if(addEnrollment.courseID ==0 || addEnrollment.studentID == 0)
+            {
+                return false;
+            }
+            try
+            {
+                _context.Enrollments.Add(addEnrollment);
+                _context.SaveChanges();
+                return true;
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+        }
 
         public static bool StudentSubmitAssignment(SubmitAssignmentValidation submiting, int studentID, cs3750Context _context)
         {
@@ -1022,4 +1038,3 @@ namespace cs3750LMS.Controllers
         }
     }
 }
-
