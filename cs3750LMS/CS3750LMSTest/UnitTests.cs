@@ -496,6 +496,9 @@ namespace CS3750LMSTest
             // Set up Transaction Scope so that nothing is added to the database
             using (new TransactionScope())
             {
+                // Create an instance of the Instructor controller
+                PublicController controller = new PublicController(_context, Environment);
+
                 // Grab list of submissions
                 List<User> users = _context.Users.ToList();
                 // Get last submission
@@ -518,9 +521,9 @@ namespace CS3750LMSTest
                 if (lastUser.ProfileImage != null)
                 {
                     //start picture logic
-                    wwwPath = this.Environment.WebRootPath;
-                    contentPath = this.Environment.ContentRootPath;
-                    path = Path.Combine(this.Environment.WebRootPath, "Images");
+                    wwwPath = Environment.WebRootPath;
+                    contentPath = Environment.ContentRootPath;
+                    path = Path.Combine(Environment.WebRootPath, "Images");
 
                     dbPath = lastUser.ProfileImage;                   //name of file, could save to db as well
                     FullPath = Path.Combine(path, dbPath);                               //save to database for later reference
@@ -544,9 +547,6 @@ namespace CS3750LMSTest
                 updatedUser.TwitterLink = lastUser.Twitter;
                 updatedUser.Bio = lastUser.Bio;
 
-                // Create an instance of the Instructor controller
-                PublicController controller = new PublicController(_context, Environment);
-
                 // Test update Phone
                 string newPhone = "(801) 222-3333";
                 bool updatePhone;
@@ -558,6 +558,10 @@ namespace CS3750LMSTest
                 // Test update Bio
                 string newBio = "I am the walrus.";
                 bool updateBio;
+
+                // Test update All
+                bool updateAll;
+
 
                 ////////////////////Tests
                 // Test update Phone
@@ -572,6 +576,25 @@ namespace CS3750LMSTest
                 updatedUser.Bio = newBio;
                 updateBio = controller.ProfileDBUpdate(updatedUser, _context);
 
+                // Test update All
+                updatedUser.FirstName = "Joe";
+                updatedUser.LastName = "Schmoe";
+                updatedUser.Birthday = DateTime.Now;
+
+                //////////////////////////end pic logic
+                updatedUser.Address1 = "123 S. Green Street";
+                updatedUser.Address2 = "";
+                updatedUser.City = "Salem";
+                updatedUser.State = 4;
+                updatedUser.Zip = "88888";
+                updatedUser.Phone = "(801) 555-4444";
+                updatedUser.LinkedInLink = "";
+                updatedUser.GitHubLink = "";
+                updatedUser.TwitterLink = "";
+                updatedUser.Bio = "I am the egg man.";
+
+                updateAll = controller.ProfileDBUpdate(updatedUser, _context);
+
                 //////////////////Test Results
                 // Test update Phone
                 Assert.IsTrue(updatePhone);
@@ -581,6 +604,9 @@ namespace CS3750LMSTest
 
                 //Test update Bio
                 Assert.IsTrue(updateBio);
+
+                // Test update All
+                Assert.IsTrue(updateAll);
 
             }
             /* End Profile Update Testing */
