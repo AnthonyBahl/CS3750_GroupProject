@@ -14,7 +14,7 @@ namespace cs3750LMS.Models.Repository
         IEnumerable<Notification> GetAllUserNotifications(int userID);
         Notification Add(Notification notification);
         Notification Update(Notification notification);
-        Notification DeleteNotification(int id);
+        bool DeleteNotification(Notification notification);
 
     }
 }

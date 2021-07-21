@@ -219,6 +219,7 @@ namespace cs3750LMS.Controllers
 
             ViewData["ClickedCourse"] = course;
             ViewData["Message"] = session;
+            ViewData["url"] = "~Views/Instructor/CourseEdit.cshtml";
             return View("~/Views/Instructor/CourseEdit.cshtml");
         }
         //-------------------------------Course Edit Logic End----------------
@@ -339,6 +340,7 @@ namespace cs3750LMS.Controllers
                     ViewData["DepartmentData"] = depts;
                     ViewData["Message"] = session;
                     ViewData["Courses"] = userCourses;
+                    ViewData["url"] = "~Views/Instructor/AddClass.cshtml";
                     return View("~/Views/Instructor/AddClass.cshtml");
                 }
             }
@@ -407,6 +409,7 @@ namespace cs3750LMS.Controllers
             ViewData["DepartmentData"] = depts;
             ViewData["Message"] = session;
             ViewData["Courses"] = userCourses;
+            ViewData["url"] = "~Views/Instructor/AddClass.cshtml";
             return View();
         }
 
@@ -549,6 +552,7 @@ namespace cs3750LMS.Controllers
             ViewData["DepartmentData"] = depts;
             ViewData["Message"] = session;
             ViewData["Courses"] = userCourses;
+            ViewData["url"] = "~Views/Instructor/AddClass.cshtml";
             return View("AddClass");
         }
 
@@ -609,6 +613,7 @@ namespace cs3750LMS.Controllers
             ViewData["ClickedAssignment"] = assignment;
             ViewData["Students"] = students;
             ViewData["Message"] = session;
+            ViewData["url"] = "~/Views/Instructor/Submissions.cshtml";
             return View("~/Views/Instructor/Submissions.cshtml");
         }
 
@@ -653,6 +658,7 @@ namespace cs3750LMS.Controllers
             ViewData["Student"] = student;
             ViewData["File"] = path;
             ViewData["Message"] = session;
+            ViewData["url"] = "~/Views/Instructor/SubmissionDetail.cshtml";
             return View("~/Views/Instructor/SubmissionDetail.cshtml");
         }
 
@@ -690,7 +696,7 @@ namespace cs3750LMS.Controllers
             //create notification for graded assignment. 
             Notification message = new Notification
             {
-                RecipientID = submission.StudentID,  //this will send it to the student
+                RecipientID = updatedGrade.StudentID,  //this will send it to the student
                 ReferenceID = courseID,         //this makes it so when the student clicks on the notification, it takes them to the course page. 
                 NotificationType = "Assignment",
                 Message = CourseName + " | " + AssignmentName + " grade was changed",
@@ -725,6 +731,7 @@ namespace cs3750LMS.Controllers
             ViewData["ClickedAssignment"] = assignment;
             ViewData["Students"] = courseStudents;
             ViewData["Message"] = session;
+            ViewData["url"] = "~/Views/Instructor/Submissions.cshtml";
             return View("Submissions", assignment.Selection.AssignmentID);
         }
 

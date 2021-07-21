@@ -1,4 +1,4 @@
-﻿using cs3750LMS.DataAccess;
+using cs3750LMS.DataAccess;
 using cs3750LMS.Models;
 using cs3750LMS.Models.entites;
 using cs3750LMS.Models.general;
@@ -74,13 +74,13 @@ namespace cs3750LMS.Controllers
             ViewData["Submission"] = submissions;
             ViewData["ClickedCourse"] = course;
             ViewData["Message"] = session;
-
+            ViewData["url"] = "~/Views/Student/ViewCourse.cshtml";
 
             return View("~/Views/Student/ViewCourse.cshtml");
         }
 
         [HttpGet]
-        public IActionResult SubmitAssignment(int id)
+        public IActionResult SubmitAssignment (int id)
         {
 
             //get user info from session
@@ -96,7 +96,7 @@ namespace cs3750LMS.Controllers
             Assignments userAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
 
             Assignment clickedAssignment = userAssignments.AssignmentList.Where(x => x.AssignmentID == id).Single();
-            if (submissions.Count(x => x.AssignmentID == clickedAssignment.AssignmentID) > 0)
+            if (submissions.Count(x=>x.AssignmentID == clickedAssignment.AssignmentID) >0 )
             {
                 ViewData["AlreadySubmitted"] = true;
                 ViewData["AssignmentStats"] = GetAssignmentStats(clickedAssignment);
@@ -109,7 +109,7 @@ namespace cs3750LMS.Controllers
             ViewData["Submission"] = submissions;
             ViewData["ClickedAssignment"] = clickedAssignment;
             ViewData["Message"] = session;
-
+            ViewData["url"] = "~/Views/Student/SubmitAssignment.cshtml";
 
             return View("~/Views/Student/SubmitAssignment.cshtml");
         }
@@ -183,12 +183,13 @@ namespace cs3750LMS.Controllers
             {
                 return SubmitAssignment(submiting.AssignmentId);
             }
+
             return ViewCourse(submiting.CourseId);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult FileSubmit([Bind("FileSubmission,CourseId,AssignmentId")] SubmitAssignmentValidation submiting)
+        public IActionResult FileSubmit([Bind("FileSubmission,CourseId,AssignmentId")]SubmitAssignmentValidation submiting)
         {
             //get user info from session
             string serialUser = HttpContext.Session.GetString("userInfo");
@@ -198,7 +199,7 @@ namespace cs3750LMS.Controllers
                 //file storage   stored in file assignment id directory first, and student id second, with the file inside                 
                 string wwwPath = this.Environment.WebRootPath;
                 string contentPath = this.Environment.ContentRootPath;
-                string path = Path.Combine(this.Environment.WebRootPath, "Submissions/" + submiting.AssignmentId + "/" + session.UserId);
+                string path = Path.Combine(this.Environment.WebRootPath, "Submissions/" + submiting.AssignmentId + "/"+session.UserId);
 
                 if (!Directory.Exists(path))
                 {
@@ -354,17 +355,17 @@ namespace cs3750LMS.Controllers
 
             List<Course> removeList = new List<Course>();
             //filter data
-            if (pars.Department != -1)
+            if(pars.Department != -1)
             {
-                for (int i = 0; i < allCourses.CourseList.Count; i++)
+                for(int i = 0; i < allCourses.CourseList.Count; i++)
                 {
-                    if (allCourses.CourseList[i].Department != pars.Department)
+                    if(allCourses.CourseList[i].Department != pars.Department)
                     {
                         removeList.Add(allCourses.CourseList[i]);
                     }
                 }
             }
-            if (pars.Title != null && pars.Title != string.Empty)
+            if(pars.Title != null && pars.Title != string.Empty)
             {
                 for (int i = 0; i < allCourses.CourseList.Count; i++)
                 {
@@ -377,7 +378,7 @@ namespace cs3750LMS.Controllers
                 }
             }
 
-            foreach (Course c in removeList)
+            foreach(Course c in removeList)
             {
                 allCourses.CourseList.Remove(c);
             }
@@ -401,6 +402,7 @@ namespace cs3750LMS.Controllers
             ViewData["Message"] = session;
             ViewData["Courses"] = allCourses;
             ViewData["StudentCourses"] = studentCourses;
+            ViewData["url"] = "~/Views/Student/Register.cshtml";
 
             return View("~/Views/Student/Register.cshtml");
         }
@@ -410,7 +412,7 @@ namespace cs3750LMS.Controllers
             {
                 //get user info from session
                 string serialUser = HttpContext.Session.GetString("userInfo");
-                UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
+                UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);       
 
                 if (session.AccountType == 0)
                 {
@@ -468,7 +470,7 @@ namespace cs3750LMS.Controllers
                         HttpContext.Session.SetString("userEnrollment", JsonSerializer.Serialize(enrollment));
                         HttpContext.Session.SetString("AllCourses", JsonSerializer.Serialize(allCourses));
                     }
-
+                
 
 
                     //get student courses from session
@@ -497,6 +499,7 @@ namespace cs3750LMS.Controllers
                     ViewData["Message"] = session;
                     ViewData["Courses"] = allCourses;
                     ViewData["StudentCourses"] = studentCourses;
+                    ViewData["url"] = "~/Views/Student/Register.cshtml";
                     return View();
                 }
             }
@@ -530,14 +533,17 @@ namespace cs3750LMS.Controllers
 
             //if model valid add new course
             bool success = false;
-
+  
             Enrollment newEnrollment = new Enrollment
             {
                 studentID = session.UserId,
                 courseID = passedEnrollment.courseID
             };
 
-            success = AddEnrollment(newEnrollment,_context);
+            List<Enrollment> errorCheck = _context.Enrollments.Where(x => (x.studentID == passedEnrollment.studentID && x.courseID == passedEnrollment.courseID)).ToList();
+            _context.Enrollments.Add(newEnrollment);
+            _context.SaveChanges();
+            success = true;
 
             enrollment.EnrollmentList = _context.Enrollments.Where(x => x.studentID == session.UserId).ToList();
             HttpContext.Session.SetString("userEnrollment", JsonSerializer.Serialize(enrollment));
@@ -548,7 +554,7 @@ namespace cs3750LMS.Controllers
             HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(studentCourses));
             //reload assignments
             Assignments userAssignments = JsonSerializer.Deserialize<Assignments>(HttpContext.Session.GetString("userAssignments"));
-            userAssignments.AssignmentList = _context.Assignments.Where(x => enrolled.Contains(x.CourseID)).ToList();
+            userAssignments.AssignmentList= _context.Assignments.Where(x => enrolled.Contains(x.CourseID)).ToList();
             HttpContext.Session.SetString("userAssignments", JsonSerializer.Serialize(userAssignments));
             //save times
             List<TimeStamp> timesSave = new TimeStamp().ParseTimes(studentCourses);
@@ -583,6 +589,7 @@ namespace cs3750LMS.Controllers
             ViewData["Message"] = session;
             ViewData["Courses"] = allCourses;
             ViewData["StudentCourses"] = studentCourses;
+            ViewData["url"] = "~/Views/Student/Register.cshtml";
             return View("~/Views/Student/Register.cshtml");
         }
 
@@ -662,6 +669,7 @@ namespace cs3750LMS.Controllers
             ViewData["Message"] = session;
             ViewData["Courses"] = allCourses;
             ViewData["StudentCourses"] = studentCourses;
+            ViewData["url"] = "~/Views/Student/Register.cshtml";
             return View("~/Views/Student/Register.cshtml");
         }
 
@@ -736,6 +744,7 @@ namespace cs3750LMS.Controllers
                     ViewData["Message"] = session;
                     ViewData["Courses"] = allCourses;
                     ViewData["StudentCourses"] = studentCourses;
+                    ViewData["url"] = "~/Views/Student/Payment.cshtml";
                     return View();
                 }
             }
@@ -811,7 +820,7 @@ namespace cs3750LMS.Controllers
 
                     string ccErrMsg = "";
 
-                    client.BaseAddress = new Uri(url);
+                    client.BaseAddress = new Uri(url); 
                     client.DefaultRequestHeaders.Accept.Clear(); // clear preexisting headers
 
                     // set headers
@@ -835,14 +844,14 @@ namespace cs3750LMS.Controllers
                     if (res.IsSuccessStatusCode)
                     {
                         var responseString = await res.Content.ReadAsStringAsync();
-
+                       
                         // parse json response
                         JsonDocument doc = JsonDocument.Parse(responseString);
                         // grab root json element
                         JsonElement root = doc.RootElement;
                         // grab token id field
                         string tokenId = root.GetProperty("id").ToString();
-
+                        
                         // do next request
 
                         client = new HttpClient();
@@ -854,7 +863,7 @@ namespace cs3750LMS.Controllers
                         // set headers
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "sk_test_51J1K0xA6qDyGoLeeC6aj7Rm39c8lFFfTYZ9k4KyAy6oxH30YYJEKbE73mewvQAAc0jkzATCmsOuzwZ7pZ42bXBSc00t8sYSK1X");
-
+                      
                         // calculate ammount in dollars
                         int iAmt = Int32.Parse(amt);
                         string dollarAmt = (iAmt * 100).ToString();
@@ -915,6 +924,7 @@ namespace cs3750LMS.Controllers
                     ViewData["Message"] = session;
                     ViewData["Courses"] = allCourses;
                     ViewData["StudentCourses"] = studentCourses;
+                    ViewData["url"] = "~/Views/Student/Payment.cshtml";
                     return View("Payment");
                 }
             }
@@ -957,19 +967,19 @@ namespace cs3750LMS.Controllers
             stats.Min = query.Min();
             // Get Avg
             stats.Avg = query.Average();
-            stats.GradeDistribution = new List<int> { 0, 0, 0, 0, 0 };
-            foreach (int item in query)
+            stats.GradeDistribution = new List<int> { 0, 0, 0, 0, 0};
+            foreach(int item in query)
             {
                 double percent = ((double)item / assignment.MaxPoints) * 100;
 
-                if (percent >= 90)
+                if(percent >= 90)
                 {
                     stats.GradeDistribution[0]++;
-                }
+                } 
                 else if (percent <= 89 && percent >= 80)
                 {
                     stats.GradeDistribution[1]++;
-                }
+                } 
                 else if (percent <= 79 && percent >= 70)
                 {
                     stats.GradeDistribution[2]++;
@@ -986,7 +996,6 @@ namespace cs3750LMS.Controllers
 
             return stats;
         }
-
 
         //AddEnrollment adds a new enrollment for when a student registers for a course
         public static bool AddEnrollment(Enrollment addEnrollment, cs3750Context _context){
@@ -1005,7 +1014,6 @@ namespace cs3750LMS.Controllers
                 return false;
             }
         }
-
 
         public static bool StudentSubmitAssignment(SubmitAssignmentValidation submiting, int studentID, cs3750Context _context)
         {
@@ -1030,4 +1038,3 @@ namespace cs3750LMS.Controllers
         }
     }
 }
-
