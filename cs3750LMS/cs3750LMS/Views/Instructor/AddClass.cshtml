@@ -51,7 +51,7 @@
     <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].EndTime.ToString()</a></td>
     <td><a asp-action="CourseEdit" asp-route-id="@courses.CourseList[i].CourseID">@courses.CourseList[i].Location</a></td>
     <td><button type="button" class="btn btn-success" onclick="ToggleView(2,@courses.CourseList[i].CourseID)">Edit</button></td>
-    <td><button type="button" class="btn btn-danger">Delete</button></td>
+    <td><a asp-action="DeleteCourse" asp-route-id="@courses.CourseList[i].CourseID" type="button" class="btn btn-danger">Delete</a></td>
 </tr>                }
     </tbody>
 </table>}
