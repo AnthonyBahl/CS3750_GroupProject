@@ -23,11 +23,11 @@ namespace cs3750LMS.Controllers
         private readonly cs3750Context _context;
         private IHostingEnvironment Environment;
         private readonly INotificationRepository _notification;
-        public PublicController(cs3750Context context, IHostingEnvironment _enrionment, INotificationRepository _notification)
+        public PublicController(cs3750Context context, IHostingEnvironment _enrionment, INotificationRepository notification)
         {
             _context = context;
             Environment = _enrionment;
-            this._notification = _notification;
+            _notification = notification;
         }
 
 
@@ -218,9 +218,9 @@ namespace cs3750LMS.Controllers
             return hash.ToString();
         }
 
-        public bool CreateNotification(int recipientId, int referenceId, string type, string message) { 
-           //create notification for graded assignment. 
-            Notification noti = new Notification
+        public bool CreateNotification(int recipientId, int referenceId, string type, string message) {
+            //create notification for graded assignment. 
+            Notification noti = new Notification            
             {
                 RecipientID = recipientId,  //this is the ID of the person receiving the Notification. 
                 ReferenceID = referenceId,         //this makes it so when the student clicks on the notification, it takes them to the course page or when the teacher clicks on it, it takes them to the submission page. 
@@ -232,7 +232,7 @@ namespace cs3750LMS.Controllers
 
 
             //calls the repository function add which adds a notification to the database.                 
-            this._notification.Add(noti);
+            _notification.Add(noti);
 
             return true;
          }

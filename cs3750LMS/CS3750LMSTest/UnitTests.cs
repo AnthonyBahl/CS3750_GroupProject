@@ -42,7 +42,7 @@ namespace CS3750LMSTest
             _context.Database.Migrate();
 
          
-            //TODO: need to initialize _notification here. 
+            
       
         }
 
@@ -367,7 +367,7 @@ namespace CS3750LMSTest
 
                 bool success = false;
 
-                 success = controller.CreateNotification(instructor.UserId, 0000, "Test", "This is a Unit Test");
+                 success = controller.CreateNotification(instructor.UserId, 2468, "Test", "This is a Unit Test");
 
                 int PostNotiCount = _context.Notifications.Count(n => n.RecipientID == instructor.UserId);
 
