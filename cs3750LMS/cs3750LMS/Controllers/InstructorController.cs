@@ -533,7 +533,7 @@ namespace cs3750LMS.Controllers
             int StudentID = _context.Submissions.Where(x => x.SubmissionID == updatedGrade.SubmissionID).Select(i => i.StudentID).FirstOrDefault();
 
 
-            publicController.CreateNotification(StudentID, courseID, "Assignment", notiMessage);      
+            publicController.CreateNotification(StudentID, courseID, "Assignment", notiMessage, _notification);      
         
 
             SpecificAssignment assignment = new SpecificAssignment();

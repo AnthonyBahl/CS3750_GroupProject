@@ -21,7 +21,7 @@ namespace CS3750LMSTest
         // variables to access db and controller
         cs3750Context _context;
 
-       private INotificationRepository _notification;
+       private db_NotificationRepository _notification;
         private IHostingEnvironment Environment;
         
         ILogger<HomeController> _logger;
@@ -35,13 +35,13 @@ namespace CS3750LMSTest
            .BuildServiceProvider();
 
             var builder = new DbContextOptionsBuilder<cs3750Context>();
-            builder.UseSqlServer($"Data Source=titan.cs.weber.edu,10433;Initial Catalog=LMSBinEnt;USER ID=LMSBinEnt;Password=8!N4Ry3n7")
+            builder.UseSqlServer($"Data Source=titan.cs.weber.edu,10433;Initial Catalog=LMSBinEnt;USER ID=LMSBinEnt;Password=newPassx!#$")
                     .UseInternalServiceProvider(serviceProvider);
 
             _context = new cs3750Context(builder.Options);
             _context.Database.Migrate();
 
-         
+            _notification = new db_NotificationRepository(_context);
             
       
         }
@@ -367,8 +367,8 @@ namespace CS3750LMSTest
 
                 bool success = false;
 
-                 success = controller.CreateNotification(instructor.UserId, 2468, "Test", "This is a Unit Test");
-
+                 success = controller.CreateNotification(instructor.UserId, 2468, "Test", "This is a Unit Test", _notification);
+               
                 int PostNotiCount = _context.Notifications.Count(n => n.RecipientID == instructor.UserId);
 
                 Assert.IsTrue(success);

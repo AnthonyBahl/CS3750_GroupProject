@@ -218,7 +218,7 @@ namespace cs3750LMS.Controllers
             return hash.ToString();
         }
 
-        public bool CreateNotification(int recipientId, int referenceId, string type, string message) {
+        public bool CreateNotification(int recipientId, int referenceId, string type, string message, INotificationRepository _noti) {
             //create notification for graded assignment. 
             Notification noti = new Notification            
             {
@@ -232,7 +232,7 @@ namespace cs3750LMS.Controllers
 
 
             //calls the repository function add which adds a notification to the database.                 
-            _notification.Add(noti);
+            _noti.Add(noti);
 
             return true;
          }

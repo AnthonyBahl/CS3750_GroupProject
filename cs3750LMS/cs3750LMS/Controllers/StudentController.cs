@@ -166,7 +166,7 @@ namespace cs3750LMS.Controllers
                 int InstructorID = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(i => i.InstructorID).FirstOrDefault();
                 String notiMessage = CourseName + " | " + AssignmentName + " was submitted.";
 
-                publicController.CreateNotification(InstructorID, courseID, "Assignment", notiMessage);
+                publicController.CreateNotification(InstructorID, courseID, "Assignment", notiMessage, _notification);
 
             }
             else //fail case
@@ -247,7 +247,7 @@ namespace cs3750LMS.Controllers
                 int InstructorID = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(i => i.InstructorID).FirstOrDefault();
                 String notiMessage = CourseName + " | " + AssignmentName + " was submitted.";
 
-                publicController.CreateNotification(InstructorID, courseID, "Assignment", notiMessage);
+                publicController.CreateNotification(InstructorID, courseID, "Assignment", notiMessage, _notification);
 
             }
             else //fail case
