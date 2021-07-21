@@ -30,7 +30,167 @@ namespace cs3750LMS.Controllers
             this._notification = _notification;
             publicController = new PublicController(_context, _environment, _notification);
         }
+        //(begin)Deletions of a Course Logics(begin)----------------------------
+        [HttpGet]
+        public IActionResult DeleteCourse(int id)
+        {
+            //set courses object for next pass
+            string serialCourse = HttpContext.Session.GetString("userCourses");
+            Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+            //make sure course exists, if not send to index
+            if (userCourses.CourseList.Count(x=>x.CourseID == id)<1)
+            {
+                string serialUser = HttpContext.Session.GetString("userInfo");
+                UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
 
+                string serialCourseb = HttpContext.Session.GetString("userCourses");
+                Courses userCoursesb = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourseb);
+
+                string serialAssignment2 = HttpContext.Session.GetString("userAssignments");
+                Assignments userAssignments3 = serialAssignment2 == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment2);
+
+
+                //reload timespans
+                string serialTimes = HttpContext.Session.GetString("courseTimes");
+                List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
+                userCourses.RefactorTimeSpans(times);
+
+                ViewData["UserCourses"] = userCourses;
+                ViewData["Message"] = session;
+                ViewData["userAssignments"] = userAssignments3;
+                return View("~/Views/Home/Index.cshtml");
+            }
+
+            //get assignments, and selected assignment
+            string serialAssignment = HttpContext.Session.GetString("userAssignments");
+            Assignments userAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
+
+            List<Assignment> selectedAssignments = new List<Assignment>();
+
+            if (userAssignments.AssignmentList.Count(x => x.CourseID == id) == 1)
+            {
+                selectedAssignments = userAssignments.AssignmentList.Where(x => x.CourseID == id).ToList();
+            }
+
+
+            SpecificCourse dummy = new SpecificCourse()
+            {
+                AssignmentList = new List<Assignment>()
+            };
+
+            //perform Delete
+            bool result = DeleteXAssignmentHelper(_context, userAssignments, dummy, selectedAssignments, Environment);
+
+            List<Enrollment> courseEnrollments = _context.Enrollments.Where(x => x.courseID == id).ToList();
+            foreach(Enrollment e in courseEnrollments)
+            {
+                _context.Enrollments.Remove(e);
+            }
+            Course selectedCourse = userCourses.CourseList.Where(x => x.CourseID == id).Single();
+            _context.Courses.Remove(selectedCourse);
+            _context.SaveChanges();
+            userCourses.CourseList.Remove(selectedCourse);
+
+            //update session saved courses
+            HttpContext.Session.SetString("userCourses", JsonSerializer.Serialize(userCourses));
+            HttpContext.Session.SetString("userAssignments", JsonSerializer.Serialize(userAssignments));
+            return AddClass();
+        }
+        //(end)Deletions of a course Logics(end)-------------------------------
+
+        //(begin)Deletions of an Assignment Logics(begin)-----------------------
+        [HttpGet]
+        public IActionResult DeleteAssignment(int idAssignment)
+        {
+            //get assignments, and selected assignment
+            string serialAssignment = HttpContext.Session.GetString("userAssignments");
+            Assignments userAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
+            Assignment selectedAssignment = new Assignment();
+            if (userAssignments.AssignmentList.Count(x => x.AssignmentID == idAssignment) == 1)
+            {
+                selectedAssignment = userAssignments.AssignmentList.Where(x => x.AssignmentID == idAssignment).Single();
+            }
+            else
+            {
+                string serialUser = HttpContext.Session.GetString("userInfo");
+                UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
+
+                string serialCourse = HttpContext.Session.GetString("userCourses");
+                Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+
+                string serialAssignment2 = HttpContext.Session.GetString("userAssignments");
+                Assignments userAssignments3 = serialAssignment2 == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment2);
+
+
+                //reload timespans
+                string serialTimes = HttpContext.Session.GetString("courseTimes");
+                List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
+                userCourses.RefactorTimeSpans(times);
+
+                ViewData["UserCourses"] = userCourses;
+                ViewData["Message"] = session;
+                ViewData["userAssignments"] = userAssignments3;
+                return View("~/Views/Home/Index.cshtml");
+            }
+             
+            //get course
+            string courseKey = "course" + selectedAssignment.CourseID;
+            string serialSelected = HttpContext.Session.GetString(courseKey);
+            SpecificCourse course = JsonSerializer.Deserialize<SpecificCourse>(serialSelected);
+
+            List<Assignment> selectedAssignments = new List<Assignment>();
+            selectedAssignments.Add(selectedAssignment);
+
+            //perform Delete
+            bool result = DeleteXAssignmentHelper(_context, userAssignments, course, selectedAssignments, Environment);
+
+            //update session saved courses
+            HttpContext.Session.SetString("userAssignments", JsonSerializer.Serialize(userAssignments));
+            HttpContext.Session.SetString(courseKey, JsonSerializer.Serialize(course));
+            
+            
+
+            return CourseEdit(selectedAssignment.CourseID);
+        }
+
+        //Helper functions for Deletion(s)//
+        public static bool DeleteXAssignmentHelper(cs3750Context _context, Assignments userAssignments, SpecificCourse course, List<Assignment> selectedAssignments, IHostingEnvironment Environment)
+        {
+            try
+            {
+                foreach (Assignment selectedAssignment in selectedAssignments)
+                {
+                    //remove assignment from lists and db
+                    _context.Assignments.Remove(selectedAssignment);
+                    userAssignments.AssignmentList.Remove(userAssignments.AssignmentList.Where(x=>x.AssignmentID==selectedAssignment.AssignmentID).Single());
+                    course.AssignmentList.Remove(course.AssignmentList.Where(x=>x.AssignmentID==selectedAssignment.AssignmentID).Single());
+
+                    //remove submissions
+                    List<Submission> submissionsForDelete = _context.Submissions.Where(x => x.AssignmentID == selectedAssignment.AssignmentID).ToList();
+                    foreach (Submission s in submissionsForDelete)
+                    {
+                        _context.Submissions.Remove(s);
+                    }
+                    
+                    string path = Path.Combine(Environment.WebRootPath,"Submissions/" + selectedAssignment.AssignmentID);
+                    if (Directory.Exists(path))
+                    {
+                        Directory.Delete(path, true);
+                    }
+                    //end remove submissions
+                }
+                //save database ane return affirmation
+                _context.SaveChanges();
+                return true;
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+        }
+
+
+        //(end)Deletions of an Assignment Logic (end) ----------------------
 
         //-------------------------------Specific Course Edit logic Begin--------------
         [HttpGet]
@@ -62,6 +222,7 @@ namespace cs3750LMS.Controllers
 
             ViewData["ClickedCourse"] = course;
             ViewData["Message"] = session;
+            ViewData["url"] = "~Views/Instructor/CourseEdit.cshtml";
             return View("~/Views/Instructor/CourseEdit.cshtml");
         }
         //-------------------------------Course Edit Logic End----------------
@@ -182,7 +343,8 @@ namespace cs3750LMS.Controllers
                     ViewData["DepartmentData"] = depts;
                     ViewData["Message"] = session;
                     ViewData["Courses"] = userCourses;
-                    return View();
+                    ViewData["url"] = "~Views/Instructor/AddClass.cshtml";
+                    return View("~/Views/Instructor/AddClass.cshtml");
                 }
             }
             return View("~/Views/Home/Login.cshtml");
@@ -250,6 +412,7 @@ namespace cs3750LMS.Controllers
             ViewData["DepartmentData"] = depts;
             ViewData["Message"] = session;
             ViewData["Courses"] = userCourses;
+            ViewData["url"] = "~Views/Instructor/AddClass.cshtml";
             return View();
         }
 
@@ -392,6 +555,7 @@ namespace cs3750LMS.Controllers
             ViewData["DepartmentData"] = depts;
             ViewData["Message"] = session;
             ViewData["Courses"] = userCourses;
+            ViewData["url"] = "~Views/Instructor/AddClass.cshtml";
             return View("AddClass");
         }
 
@@ -452,6 +616,7 @@ namespace cs3750LMS.Controllers
             ViewData["ClickedAssignment"] = assignment;
             ViewData["Students"] = students;
             ViewData["Message"] = session;
+            ViewData["url"] = "~/Views/Instructor/Submissions.cshtml";
             return View("~/Views/Instructor/Submissions.cshtml");
         }
 
@@ -496,6 +661,7 @@ namespace cs3750LMS.Controllers
             ViewData["Student"] = student;
             ViewData["File"] = path;
             ViewData["Message"] = session;
+            ViewData["url"] = "~/Views/Instructor/SubmissionDetail.cshtml";
             return View("~/Views/Instructor/SubmissionDetail.cshtml");
         }
 
@@ -560,6 +726,7 @@ namespace cs3750LMS.Controllers
             ViewData["ClickedAssignment"] = assignment;
             ViewData["Students"] = courseStudents;
             ViewData["Message"] = session;
+            ViewData["url"] = "~/Views/Instructor/Submissions.cshtml";
             return View("Submissions", assignment.Selection.AssignmentID);
         }
 

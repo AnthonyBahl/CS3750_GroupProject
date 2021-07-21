@@ -12,6 +12,8 @@ using Microsoft.Extensions.Logging;
 using cs3750LMS.Models.entites;
 using System.Collections.Generic;
 using cs3750LMS.Models.validation;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace CS3750LMSTest
 {
@@ -67,7 +69,7 @@ namespace CS3750LMSTest
                 TimeSpan startTime = new TimeSpan(21, 40, 50);
                 TimeSpan endTime = new TimeSpan(21, 50, 50);
 
-                // call instructor controller with the context and enviroment passed in
+                // call instructor controller with the context and environment passed in
                 var controller = new InstructorController(_context, Environment, _notification);
 
                 // create a new class object
@@ -351,42 +353,83 @@ namespace CS3750LMSTest
 
 
 
+        /// <summary>
+        /// This method tests to make sure that the submit a text assignment functionality does not break.
+        /// </summary>
+        [TestMethod]
+        public void StudentCanSubmitAssignmentTest()
+        {
+            // Set up Transaction Scope so that nothing is added to the database
+            using (new TransactionScope())
+            {
+                //get student
+                User student = _context.Users.Find(3);
 
+                  //get assignments
+                List<Assignment> assignments = _context.Assignments.ToList();
+                   //get last assignment
+                Assignment lastAssignmetn = assignments.Last();
 
+                //get count of submissions. 
+                var preSubmissionCount = _context.Submissions.Count(n => n.AssignmentID == lastAssignmetn.AssignmentID);
 
+                //create new submission
+                SubmitAssignmentValidation newSubmission = new SubmitAssignmentValidation();           
 
+                //Populate fields
+                newSubmission.AssignmentId = lastAssignmetn.AssignmentID;
+                newSubmission.CourseId = lastAssignmetn.CourseID;
+                newSubmission.TextSubmission = "[Unit Test] assignment Text Submission.";
 
+                //get student controller instance
+                StudentController.StudentSubmitAssignment(newSubmission, student.UserId, _context);
 
+                //get Post submission Count
+                var postSubmissionCount = _context.Submissions.Count(n => n.AssignmentID == lastAssignmetn.AssignmentID);             
 
+                // Determine if everything is working.                
+                Assert.AreEqual(postSubmissionCount, preSubmissionCount+1);
+          
+                
+            }
+        }
 
+        /// <summary>
+        /// This method tests to make sure that the application can register users
+        /// </summary>
+        [TestMethod]
+        public void CreateTransactionTest()
+        {
+            // in a transaction scope so it will not be run in the database
+            using (new TransactionScope())
+            {
+                // create a new class object
+                UserSession session = new UserSession();
 
+                // add fields
+                session.UserId = 1;
+                int iChargeAmount = 10;
 
+                // grab the Transaction count
+                var allTransactions = _context.Transactions.Count();
+                var expectedTranactions = allTransactions + 1; // grab the expected result
 
+                // Act
+                // add the class in the controller
+                cs3750LMS.Models.entites.Transaction newTransaction = StudentController.SaveTransactionInDB(iChargeAmount, session, _context);
 
+                // find out the count again
+                allTransactions = _context.Transactions.Count();
 
+                // Assert
+                // sees if the tractioins created
+                Assert.AreEqual(allTransactions, expectedTranactions);
 
+                // make sure the charge amount is equal
+                Assert.AreEqual(newTransaction.amount, iChargeAmount);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            } // Dispose rolls back everything.
+        }
 
 
         /// <summary>
@@ -406,8 +449,8 @@ namespace CS3750LMSTest
 
                 bool success = false;
 
-                 success = controller.CreateNotification(instructor.UserId, 2468, "Test", "This is a Unit Test", _notification);
-               
+                success = controller.CreateNotification(instructor.UserId, 2468, "Test", "This is a Unit Test", _notification);
+
                 int PostNotiCount = _context.Notifications.Count(n => n.RecipientID == instructor.UserId);
 
                 Assert.IsTrue(success);
@@ -416,6 +459,193 @@ namespace CS3750LMSTest
 
 
             } // Dispose rolls back everything.
+        }
+
+
+        [TestMethod]
+        public void RegisterForCourseAddsEnrollmentTest()
+        {
+            //////////////////////////////////////prep tests
+            //Normal Enrollment(test case user and course)
+            Enrollment testValidCase = new Enrollment
+            {
+                studentID = -1,
+                courseID = -1
+            };
+            bool testValidCaseResult;
+
+            //student value missing
+            Enrollment testNoStudent = new Enrollment
+            {
+                courseID = -1
+            };
+            bool testNoStudentResult;
+
+            //course value missing
+            Enrollment testNoCourse = new Enrollment
+            {
+                studentID = -1
+            };
+            bool testNoCourseResult;
+
+            //Neither student nor course
+            Enrollment testEmptyCase = new Enrollment();
+            bool testEmptyCaseResult;
+
+            ///////////////////////////////perform operations
+            //Normal Enrollment(test case user and course)
+            testValidCaseResult = StudentController.AddEnrollment(testValidCase, _context);
+
+            //student value missing
+            testNoStudentResult = StudentController.AddEnrollment(testNoStudent, _context);
+
+            //course value missing
+            testNoCourseResult = StudentController.AddEnrollment(testNoCourse, _context);
+
+            //Neither student nor course
+            testEmptyCaseResult = StudentController.AddEnrollment(testEmptyCase, _context);
+
+            //////////////////////////////test results
+            //Normal Enrollment(test case user and course)
+            Assert.IsTrue(testValidCaseResult);
+
+            //student value missing
+            Assert.IsFalse(testNoStudentResult);
+
+            //course value missing
+            Assert.IsFalse(testNoCourseResult);
+
+            //Neither student nor course
+            Assert.IsFalse(testEmptyCaseResult);
+
+            //Clean Up Tests from database
+            _context.Enrollments.RemoveRange(_context.Enrollments.Where(x => x.studentID <= 0 || x.courseID <= 0));
+            _context.SaveChanges();
+        }
+
+        /// <summary>
+        /// This method tests to make sure that grades can be updated.
+        /// </summary>
+        [TestMethod]
+        public void UserCanUpdateProfileTest()
+        {
+            // Set up Transaction Scope so that nothing is added to the database
+            using (new TransactionScope())
+            {
+                // Create an instance of the Instructor controller
+                PublicController controller = new PublicController(_context, Environment);
+
+                // Grab list of submissions
+                List<User> users = _context.Users.ToList();
+                // Get last submission
+                User lastUser = users.Last();
+
+                UserValidationUpdate updatedUser = new UserValidationUpdate();
+
+                updatedUser.Email = lastUser.Email;
+                updatedUser.FirstName = lastUser.FirstName;
+                updatedUser.LastName = lastUser.LastName;
+                updatedUser.Phone = lastUser.Phone;
+                updatedUser.Birthday = lastUser.Birthday;
+
+                string wwwPath;
+                string contentPath;
+                string path;
+                string dbPath;
+                string FullPath;
+
+                if (lastUser.ProfileImage != null)
+                {
+                    //start picture logic
+                    wwwPath = Environment.WebRootPath;
+                    contentPath = Environment.ContentRootPath;
+                    path = Path.Combine(Environment.WebRootPath, "Images");
+
+                    dbPath = lastUser.ProfileImage;                   //name of file, could save to db as well
+                    FullPath = Path.Combine(path, dbPath);                               //save to database for later reference
+
+                    //add to files
+                    using (FileStream stream = new FileStream(FullPath, FileMode.Open))
+                    {
+                        updatedUser.ProfileImage = new FormFile(stream, 0, stream.Length, null, Path.GetFileName(stream.Name));
+                    }
+                }
+
+                //////////////////////////end pic logic
+                updatedUser.Address1 = lastUser.Address1;
+                updatedUser.Address2 = lastUser.Address2;
+                updatedUser.City = lastUser.City;
+                updatedUser.State = lastUser.State;
+                updatedUser.Zip = lastUser.Zip;
+                updatedUser.Phone = lastUser.Phone;
+                updatedUser.LinkedInLink = lastUser.LinkedIn;
+                updatedUser.GitHubLink = lastUser.Github;
+                updatedUser.TwitterLink = lastUser.Twitter;
+                updatedUser.Bio = lastUser.Bio;
+
+                // Test update Phone
+                string newPhone = "(801) 222-3333";
+                bool updatePhone;
+
+                // Test update LinkedIn
+                string newLinkedIn = "https://www.linkedin.com/in/cammasfreeman/";
+                bool updateLinkedIn;
+
+                // Test update Bio
+                string newBio = "I am the walrus.";
+                bool updateBio;
+
+                // Test update All
+                bool updateAll;
+
+
+                ////////////////////Tests
+                // Test update Phone
+                updatedUser.Phone = newPhone;
+                updatePhone = controller.ProfileDBUpdate(updatedUser, _context);
+
+                // Test update LinkedIn
+                updatedUser.LinkedInLink = newLinkedIn;
+                updateLinkedIn = controller.ProfileDBUpdate(updatedUser, _context);
+
+                // Test update Bio
+                updatedUser.Bio = newBio;
+                updateBio = controller.ProfileDBUpdate(updatedUser, _context);
+
+                // Test update All
+                updatedUser.FirstName = "Joe";
+                updatedUser.LastName = "Schmoe";
+                updatedUser.Birthday = DateTime.Now;
+
+                //////////////////////////end pic logic
+                updatedUser.Address1 = "123 S. Green Street";
+                updatedUser.Address2 = "";
+                updatedUser.City = "Salem";
+                updatedUser.State = 4;
+                updatedUser.Zip = "88888";
+                updatedUser.Phone = "(801) 555-4444";
+                updatedUser.LinkedInLink = "";
+                updatedUser.GitHubLink = "";
+                updatedUser.TwitterLink = "";
+                updatedUser.Bio = "I am the egg man.";
+
+                updateAll = controller.ProfileDBUpdate(updatedUser, _context);
+
+                //////////////////Test Results
+                // Test update Phone
+                Assert.IsTrue(updatePhone);
+
+                // Test update LinkedIn
+                Assert.IsTrue(updateLinkedIn);
+
+                //Test update Bio
+                Assert.IsTrue(updateBio);
+
+                // Test update All
+                Assert.IsTrue(updateAll);
+
+            }
+            /* End Profile Update Testing */
         }
 
     }

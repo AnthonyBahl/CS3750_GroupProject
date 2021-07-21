@@ -55,6 +55,7 @@ namespace cs3750LMS.Controllers
                 ViewData["UserCourses"] = userCourses;
                 ViewData["UserAssignments"] = userAssignments;
                 ViewData["Message"] = session;
+                ViewData["url"] = "~/Views/Public/Calendar.cshtml";
                 return View();
             }
             return View("~/Views/Home/Login.cshtml");
@@ -82,6 +83,7 @@ namespace cs3750LMS.Controllers
 
                 ViewData["States"] = states;
                 ViewData["Message"] = session;
+                ViewData["url"] = "~/Views/Public/Profile.cshtml";
                 return View();
             }
             return View("~/Views/Home/Login.cshtml");
@@ -99,62 +101,13 @@ namespace cs3750LMS.Controllers
             {
                 if (_context.Users.Count(e => e.Email == testUser.Email) == 1)
                 {
-
-                    users = _context.Users.Where(x => x.Email == testUser.Email).Single();
-                    users.Email = testUser.Email;
-                    users.FirstName = testUser.FirstName;
-                    users.LastName = testUser.LastName;
-                    users.Phone = testUser.Phone;
-                    users.Birthday = testUser.Birthday;
-
-                    if (testUser.ProfileImage != null) {
-                        //start picture logic
-                        string wwwPath = this.Environment.WebRootPath;
-                        string contentPath = this.Environment.ContentRootPath;
-                        string path = Path.Combine(this.Environment.WebRootPath, "Images");
-
-                        if (!Directory.Exists(path))
-                        {
-                            Directory.CreateDirectory(path);
-                        }
-
-                        string dbPath = Path.GetFileName(testUser.ProfileImage.FileName);                   //name of file, could save to db as well
-                        string FullPath = Path.Combine(path, dbPath);                               //save to database for later reference
-
-
-                        //delete from files
-                        if (System.IO.File.Exists(users.ProfileImage))
-                        {
-                            System.IO.File.Delete(users.ProfileImage);
-                        }
-                        //add to files
-                        using (FileStream stream = new FileStream(FullPath, FileMode.Create))
-                        {
-                            testUser.ProfileImage.CopyTo(stream);
-                        }
-                        users.ProfileImage = "/Images/" + testUser.ProfileImage.FileName;
-                    }
-
-
-                    //////////////////////////end pic logic
-                    users.Address1 = testUser.Address1;
-                    users.Address2 = testUser.Address2;
-                    users.City = testUser.City;
-                    users.State = testUser.State;
-                    users.Zip = testUser.Zip;
-                    users.Phone = testUser.Phone;
-                    users.LinkedIn = testUser.LinkedInLink;
-                    users.Github = testUser.GitHubLink;
-                    users.Twitter = testUser.TwitterLink;
-                    users.Bio = testUser.Bio;
-
-                    await _context.SaveChangesAsync();
-                    updateSuccess = true;
+                    updateSuccess = ProfileDBUpdate(testUser, _context);
                 }
             }
             UserSession session;
             if (updateSuccess)
             {
+                users = _context.Users.Where(e => e.Email == testUser.Email).Single();
                 session = new UserSession
                 {
                     UserId = users.UserId,
@@ -201,6 +154,7 @@ namespace cs3750LMS.Controllers
 
             ViewData["States"] = states;
             ViewData["Message"] = session;
+            ViewData["url"] = "~/Views/Public/Profile.cshtml";
             return View("Profile");
         }
 
@@ -218,9 +172,75 @@ namespace cs3750LMS.Controllers
             return hash.ToString();
         }
 
-        public bool CreateNotification(int recipientId, int referenceId, string type, string message, INotificationRepository _noti) {
+        public bool ProfileDBUpdate(UserValidationUpdate updateUser, cs3750Context _context)
+        {
+            try
+            {
+                User users = new User();
+
+                users = _context.Users.Where(x => x.Email == updateUser.Email).Single();
+                users.Email = updateUser.Email;
+                users.FirstName = updateUser.FirstName;
+                users.LastName = updateUser.LastName;
+                users.Phone = updateUser.Phone;
+                users.Birthday = updateUser.Birthday;
+
+                if (updateUser.ProfileImage != null)
+                {
+                    //start picture logic
+                    string wwwPath = this.Environment.WebRootPath;
+                    string contentPath = this.Environment.ContentRootPath;
+                    string path = Path.Combine(this.Environment.WebRootPath, "Images");
+
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+
+                    string dbPath = Path.GetFileName(updateUser.ProfileImage.FileName);                   //name of file, could save to db as well
+                    string FullPath = Path.Combine(path, dbPath);                               //save to database for later reference
+
+                    //delete from files
+                    if (System.IO.File.Exists(users.ProfileImage))
+                    {
+                        System.IO.File.Delete(users.ProfileImage);
+                    }
+                    //add to files
+                    using (FileStream stream = new FileStream(FullPath, FileMode.Create))
+                    {
+                        updateUser.ProfileImage.CopyTo(stream);
+                    }
+                    users.ProfileImage = "/Images/" + updateUser.ProfileImage.FileName;
+                }
+
+                //////////////////////////end pic logic
+                users.Address1 = updateUser.Address1;
+                users.Address2 = updateUser.Address2;
+                users.City = updateUser.City;
+                users.State = updateUser.State;
+                users.Zip = updateUser.Zip;
+                users.Phone = updateUser.Phone;
+                users.LinkedIn = updateUser.LinkedInLink;
+                users.Github = updateUser.GitHubLink;
+                users.Twitter = updateUser.TwitterLink;
+                users.Bio = updateUser.Bio;
+
+                _context.SaveChanges();
+                return true;
+            } 
+            catch
+            {
+                return false;
+            }
+            
+        }
+
+
+
+        public bool CreateNotification(int recipientId, int referenceId, string type, string message, INotificationRepository _noti)
+        {
             //create notification for graded assignment. 
-            Notification noti = new Notification            
+            Notification noti = new Notification
             {
                 RecipientID = recipientId,  //this is the ID of the person receiving the Notification. 
                 ReferenceID = referenceId,         //this makes it so when the student clicks on the notification, it takes them to the course page or when the teacher clicks on it, it takes them to the submission page. 
@@ -235,49 +255,7 @@ namespace cs3750LMS.Controllers
             _noti.Add(noti);
 
             return true;
-         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        }
 
     }
 }

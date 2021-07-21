@@ -49,6 +49,7 @@ namespace cs3750LMS.Controllers
                 ViewData["UserCourses"] = userCourses;
                 ViewData["Message"] = session;
                 ViewData["userAssignments"] = userAssignments;
+                ViewData["url"] = "~Views/Home/Index.cshtml";
            
 
                 return View();
@@ -132,6 +133,7 @@ namespace cs3750LMS.Controllers
                     HttpContext.Session.SetString("userSubmissions", JsonSerializer.Serialize(submissions));
 
                     //on success is now logged in, route to dashboard
+                    ViewData["url"] = "~Views/Home/Index.cshtml";
                     return View("~/Views/Home/Index.cshtml");
                 }
             }
@@ -275,6 +277,7 @@ namespace cs3750LMS.Controllers
                     }
 
                     //on success is logged in route to dashboard
+                    ViewData["url"] = "~Views/Home/Index.cshtml";
                     return View("~/Views/Home/Index.cshtml");
                 }
             }
@@ -328,6 +331,35 @@ namespace cs3750LMS.Controllers
                 hash.Append(b.ToString());
 
             return hash.ToString();
+        }
+
+        public IActionResult DeleteNotification(int id)
+        {
+            Notification noti = _context.Notifications.Where(x => x.NotificationID == id).Single();
+            _context.Notifications.Remove(noti);
+            _context.SaveChanges();
+            if (HttpContext.Session.Get<string>("user") != null)
+            {
+                string serialUser = HttpContext.Session.GetString("userInfo");
+                UserSession session = serialUser == null ? null : JsonSerializer.Deserialize<UserSession>(serialUser);
+
+                string serialCourse = HttpContext.Session.GetString("userCourses");
+                Courses userCourses = serialCourse == null ? null : JsonSerializer.Deserialize<Courses>(serialCourse);
+
+                string serialAssignment = HttpContext.Session.GetString("userAssignments");
+                Assignments userAssignments = serialAssignment == null ? null : JsonSerializer.Deserialize<Assignments>(serialAssignment);
+
+                //reload timespans
+                string serialTimes = HttpContext.Session.GetString("courseTimes");
+                List<TimeStamp> times = JsonSerializer.Deserialize<List<TimeStamp>>(serialTimes);
+                userCourses.RefactorTimeSpans(times);
+
+                ViewData["UserCourses"] = userCourses;
+                ViewData["Message"] = session;
+                ViewData["userAssignments"] = userAssignments;
+                ViewData["url"] = "~Views/Home/Index.cshtml";
+            }
+            return View("Index");
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using cs3750LMS.DataAccess;
+using cs3750LMS.DataAccess;
 using cs3750LMS.Models;
 using cs3750LMS.Models.entites;
 using cs3750LMS.Models.general;
@@ -76,7 +76,7 @@ namespace cs3750LMS.Controllers
             ViewData["Submission"] = submissions;
             ViewData["ClickedCourse"] = course;
             ViewData["Message"] = session;
-            
+            ViewData["url"] = "~/Views/Student/ViewCourse.cshtml";
 
             return View("~/Views/Student/ViewCourse.cshtml");
         }
@@ -111,7 +111,7 @@ namespace cs3750LMS.Controllers
             ViewData["Submission"] = submissions;
             ViewData["ClickedAssignment"] = clickedAssignment;
             ViewData["Message"] = session;
-           
+            ViewData["url"] = "~/Views/Student/SubmitAssignment.cshtml";
 
             return View("~/Views/Student/SubmitAssignment.cshtml");
         }
@@ -136,9 +136,10 @@ namespace cs3750LMS.Controllers
                     Contents = submiting.TextSubmission
                 };
 
-                //save to database
-                _context.Submissions.Add(newSubmission);
-                _context.SaveChanges();
+
+                //add to database using method. 
+                StudentSubmitAssignment(submiting, session.UserId, _context);
+              
 
                 //get submissions, add new, and save to session
                 string serialSubmissions = HttpContext.Session.GetString("userSubmissions");
@@ -173,6 +174,7 @@ namespace cs3750LMS.Controllers
             {
                 return SubmitAssignment(submiting.AssignmentId);
             }
+
             return ViewCourse(submiting.CourseId);
         }
 
@@ -379,7 +381,8 @@ namespace cs3750LMS.Controllers
             ViewData["Message"] = session;
             ViewData["Courses"] = allCourses;
             ViewData["StudentCourses"] = studentCourses;
-            
+            ViewData["url"] = "~/Views/Student/Register.cshtml";
+
             return View("~/Views/Student/Register.cshtml");
         }
         public IActionResult Register()
@@ -475,6 +478,7 @@ namespace cs3750LMS.Controllers
                     ViewData["Message"] = session;
                     ViewData["Courses"] = allCourses;
                     ViewData["StudentCourses"] = studentCourses;
+                    ViewData["url"] = "~/Views/Student/Register.cshtml";
                     return View();
                 }
             }
@@ -564,6 +568,7 @@ namespace cs3750LMS.Controllers
             ViewData["Message"] = session;
             ViewData["Courses"] = allCourses;
             ViewData["StudentCourses"] = studentCourses;
+            ViewData["url"] = "~/Views/Student/Register.cshtml";
             return View("~/Views/Student/Register.cshtml");
         }
 
@@ -643,6 +648,7 @@ namespace cs3750LMS.Controllers
             ViewData["Message"] = session;
             ViewData["Courses"] = allCourses;
             ViewData["StudentCourses"] = studentCourses;
+            ViewData["url"] = "~/Views/Student/Register.cshtml";
             return View("~/Views/Student/Register.cshtml");
         }
 
@@ -717,6 +723,7 @@ namespace cs3750LMS.Controllers
                     ViewData["Message"] = session;
                     ViewData["Courses"] = allCourses;
                     ViewData["StudentCourses"] = studentCourses;
+                    ViewData["url"] = "~/Views/Student/Payment.cshtml";
                     return View();
                 }
             }
@@ -866,17 +873,7 @@ namespace cs3750LMS.Controllers
                             int.TryParse(chargesRoot.GetProperty("amount").ToString(), out iChargeAmount);
 
                             // Create transaction object
-                            Transaction newTransaction = new Transaction
-                            {
-                                Date = DateTime.Now,
-                                userID = session.UserId,
-                                amount = iChargeAmount,
-                                status = "Settled"
-                            };
-
-                            //add the new transaction to the database and save changes
-                            _context.Add(newTransaction);
-                            await _context.SaveChangesAsync();
+                            Transaction newTransaction = SaveTransactionInDB(iChargeAmount, session, _context);
 
                             // Update Session
                             Transactions newUserTransactions = new Transactions();
@@ -906,10 +903,31 @@ namespace cs3750LMS.Controllers
                     ViewData["Message"] = session;
                     ViewData["Courses"] = allCourses;
                     ViewData["StudentCourses"] = studentCourses;
+                    ViewData["url"] = "~/Views/Student/Payment.cshtml";
                     return View("Payment");
                 }
             }
             return View("~/Views/Home/Login.cshtml");
+        }
+
+        // abtract out the creation of the transaction into the database
+        public static Transaction SaveTransactionInDB(int iChargeAmount, UserSession session, cs3750Context context)
+        {
+            // creates new transaction
+            Transaction newTransaction = new Transaction
+            {
+                Date = DateTime.Now,
+                userID = session.UserId,
+                amount = iChargeAmount,
+                status = "Settled"
+            };
+
+            // add the new transaction to the database and save changes
+            context.Add(newTransaction);
+            context.SaveChanges();
+
+            // return the transaction
+            return newTransaction;
         }
 
         private AssignmentStats GetAssignmentStats(Assignment assignment)
@@ -922,7 +940,7 @@ namespace cs3750LMS.Controllers
             var query = from a in submissions
                         where a.Grade > -1
                         select a.Grade;
-
+            stats.IndividualGrades = query.ToList();
             stats.Max = query.Max();
             // Get Min
             stats.Min = query.Min();
@@ -956,6 +974,46 @@ namespace cs3750LMS.Controllers
             }
 
             return stats;
+        }
+
+        //AddEnrollment adds a new enrollment for when a student registers for a course
+        public static bool AddEnrollment(Enrollment addEnrollment, cs3750Context _context){
+            if(addEnrollment.courseID ==0 || addEnrollment.studentID == 0)
+            {
+                return false;
+            }
+            try
+            {
+                _context.Enrollments.Add(addEnrollment);
+                _context.SaveChanges();
+                return true;
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+        }
+
+        public static bool StudentSubmitAssignment(SubmitAssignmentValidation submiting, int studentID, cs3750Context _context)
+        {
+
+            Submission sub = new Submission();
+
+            Submission newSubmission = new Submission
+            {
+                AssignmentID = submiting.AssignmentId,
+                StudentID = studentID,
+                SubmissionDate = DateTime.Now,
+                SubmissionType = 1,
+                Grade = -1,
+                Contents = submiting.TextSubmission
+            };
+
+
+            _context.Submissions.Add(newSubmission);
+            _context.SaveChanges();
+
+            return true;
         }
     }
 }

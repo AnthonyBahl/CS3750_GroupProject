@@ -295,4 +295,9 @@ body {
     margin-right:20px;
 }
 
+.hidden-noti {
+    /*display: none;*/
+    font-weight: 800;
+}
+
 /*------------------------------------*/
