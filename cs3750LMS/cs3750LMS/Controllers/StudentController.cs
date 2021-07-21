@@ -134,9 +134,10 @@ namespace cs3750LMS.Controllers
                     Contents = submiting.TextSubmission
                 };
 
-                //save to database
-                _context.Submissions.Add(newSubmission);
-                _context.SaveChanges();
+
+                //add to database using method. 
+                StudentSubmitAssignment(submiting, session.UserId, _context);
+              
 
                 //get submissions, add new, and save to session
                 string serialSubmissions = HttpContext.Session.GetString("userSubmissions");
@@ -893,17 +894,7 @@ namespace cs3750LMS.Controllers
                             int.TryParse(chargesRoot.GetProperty("amount").ToString(), out iChargeAmount);
 
                             // Create transaction object
-                            Transaction newTransaction = new Transaction
-                            {
-                                Date = DateTime.Now,
-                                userID = session.UserId,
-                                amount = iChargeAmount,
-                                status = "Settled"
-                            };
-
-                            //add the new transaction to the database and save changes
-                            _context.Add(newTransaction);
-                            await _context.SaveChangesAsync();
+                            Transaction newTransaction = SaveTransactionInDB(iChargeAmount, session, _context);
 
                             // Update Session
                             Transactions newUserTransactions = new Transactions();
@@ -938,6 +929,26 @@ namespace cs3750LMS.Controllers
                 }
             }
             return View("~/Views/Home/Login.cshtml");
+        }
+
+        // abtract out the creation of the transaction into the database
+        public static Transaction SaveTransactionInDB(int iChargeAmount, UserSession session, cs3750Context context)
+        {
+            // creates new transaction
+            Transaction newTransaction = new Transaction
+            {
+                Date = DateTime.Now,
+                userID = session.UserId,
+                amount = iChargeAmount,
+                status = "Settled"
+            };
+
+            // add the new transaction to the database and save changes
+            context.Add(newTransaction);
+            context.SaveChanges();
+
+            // return the transaction
+            return newTransaction;
         }
 
         private AssignmentStats GetAssignmentStats(Assignment assignment)
@@ -985,5 +996,30 @@ namespace cs3750LMS.Controllers
 
             return stats;
         }
+
+
+
+        public static bool StudentSubmitAssignment(SubmitAssignmentValidation submiting, int studentID, cs3750Context _context)
+        {
+
+            Submission sub = new Submission();
+
+            Submission newSubmission = new Submission
+            {
+                AssignmentID = submiting.AssignmentId,
+                StudentID = studentID,
+                SubmissionDate = DateTime.Now,
+                SubmissionType = 1,
+                Grade = -1,
+                Contents = submiting.TextSubmission
+            };
+
+
+            _context.Submissions.Add(newSubmission);
+            _context.SaveChanges();
+
+            return true;
+        }
     }
 }
+

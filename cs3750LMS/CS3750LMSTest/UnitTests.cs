@@ -62,7 +62,7 @@ namespace CS3750LMSTest
                 TimeSpan startTime = new TimeSpan(21, 40, 50);
                 TimeSpan endTime = new TimeSpan(21, 50, 50);
 
-                // call instructor controller with the context and enviroment passed in
+                // call instructor controller with the context and environment passed in
                 var controller = new InstructorController(_context, Environment, _notification);
 
                 // create a new class object
@@ -344,5 +344,84 @@ namespace CS3750LMSTest
             } // Dispose rolls back everything.
         }
 
+
+
+        /// <summary>
+        /// This method tests to make sure that the submit a text assignment functionality does not break.
+        /// </summary>
+        [TestMethod]
+        public void StudentCanSubmitAssignmentTest()
+        {
+            // Set up Transaction Scope so that nothing is added to the database
+            using (new TransactionScope())
+            {
+                //get student
+                User student = _context.Users.Find(3);
+
+                  //get assignments
+                List<Assignment> assignments = _context.Assignments.ToList();
+                   //get last assignment
+                Assignment lastAssignmetn = assignments.Last();
+
+                //get count of submissions. 
+                var preSubmissionCount = _context.Submissions.Count(n => n.AssignmentID == lastAssignmetn.AssignmentID);
+
+                //create new submission
+                SubmitAssignmentValidation newSubmission = new SubmitAssignmentValidation();           
+
+                //Populate fields
+                newSubmission.AssignmentId = lastAssignmetn.AssignmentID;
+                newSubmission.CourseId = lastAssignmetn.CourseID;
+                newSubmission.TextSubmission = "[Unit Test] assignment Text Submission.";
+
+                //get student controller instance
+                StudentController.StudentSubmitAssignment(newSubmission, student.UserId, _context);
+
+                //get Post submission Count
+                var postSubmissionCount = _context.Submissions.Count(n => n.AssignmentID == lastAssignmetn.AssignmentID);             
+
+                // Determine if everything is working.                
+                Assert.AreEqual(postSubmissionCount, preSubmissionCount+1);
+          
+                
+            }
+        }
+
+        /// <summary>
+        /// This method tests to make sure that the application can register users
+        /// </summary>
+        [TestMethod]
+        public void CreateTransactionTest()
+        {
+            // in a transaction scope so it will not be run in the database
+            using (new TransactionScope())
+            {
+                // create a new class object
+                UserSession session = new UserSession();
+
+                // add fields
+                session.UserId = 1;
+                int iChargeAmount = 10;
+
+                // grab the Transaction count
+                var allTransactions = _context.Transactions.Count();
+                var expectedTranactions = allTransactions + 1; // grab the expected result
+
+                // Act
+                // add the class in the controller
+                cs3750LMS.Models.entites.Transaction newTransaction = StudentController.SaveTransactionInDB(iChargeAmount, session, _context);
+
+                // find out the count again
+                allTransactions = _context.Transactions.Count();
+
+                // Assert
+                // sees if the tractioins created
+                Assert.AreEqual(allTransactions, expectedTranactions);
+
+                // make sure the charge amount is equal
+                Assert.AreEqual(newTransaction.amount, iChargeAmount);
+
+            } // Dispose rolls back everything.
+        }
     }
 }
