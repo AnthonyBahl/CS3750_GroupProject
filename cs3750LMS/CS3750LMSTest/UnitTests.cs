@@ -12,6 +12,8 @@ using Microsoft.Extensions.Logging;
 using cs3750LMS.Models.entites;
 using System.Collections.Generic;
 using cs3750LMS.Models.validation;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace CS3750LMSTest
 {
@@ -483,6 +485,131 @@ namespace CS3750LMSTest
             //Clean Up Tests from database
             _context.Enrollments.RemoveRange(_context.Enrollments.Where(x => x.studentID <= 0 || x.courseID <= 0));
             _context.SaveChanges();
+        }
+
+        /// <summary>
+        /// This method tests to make sure that grades can be updated.
+        /// </summary>
+        [TestMethod]
+        public void UserCanUpdateProfileTest()
+        {
+            // Set up Transaction Scope so that nothing is added to the database
+            using (new TransactionScope())
+            {
+                // Create an instance of the Instructor controller
+                PublicController controller = new PublicController(_context, Environment);
+
+                // Grab list of submissions
+                List<User> users = _context.Users.ToList();
+                // Get last submission
+                User lastUser = users.Last();
+
+                UserValidationUpdate updatedUser = new UserValidationUpdate();
+
+                updatedUser.Email = lastUser.Email;
+                updatedUser.FirstName = lastUser.FirstName;
+                updatedUser.LastName = lastUser.LastName;
+                updatedUser.Phone = lastUser.Phone;
+                updatedUser.Birthday = lastUser.Birthday;
+
+                string wwwPath;
+                string contentPath;
+                string path;
+                string dbPath;
+                string FullPath;
+
+                if (lastUser.ProfileImage != null)
+                {
+                    //start picture logic
+                    wwwPath = Environment.WebRootPath;
+                    contentPath = Environment.ContentRootPath;
+                    path = Path.Combine(Environment.WebRootPath, "Images");
+
+                    dbPath = lastUser.ProfileImage;                   //name of file, could save to db as well
+                    FullPath = Path.Combine(path, dbPath);                               //save to database for later reference
+
+                    //add to files
+                    using (FileStream stream = new FileStream(FullPath, FileMode.Open))
+                    {
+                        updatedUser.ProfileImage = new FormFile(stream, 0, stream.Length, null, Path.GetFileName(stream.Name));
+                    }
+                }
+
+                //////////////////////////end pic logic
+                updatedUser.Address1 = lastUser.Address1;
+                updatedUser.Address2 = lastUser.Address2;
+                updatedUser.City = lastUser.City;
+                updatedUser.State = lastUser.State;
+                updatedUser.Zip = lastUser.Zip;
+                updatedUser.Phone = lastUser.Phone;
+                updatedUser.LinkedInLink = lastUser.LinkedIn;
+                updatedUser.GitHubLink = lastUser.Github;
+                updatedUser.TwitterLink = lastUser.Twitter;
+                updatedUser.Bio = lastUser.Bio;
+
+                // Test update Phone
+                string newPhone = "(801) 222-3333";
+                bool updatePhone;
+
+                // Test update LinkedIn
+                string newLinkedIn = "https://www.linkedin.com/in/cammasfreeman/";
+                bool updateLinkedIn;
+
+                // Test update Bio
+                string newBio = "I am the walrus.";
+                bool updateBio;
+
+                // Test update All
+                bool updateAll;
+
+
+                ////////////////////Tests
+                // Test update Phone
+                updatedUser.Phone = newPhone;
+                updatePhone = controller.ProfileDBUpdate(updatedUser, _context);
+
+                // Test update LinkedIn
+                updatedUser.LinkedInLink = newLinkedIn;
+                updateLinkedIn = controller.ProfileDBUpdate(updatedUser, _context);
+
+                // Test update Bio
+                updatedUser.Bio = newBio;
+                updateBio = controller.ProfileDBUpdate(updatedUser, _context);
+
+                // Test update All
+                updatedUser.FirstName = "Joe";
+                updatedUser.LastName = "Schmoe";
+                updatedUser.Birthday = DateTime.Now;
+
+                //////////////////////////end pic logic
+                updatedUser.Address1 = "123 S. Green Street";
+                updatedUser.Address2 = "";
+                updatedUser.City = "Salem";
+                updatedUser.State = 4;
+                updatedUser.Zip = "88888";
+                updatedUser.Phone = "(801) 555-4444";
+                updatedUser.LinkedInLink = "";
+                updatedUser.GitHubLink = "";
+                updatedUser.TwitterLink = "";
+                updatedUser.Bio = "I am the egg man.";
+
+                updateAll = controller.ProfileDBUpdate(updatedUser, _context);
+
+                //////////////////Test Results
+                // Test update Phone
+                Assert.IsTrue(updatePhone);
+
+                // Test update LinkedIn
+                Assert.IsTrue(updateLinkedIn);
+
+                //Test update Bio
+                Assert.IsTrue(updateBio);
+
+                // Test update All
+                Assert.IsTrue(updateAll);
+
+            }
+            /* End Profile Update Testing */
         }
 
     }
