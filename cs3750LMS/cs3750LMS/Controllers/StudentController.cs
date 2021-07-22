@@ -25,11 +25,13 @@ namespace cs3750LMS.Controllers
         private readonly cs3750Context _context;
         private IHostingEnvironment Environment;
         private readonly INotificationRepository _notification;
+        private PublicController publicController;
         public StudentController(cs3750Context context, IHostingEnvironment _environment, INotificationRepository notification)
         {
             _context = context;
             Environment = _environment;
             _notification = notification;
+            publicController = new PublicController(_context, _environment, _notification);
         }
 
         //--------------------------View Course logic/ submit assignment start
@@ -163,20 +165,9 @@ namespace cs3750LMS.Controllers
                 String CourseName = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(v => v.ClassTitle).FirstOrDefault();
                 String AssignmentName = courseAssignments.AssignmentList.Where(a => a.AssignmentID == submiting.AssignmentId).Select(x => x.Title).FirstOrDefault();
                 int InstructorID = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(i => i.InstructorID).FirstOrDefault();
+                String notiMessage = CourseName + " | " + AssignmentName + " was submitted.";
 
-                //create notification for graded assignment. 
-                Notification message = new Notification
-                {
-                    RecipientID = InstructorID,  //send notification to the instructor
-                    ReferenceID = courseID,      //courseID so when the notification is clicked it can go to that course page
-                    NotificationType = "Assignment",
-                    Message = CourseName + " | " + AssignmentName + " was submitted.",
-                    DateCreated = DateTime.Now,
-                    DateViewed = DateTime.Now  //this errors if its not initialized.
-                };
-
-                //calls the repository function add which adds a notification to the database. 
-                this._notification.Add(message);
+                publicController.CreateNotification(InstructorID, courseID, "Assignment", notiMessage, _notification);
 
             }
             else //fail case
@@ -256,21 +247,9 @@ namespace cs3750LMS.Controllers
                 String CourseName = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(v => v.ClassTitle).FirstOrDefault();
                 String AssignmentName = courseAssignments.AssignmentList.Where(a => a.AssignmentID == submiting.AssignmentId).Select(x => x.Title).FirstOrDefault();
                 int InstructorID = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(i => i.InstructorID).FirstOrDefault();
+                String notiMessage = CourseName + " | " + AssignmentName + " was submitted.";
 
-                //create notification for graded assignment. 
-                Notification message = new Notification
-                {
-                    RecipientID = InstructorID,  //send notification to the instructor
-                    ReferenceID = courseID,      //courseID so when the notification is clicked it can go to that course page
-                    NotificationType = "Assignment",
-                    Message = CourseName + " | " + AssignmentName + " was submitted.",
-                    DateCreated = DateTime.Now,
-                    DateViewed = DateTime.Now  //this errors if its not initialized.
-                };
-
-                //calls the repository function add which adds a notification to the database. 
-                this._notification.Add(message);
-
+                publicController.CreateNotification(InstructorID, courseID, "Assignment", notiMessage, _notification);
 
             }
             else //fail case
@@ -864,11 +843,11 @@ namespace cs3750LMS.Controllers
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "sk_test_51J1K0xA6qDyGoLeeC6aj7Rm39c8lFFfTYZ9k4KyAy6oxH30YYJEKbE73mewvQAAc0jkzATCmsOuzwZ7pZ42bXBSc00t8sYSK1X");
                       
-                        // calculate ammount in dollars
+                        // calculate amount in dollars
                         int iAmt = Int32.Parse(amt);
                         string dollarAmt = (iAmt * 100).ToString();
 
-                        // defind second request data 
+                        // define second request data 
                         bodyData = new Dictionary<string, string>
                         {
                             { "amount", dollarAmt },

@@ -3,6 +3,7 @@ using cs3750LMS.Models;
 using cs3750LMS.Models.entites;
 using cs3750LMS.Models.general;
 using cs3750LMS.Models.validation;
+using cs3750LMS.Models.Repository;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,10 +22,12 @@ namespace cs3750LMS.Controllers
     {
         private readonly cs3750Context _context;
         private IHostingEnvironment Environment;
-        public PublicController(cs3750Context context, IHostingEnvironment _enrionment)
+        private readonly INotificationRepository _notification;
+        public PublicController(cs3750Context context, IHostingEnvironment _enrionment, INotificationRepository notification)
         {
             _context = context;
             Environment = _enrionment;
+            _notification = notification;
         }
 
 
@@ -121,7 +124,7 @@ namespace cs3750LMS.Controllers
                     Zip = users.Zip,
                     Phone = users.Phone,
                     LinkedIn = users.LinkedIn,
-                    Github =users.Github,
+                    Github = users.Github,
                     Twitter = users.Twitter,
                     Bio = users.Bio
                 };
@@ -231,5 +234,28 @@ namespace cs3750LMS.Controllers
             }
             
         }
+
+
+
+        public bool CreateNotification(int recipientId, int referenceId, string type, string message, INotificationRepository _noti)
+        {
+            //create notification for graded assignment. 
+            Notification noti = new Notification
+            {
+                RecipientID = recipientId,  //this is the ID of the person receiving the Notification. 
+                ReferenceID = referenceId,         //this makes it so when the student clicks on the notification, it takes them to the course page or when the teacher clicks on it, it takes them to the submission page. 
+                NotificationType = type,   //type of notifications "Assignment"
+                Message = message,        //Notification Message
+                DateCreated = DateTime.Now,
+                DateViewed = DateTime.Now //had to put this in because it would error if it wasn't initialized. 
+            };
+
+
+            //calls the repository function add which adds a notification to the database.                 
+            _noti.Add(noti);
+
+            return true;
+        }
+
     }
 }

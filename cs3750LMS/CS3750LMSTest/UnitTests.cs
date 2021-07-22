@@ -23,8 +23,9 @@ namespace CS3750LMSTest
         // variables to access db and controller
         cs3750Context _context;
 
+       private db_NotificationRepository _notification;
         private IHostingEnvironment Environment;
-        private INotificationRepository _notification;
+        
         ILogger<HomeController> _logger;
 
         // constructor of what happens at every time this class is called
@@ -36,11 +37,15 @@ namespace CS3750LMSTest
            .BuildServiceProvider();
 
             var builder = new DbContextOptionsBuilder<cs3750Context>();
-            builder.UseSqlServer($"Data Source=titan.cs.weber.edu,10433;Initial Catalog=LMSBinEnt;USER ID=LMSBinEnt;Password=8!N4Ry3n7")
+            builder.UseSqlServer($"Data Source=titan.cs.weber.edu,10433;Initial Catalog=LMSBinEnt;USER ID=LMSBinEnt;Password=newPassx!#$")
                     .UseInternalServiceProvider(serviceProvider);
 
             _context = new cs3750Context(builder.Options);
             _context.Database.Migrate();
+
+            _notification = new db_NotificationRepository(_context);
+            
+      
         }
 
         /// <summary>
@@ -426,6 +431,37 @@ namespace CS3750LMSTest
             } // Dispose rolls back everything.
         }
 
+
+        /// <summary>
+        /// This method tests to make sure that notifications can be created
+        /// </summary>
+        [TestMethod]
+        public void CreateNotificationTest()
+        {
+            // in a transaction scope so it will not be run in the database
+            using (new TransactionScope())
+            {
+                PublicController controller = new PublicController(_context, Environment, _notification);
+
+                var instructor = _context.Users.Find(1025);
+
+                int PreNotiCount = _context.Notifications.Count(n => n.RecipientID == instructor.UserId);
+
+                bool success = false;
+
+                success = controller.CreateNotification(instructor.UserId, 2468, "Test", "This is a Unit Test", _notification);
+
+                int PostNotiCount = _context.Notifications.Count(n => n.RecipientID == instructor.UserId);
+
+                Assert.IsTrue(success);
+                Assert.AreEqual(PreNotiCount + 1, PostNotiCount);
+
+
+
+            } // Dispose rolls back everything.
+        }
+
+
         [TestMethod]
         public void RegisterForCourseAddsEnrollmentTest()
         {
@@ -497,7 +533,7 @@ namespace CS3750LMSTest
             using (new TransactionScope())
             {
                 // Create an instance of the Instructor controller
-                PublicController controller = new PublicController(_context, Environment);
+                PublicController controller = new PublicController(_context, Environment, _notification);
 
                 // Grab list of submissions
                 List<User> users = _context.Users.ToList();

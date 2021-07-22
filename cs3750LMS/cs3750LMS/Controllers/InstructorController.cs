@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
+
 namespace cs3750LMS.Controllers
 {
     public class InstructorController : Controller
@@ -21,11 +22,13 @@ namespace cs3750LMS.Controllers
         private readonly cs3750Context _context;
         private IHostingEnvironment Environment;
         private readonly INotificationRepository _notification;
+        private PublicController publicController;
         public InstructorController(cs3750Context context, IHostingEnvironment _environment, INotificationRepository _notification)
         {
             _context = context;
             Environment = _environment;
             this._notification = _notification;
+            publicController = new PublicController(_context, _environment, _notification);
         }
         //(begin)Deletions of a Course Logics(begin)----------------------------
         [HttpGet]
@@ -675,7 +678,8 @@ namespace cs3750LMS.Controllers
             string serialStudents = HttpContext.Session.GetString("courseStudents");
             SIUsers courseStudents = serialStudents == null ? null : JsonSerializer.Deserialize<SIUsers>(serialStudents);
 
-            Submission submission = new Submission();
+            Submission submission = new Submission();           
+            
             bool success = false;
             if (ModelState.IsValid)
             {
@@ -691,21 +695,12 @@ namespace cs3750LMS.Controllers
             int courseID = courseAssignments.AssignmentList.Where(a => a.AssignmentID == updatedGrade.AssignmentID).Select(x => x.CourseID).FirstOrDefault();
             String CourseName = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(v => v.ClassTitle).FirstOrDefault();
             String AssignmentName = courseAssignments.AssignmentList.Where(a => a.AssignmentID == updatedGrade.AssignmentID).Select(x => x.Title).FirstOrDefault();
+            String notiMessage = CourseName + " | " + AssignmentName + " grade was changed";
+            int StudentID = _context.Submissions.Where(x => x.SubmissionID == updatedGrade.SubmissionID).Select(i => i.StudentID).FirstOrDefault();
 
 
-            //create notification for graded assignment. 
-            Notification message = new Notification
-            {
-                RecipientID = updatedGrade.StudentID,  //this will send it to the student
-                ReferenceID = courseID,         //this makes it so when the student clicks on the notification, it takes them to the course page. 
-                NotificationType = "Assignment",
-                Message = CourseName + " | " + AssignmentName + " grade was changed",
-                DateCreated = DateTime.Now,
-                DateViewed = DateTime.Now //had to put this in because it would error if it wasn't initalized. 
-            };
-
-            //calls the repository function add which adds a notification to the database. 
-            this._notification.Add(message);
+            publicController.CreateNotification(StudentID, courseID, "Assignment", notiMessage, _notification);      
+        
 
             SpecificAssignment assignment = new SpecificAssignment();
 
