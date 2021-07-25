@@ -93,7 +93,7 @@ namespace cs3750LMS.Controllers
         //updates user profile to database from the profile page
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateProfile([Bind("ProfileImage,Email,FirstName,LastName,Birthday,ProfileImage,Address1,Address2,City,State,Zip,Phone,gitHubLink,TwitterLink,LinkedInLink,Bio")] UserValidationUpdate testUser)
+        public async Task<IActionResult> UpdateProfile([Bind("ProfileImage,Email,FirstName,LastName,Birthday,ProfileImage,Address1,Address2,City,State,Zip,Phone,GitHubLink,TwitterLink,LinkedInLink,Bio")] UserValidationUpdate testUser)
         {
             User users = new User();
             bool updateSuccess = false;
