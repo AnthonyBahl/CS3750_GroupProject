@@ -82,47 +82,55 @@
                                 <a class="nav-link" id="notiDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i id="bellIcon" class="far fa-bell fa-lg"></i></a>
                                 @if (notifications.Count() > 0)
                                 {
-                                    <div class="dropdown-menu" id="notiMenu">
-                                        @for (int i = 0; i < notifications.Count(); i++)
-                                        {
+                                <div class="dropdown-menu" id="notiMenu">
+                                    @for (int i = 0; i < notifications.Count(); i++)
+                                    {
 
-                                            //Each Account Type and Notification Type combination will have a different <a></a> link when clicked.
-                                            if (show.AccountType == 0 && notifications.ElementAt(i).NotificationType == "Assignment")  //student
-                                            {
-                                                <div class="dropdown-item">
-                                                    <div class="row">
-                                                        <div class="col-10">
-                                                            <a asp-controller="Student" asp-action="ViewCourse" asp-route-id=@notifications.ElementAt(i).ReferenceID>
-                                                                @notifications.ElementAt(i).Message
-                                                            </a>
-                                                        </div>
-                                                        <div class="col-1">
-                                                            <a asp-controller="Home" asp-action="DeleteNotification" asp-route-id=@notifications.ElementAt(i).NotificationID>
-                                                                <i id="notificationXicon" class="far fa-window-close fa-med icorrect noti"></i>
-                                                            </a>
-                                                        </div>
+                                        //Each Account Type and Notification Type combination will have a different <a></a> link when clicked.
+                                        if (show.AccountType == 0 && notifications.ElementAt(i).NotificationType == "Assignment")  //student
+                                        {
+                                            <div class="dropdown-item">
+                                                <div class="row">
+                                                    <div class="col-12 d-flex flex-row align-items-end justify-content-end">
+                                                        <a asp-controller="Home" asp-action="DeleteNotification" asp-route-id=@notifications.ElementAt(i).NotificationID>
+                                                            <i id="notificationXicon" class="far fa-window-close fa-med icorrect noti mx-0"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <a asp-controller="Student" asp-action="ViewCourse" asp-route-id=@notifications.ElementAt(i).ReferenceID>
+                                                            @notifications.ElementAt(i).Message
+                                                        </a>
                                                     </div>
                                                 </div>
-                                            }
-                                            else if (show.AccountType == 1 && notifications.ElementAt(i).NotificationType == "Assignment") //teacher
+                                            </div>
+                                            if (notifications.Count() > 1 && notifications.Count() != i + 1)
                                             {
-                                                <div class="dropdown-item">
-                                                    <div class="row">
-                                                        <div class="col-10">
-                                                            <a asp-controller="Instructor" asp-action="CourseEdit" asp-route-id=@notifications.ElementAt(i).ReferenceID>
-                                                                @notifications.ElementAt(i).Message
-                                                            </a>
-                                                        </div>
-                                                        <div class="col-1">
-                                                            <a asp-controller="Home" asp-action="DeleteNotification" asp-route-id=@notifications.ElementAt(i).NotificationID>
-                                                                <i id="notificationXicon" class="far fa-window-close fa-med icorrect noti"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                <hr />
                                             }
                                         }
-                                    </div>
+                                        else if (show.AccountType == 1 && notifications.ElementAt(i).NotificationType == "Assignment") //teacher
+                                        {
+                                            <div class="dropdown-item">
+                                                <div class="row">
+                                                    <div class="col-12 d-flex flex-row align-items-end justify-content-end">
+                                                        <a asp-controller="Home" asp-action="DeleteNotification" asp-route-id=@notifications.ElementAt(i).NotificationID>
+                                                            <i id="notificationXicon" class="far fa-window-close fa-med icorrect noti mx-0"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <a asp-controller="Instructor" asp-action="CourseEdit" asp-route-id=@notifications.ElementAt(i).ReferenceID>
+                                                            @notifications.ElementAt(i).Message
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            if (notifications.Count() > 1 && notifications.Count() != i + 1)
+                                            {
+                                                <hr />
+                                            }
+                                        }
+                                    }
+                                </div>
                                     <input id="PassingNotificationCountToJavaScript" hidden value=@notifications.Count()>
                                 }
                             </li>

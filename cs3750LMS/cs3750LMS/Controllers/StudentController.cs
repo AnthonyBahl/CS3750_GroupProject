@@ -162,7 +162,7 @@ namespace cs3750LMS.Controllers
 
                 //Need these to create the message for the notification. 
                 int courseID = submiting.CourseId;
-                String CourseName = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(v => v.ClassTitle).FirstOrDefault();
+                String CourseName = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(v => v.ClassNumber).FirstOrDefault();
                 String AssignmentName = courseAssignments.AssignmentList.Where(a => a.AssignmentID == submiting.AssignmentId).Select(x => x.Title).FirstOrDefault();
                 int InstructorID = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(i => i.InstructorID).FirstOrDefault();
                 String notiMessage = CourseName + " | " + AssignmentName + " was submitted.";
@@ -244,7 +244,7 @@ namespace cs3750LMS.Controllers
 
                 //Need these to create the message for the notification. 
                 int courseID = submiting.CourseId;
-                String CourseName = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(v => v.ClassTitle).FirstOrDefault();
+                String CourseName = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(v => v.ClassNumber).FirstOrDefault();
                 String AssignmentName = courseAssignments.AssignmentList.Where(a => a.AssignmentID == submiting.AssignmentId).Select(x => x.Title).FirstOrDefault();
                 int InstructorID = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(i => i.InstructorID).FirstOrDefault();
                 String notiMessage = CourseName + " | " + AssignmentName + " was submitted.";

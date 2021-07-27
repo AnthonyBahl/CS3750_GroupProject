@@ -693,7 +693,7 @@ namespace cs3750LMS.Controllers
 
             //Need these to create the message for the notification. 
             int courseID = courseAssignments.AssignmentList.Where(a => a.AssignmentID == updatedGrade.AssignmentID).Select(x => x.CourseID).FirstOrDefault();
-            String CourseName = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(v => v.ClassTitle).FirstOrDefault();
+            String CourseName = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(v => v.ClassNumber).FirstOrDefault();
             String AssignmentName = courseAssignments.AssignmentList.Where(a => a.AssignmentID == updatedGrade.AssignmentID).Select(x => x.Title).FirstOrDefault();
             String notiMessage = CourseName + " | " + AssignmentName + " grade was changed";
             int StudentID = _context.Submissions.Where(x => x.SubmissionID == updatedGrade.SubmissionID).Select(i => i.StudentID).FirstOrDefault();
