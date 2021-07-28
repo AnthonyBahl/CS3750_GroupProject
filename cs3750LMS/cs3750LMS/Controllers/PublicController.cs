@@ -55,7 +55,7 @@ namespace cs3750LMS.Controllers
                 ViewData["UserCourses"] = userCourses;
                 ViewData["UserAssignments"] = userAssignments;
                 ViewData["Message"] = session;
-                ViewData["url"] = "~/Views/Public/Calendar.cshtml";
+                ViewData["url"] = "/Public/Calendar";
                 return View();
             }
             return View("~/Views/Home/Login.cshtml");
@@ -83,7 +83,7 @@ namespace cs3750LMS.Controllers
 
                 ViewData["States"] = states;
                 ViewData["Message"] = session;
-                ViewData["url"] = "~/Views/Public/Profile.cshtml";
+                ViewData["url"] = "/Public/Profile";
                 return View();
             }
             return View("~/Views/Home/Login.cshtml");
@@ -154,7 +154,7 @@ namespace cs3750LMS.Controllers
 
             ViewData["States"] = states;
             ViewData["Message"] = session;
-            ViewData["url"] = "~/Views/Public/Profile.cshtml";
+            ViewData["url"] = "/Public/Profile";
             return View("Profile");
         }
 

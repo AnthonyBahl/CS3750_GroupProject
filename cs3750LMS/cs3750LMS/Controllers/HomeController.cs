@@ -49,7 +49,7 @@ namespace cs3750LMS.Controllers
                 ViewData["UserCourses"] = userCourses;
                 ViewData["Message"] = session;
                 ViewData["userAssignments"] = userAssignments;
-                ViewData["url"] = "~Views/Home/Index.cshtml";
+                ViewData["url"] = "/Home/Index";
            
 
                 return View();
@@ -133,7 +133,7 @@ namespace cs3750LMS.Controllers
                     HttpContext.Session.SetString("userSubmissions", JsonSerializer.Serialize(submissions));
 
                     //on success is now logged in, route to dashboard
-                    ViewData["url"] = "~Views/Home/Index.cshtml";
+                    ViewData["url"] = "/Home/Index";
                     return View("~/Views/Home/Index.cshtml");
                 }
             }
@@ -277,7 +277,7 @@ namespace cs3750LMS.Controllers
                     }
 
                     //on success is logged in route to dashboard
-                    ViewData["url"] = "~Views/Home/Index.cshtml";
+                    ViewData["url"] = "/Home/Index";
                     return View("~/Views/Home/Index.cshtml");
                 }
             }
@@ -333,7 +333,9 @@ namespace cs3750LMS.Controllers
             return hash.ToString();
         }
 
-        public IActionResult DeleteNotification(int id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteNotification(int id, string pageURL)
         {
             Notification noti = _context.Notifications.Where(x => x.NotificationID == id).Single();
             _context.Notifications.Remove(noti);
@@ -357,9 +359,8 @@ namespace cs3750LMS.Controllers
                 ViewData["UserCourses"] = userCourses;
                 ViewData["Message"] = session;
                 ViewData["userAssignments"] = userAssignments;
-                ViewData["url"] = "~Views/Home/Index.cshtml";
             }
-            return View("Index");
+            return Redirect(pageURL);
         }
     }
 }

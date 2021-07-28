@@ -130,6 +130,7 @@ namespace cs3750LMS.Controllers
                 ViewData["UserCourses"] = userCourses;
                 ViewData["Message"] = session;
                 ViewData["userAssignments"] = userAssignments3;
+                ViewData["url"] = "/Home/Index";
                 return View("~/Views/Home/Index.cshtml");
             }
              
@@ -222,7 +223,7 @@ namespace cs3750LMS.Controllers
 
             ViewData["ClickedCourse"] = course;
             ViewData["Message"] = session;
-            ViewData["url"] = "~Views/Instructor/CourseEdit.cshtml";
+            ViewData["url"] = "/Instructor/CourseEdit/" + id.ToString();
             return View("~/Views/Instructor/CourseEdit.cshtml");
         }
         //-------------------------------Course Edit Logic End----------------
@@ -247,6 +248,7 @@ namespace cs3750LMS.Controllers
                 HttpContext.Session.SetString("userAssignments", JsonSerializer.Serialize(userAssignments));
                 HttpContext.Session.SetString(courseKey, JsonSerializer.Serialize(course));
             }
+            ViewData["url"] = "/Instructor/CourseEdit/" + assignment.CourseID.ToString();
             return CourseEdit(assignment.CourseID);
         }
 
@@ -298,6 +300,7 @@ namespace cs3750LMS.Controllers
                 HttpContext.Session.SetString(courseKey, JsonSerializer.Serialize(course));
 
             }
+            ViewData["url"] = "/Instructor/CourseEdit/" + editAssignment.CourseID.ToString();
             return CourseEdit(editAssignment.CourseID);
         }
 
@@ -343,7 +346,7 @@ namespace cs3750LMS.Controllers
                     ViewData["DepartmentData"] = depts;
                     ViewData["Message"] = session;
                     ViewData["Courses"] = userCourses;
-                    ViewData["url"] = "~Views/Instructor/AddClass.cshtml";
+                    ViewData["url"] = "/Instructor/AddClass";
                     return View("~/Views/Instructor/AddClass.cshtml");
                 }
             }
@@ -412,7 +415,7 @@ namespace cs3750LMS.Controllers
             ViewData["DepartmentData"] = depts;
             ViewData["Message"] = session;
             ViewData["Courses"] = userCourses;
-            ViewData["url"] = "~Views/Instructor/AddClass.cshtml";
+            ViewData["url"] = "/Instructor/AddClass";
             return View();
         }
 
@@ -555,7 +558,7 @@ namespace cs3750LMS.Controllers
             ViewData["DepartmentData"] = depts;
             ViewData["Message"] = session;
             ViewData["Courses"] = userCourses;
-            ViewData["url"] = "~Views/Instructor/AddClass.cshtml";
+            ViewData["url"] = "/Instructor/AddClass";
             return View("AddClass");
         }
 
@@ -616,7 +619,7 @@ namespace cs3750LMS.Controllers
             ViewData["ClickedAssignment"] = assignment;
             ViewData["Students"] = students;
             ViewData["Message"] = session;
-            ViewData["url"] = "~/Views/Instructor/Submissions.cshtml";
+            ViewData["url"] = "/Instructor/Submissions/" + id.ToString();
             return View("~/Views/Instructor/Submissions.cshtml");
         }
 
@@ -661,7 +664,7 @@ namespace cs3750LMS.Controllers
             ViewData["Student"] = student;
             ViewData["File"] = path;
             ViewData["Message"] = session;
-            ViewData["url"] = "~/Views/Instructor/SubmissionDetail.cshtml";
+            ViewData["url"] = "/Instructor/SubmissionDetail/" + id.ToString();
             return View("~/Views/Instructor/SubmissionDetail.cshtml");
         }
 
@@ -693,7 +696,7 @@ namespace cs3750LMS.Controllers
 
             //Need these to create the message for the notification. 
             int courseID = courseAssignments.AssignmentList.Where(a => a.AssignmentID == updatedGrade.AssignmentID).Select(x => x.CourseID).FirstOrDefault();
-            String CourseName = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(v => v.ClassTitle).FirstOrDefault();
+            String CourseName = userCourses.CourseList.Where(c => c.CourseID == courseID).Select(v => v.ClassNumber).FirstOrDefault();
             String AssignmentName = courseAssignments.AssignmentList.Where(a => a.AssignmentID == updatedGrade.AssignmentID).Select(x => x.Title).FirstOrDefault();
             String notiMessage = CourseName + " | " + AssignmentName + " grade was changed";
             int StudentID = _context.Submissions.Where(x => x.SubmissionID == updatedGrade.SubmissionID).Select(i => i.StudentID).FirstOrDefault();
@@ -726,7 +729,7 @@ namespace cs3750LMS.Controllers
             ViewData["ClickedAssignment"] = assignment;
             ViewData["Students"] = courseStudents;
             ViewData["Message"] = session;
-            ViewData["url"] = "~/Views/Instructor/Submissions.cshtml";
+            ViewData["url"] = "/Instructor/Submissions/" + assignment.Selection.AssignmentID.ToString();
             return View("Submissions", assignment.Selection.AssignmentID);
         }
 
