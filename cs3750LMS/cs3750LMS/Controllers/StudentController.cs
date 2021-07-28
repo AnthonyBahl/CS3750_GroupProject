@@ -941,12 +941,20 @@ namespace cs3750LMS.Controllers
                         where a.Grade > -1
                         select a.Grade;
             stats.IndividualGrades = query.ToList();
-            stats.Max = query.Max();
-            // Get Min
-            stats.Min = query.Min();
-            // Get Avg
-            stats.Avg = query.Average();
-            stats.GradeDistribution = new List<int> { 0, 0, 0, 0, 0};
+            stats.GradeDistribution = new List<int> { 0, 0, 0, 0, 0 };
+            if (stats.IndividualGrades.Count > 0)
+            {
+                stats.Max = query.Max();
+                // Get Min
+                stats.Min = query.Min();
+                // Get Avg
+                stats.Avg = query.Average();
+            }
+            else
+            {
+                return stats;
+            }
+            
             foreach(int item in query)
             {
                 double percent = ((double)item / assignment.MaxPoints) * 100;
