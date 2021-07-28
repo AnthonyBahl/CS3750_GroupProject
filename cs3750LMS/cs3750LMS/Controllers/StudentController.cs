@@ -76,7 +76,7 @@ namespace cs3750LMS.Controllers
             ViewData["Submission"] = submissions;
             ViewData["ClickedCourse"] = course;
             ViewData["Message"] = session;
-            ViewData["url"] = "~/Views/Student/ViewCourse.cshtml";
+            ViewData["url"] = "/Student/ViewCourse/" + id.ToString();
 
             return View("~/Views/Student/ViewCourse.cshtml");
         }
@@ -111,7 +111,7 @@ namespace cs3750LMS.Controllers
             ViewData["Submission"] = submissions;
             ViewData["ClickedAssignment"] = clickedAssignment;
             ViewData["Message"] = session;
-            ViewData["url"] = "~/Views/Student/SubmitAssignment.cshtml";
+            ViewData["url"] = "/Student/SubmitAssignment/" + id.ToString();
 
             return View("~/Views/Student/SubmitAssignment.cshtml");
         }
@@ -174,7 +174,7 @@ namespace cs3750LMS.Controllers
             {
                 return SubmitAssignment(submiting.AssignmentId);
             }
-
+            ViewData["url"] = "/Student/ViewCourse/" + submiting.CourseId.ToString();
             return ViewCourse(submiting.CourseId);
         }
 
@@ -256,7 +256,7 @@ namespace cs3750LMS.Controllers
             {
                 return SubmitAssignment(submiting.AssignmentId);
             }
-
+            ViewData["url"] = "/Student/ViewCourse/" + submiting.CourseId.ToString();
             return ViewCourse(submiting.CourseId);
         }
         //--------------------------View Course logic/submit assignment end
@@ -381,7 +381,7 @@ namespace cs3750LMS.Controllers
             ViewData["Message"] = session;
             ViewData["Courses"] = allCourses;
             ViewData["StudentCourses"] = studentCourses;
-            ViewData["url"] = "~/Views/Student/Register.cshtml";
+            ViewData["url"] = "/Student/Register";
 
             return View("~/Views/Student/Register.cshtml");
         }
@@ -478,7 +478,7 @@ namespace cs3750LMS.Controllers
                     ViewData["Message"] = session;
                     ViewData["Courses"] = allCourses;
                     ViewData["StudentCourses"] = studentCourses;
-                    ViewData["url"] = "~/Views/Student/Register.cshtml";
+                    ViewData["url"] = "/Student/Register";
                     return View();
                 }
             }
@@ -568,7 +568,7 @@ namespace cs3750LMS.Controllers
             ViewData["Message"] = session;
             ViewData["Courses"] = allCourses;
             ViewData["StudentCourses"] = studentCourses;
-            ViewData["url"] = "~/Views/Student/Register.cshtml";
+            ViewData["url"] = "/Student/Register";
             return View("~/Views/Student/Register.cshtml");
         }
 
@@ -648,7 +648,7 @@ namespace cs3750LMS.Controllers
             ViewData["Message"] = session;
             ViewData["Courses"] = allCourses;
             ViewData["StudentCourses"] = studentCourses;
-            ViewData["url"] = "~/Views/Student/Register.cshtml";
+            ViewData["url"] = "/Student/Register";
             return View("~/Views/Student/Register.cshtml");
         }
 
@@ -723,7 +723,7 @@ namespace cs3750LMS.Controllers
                     ViewData["Message"] = session;
                     ViewData["Courses"] = allCourses;
                     ViewData["StudentCourses"] = studentCourses;
-                    ViewData["url"] = "~/Views/Student/Payment.cshtml";
+                    ViewData["url"] = "/Student/Payment";
                     return View();
                 }
             }
@@ -903,7 +903,7 @@ namespace cs3750LMS.Controllers
                     ViewData["Message"] = session;
                     ViewData["Courses"] = allCourses;
                     ViewData["StudentCourses"] = studentCourses;
-                    ViewData["url"] = "~/Views/Student/Payment.cshtml";
+                    ViewData["url"] = "/Student/Payment";
                     return View("Payment");
                 }
             }

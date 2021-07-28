@@ -92,9 +92,13 @@
                                             <div class="dropdown-item">
                                                 <div class="row">
                                                     <div class="col-12 d-flex flex-row align-items-end justify-content-end">
-                                                        <a asp-controller="Home" asp-action="DeleteNotification" asp-route-id=@notifications.ElementAt(i).NotificationID>
-                                                            <i id="notificationXicon" class="far fa-window-close fa-med icorrect noti mx-0"></i>
-                                                        </a>
+                                                        <form asp-controller="Home" asp-action="DeleteNotification" method="post">
+                                                            <div style="display:none">
+                                                                <input type="number" name="id" value=@notifications.ElementAt(i).NotificationID />
+                                                                <input type="text" name="pageURL" value=@url />
+                                                            </div>
+                                                            <button type="submit" class="btn btn-danger m-0 py-0 px-1"><i id="notificationXicon" class="far fa-window-close fa-med icorrect noti m-0 p-0"></i></button>
+                                                        </form>
                                                     </div>
                                                     <div class="col-12">
                                                         <a asp-controller="Student" asp-action="ViewCourse" asp-route-id=@notifications.ElementAt(i).ReferenceID>
@@ -113,9 +117,13 @@
                                             <div class="dropdown-item">
                                                 <div class="row">
                                                     <div class="col-12 d-flex flex-row align-items-end justify-content-end">
-                                                        <a asp-controller="Home" asp-action="DeleteNotification" asp-route-id=@notifications.ElementAt(i).NotificationID>
-                                                            <i id="notificationXicon" class="far fa-window-close fa-med icorrect noti mx-0"></i>
-                                                        </a>
+                                                        <form asp-controller="Home" asp-action="DeleteNotification" method="post">
+                                                            <div style="display:none">
+                                                                <input type="number" name="id" value=@notifications.ElementAt(i).NotificationID />
+                                                                <input type="text" name="pageURL" value=@url/>
+                                                            </div>
+                                                            <button type="submit" class="btn btn-danger m-0 py-0 px-1"><i id="notificationXicon" class="far fa-window-close fa-med icorrect noti m-0 p-0"></i></button>
+                                                        </form>
                                                     </div>
                                                     <div class="col-12">
                                                         <a asp-controller="Instructor" asp-action="CourseEdit" asp-route-id=@notifications.ElementAt(i).ReferenceID>

@@ -6,12 +6,8 @@
     ViewData["Title"] = course.Selection.ClassTitle;
 }
 
-<!-- ******************************************************** UI CHANGE ************************************************************ -->
-<!-- The h1 element below should be inside the div element directly below it. This will allow the h1 element to benefit from the     -->
-<!-- layout established by the div with its "container" class.-->
-<!-- ******************************************************************************************************************************* -->
-<h1>@course.Selection.ClassNumber - @course.Selection.ClassTitle</h1>
 <div id="AssignmentView" class="container">
+    <h1>@course.Selection.ClassNumber - @course.Selection.ClassTitle</h1>
     <h2 class="text-center mt-3">Assignments</h2>
     <table class="table table-hover bg-white mt-5">
         <thead>
@@ -32,14 +28,14 @@
                     <td scope="row">@course.AssignmentList[i].DueDate.ToString("hh:mm tt")</td>
                     @if (submissionIds.Contains(course.AssignmentList[i].AssignmentID))
                     {
-                        
+
                         <td>
                             Submitted
                         </td>
                         <td>
                             <a type="button" asp-controller="Student" asp-action="SubmitAssignment" asp-route-id="@course.AssignmentList[i].AssignmentID" class="btn btn-success">Details</a>
                         </td>
-                        
+
 
                     }
                     else
